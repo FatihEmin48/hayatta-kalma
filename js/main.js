@@ -1,0 +1,171 @@
+const STATE = { START: 'START', PLAYING: 'PLAYING', LEVEL_UP: 'LEVEL_UP', GAME_OVER: 'GAME_OVER', VICTORY: 'VICTORY' };
+
+let canvas, ctx;
+let lastTime = 0;
+let state = null;
+
+function createPlayer() {
+  return {
+    x: WORLD_W / 2, y: WORLD_H / 2,
+    radius: PLAYER_BASE.radius,
+    hp: PLAYER_BASE.maxHp,
+    facingX: 0, facingY: -1,
+    invulnUntil: 0,
+    xp: 0, level: 1, xpToNext: xpToNextLevel(1),
+    weapons: [{ defId: 'whip', level: 1, cooldownLeft: 0 }],
+    passives: { speed: 0, maxHp: 0, pickup: 0, damage: 0, regen: 0 },
+  };
+}
+
+function createInitialState() {
+  return {
+    mode: STATE.START,
+    timer: 0,
+    kills: 0,
+    player: createPlayer(),
+    enemies: [],
+    projectiles: [],
+    gems: [],
+    weaponEffects: [],
+    camera: { x: 0, y: 0 },
+    spawnTimer: SPAWN.baseIntervalSec,
+    eliteTimer: ELITE_DEF.every,
+    pendingLevelUps: 0,
+    levelUpChoices: [],
+  };
+}
+
+function updateCamera(state) {
+  state.camera.x = clamp(state.player.x - CANVAS_W / 2, 0, WORLD_W - CANVAS_W);
+  state.camera.y = clamp(state.player.y - CANVAS_H / 2, 0, WORLD_H - CANVAS_H);
+}
+
+function updatePlayerMovement(state, dt) {
+  const player = state.player;
+  const move = getMoveVector();
+  const speed = getPlayerSpeed(player);
+
+  if (move.x !== 0 || move.y !== 0) {
+    player.facingX = move.x;
+    player.facingY = move.y;
+  }
+
+  player.x = clamp(player.x + move.x * speed * dt, 0, WORLD_W);
+  player.y = clamp(player.y + move.y * speed * dt, 0, WORLD_H);
+}
+
+// `now` is captured once per frame, so a whole cluster of enemies touching the
+// player simultaneously only ever lands one hit per invulnerability window.
+function updateContactDamage(state) {
+  const player = state.player;
+  const now = performance.now();
+  for (const e of state.enemies) {
+    if (e.dead) continue;
+    if (circleHit(player.x, player.y, player.radius, e.x, e.y, e.radius)) {
+      if (now >= player.invulnUntil) {
+        player.hp -= e.damage;
+        player.invulnUntil = now + PLAYER_BASE.invulnMs;
+      }
+    }
+  }
+}
+
+function updateRegen(state, dt) {
+  const player = state.player;
+  const regen = getPlayerRegen(player);
+  if (regen > 0) {
+    player.hp = Math.min(getPlayerMaxHp(player), player.hp + regen * dt);
+  }
+}
+
+function update(state, dt) {
+  state.timer += dt;
+  updatePlayerMovement(state, dt);
+  updateCamera(state);
+  updateEnemies(state, dt);
+  updateSpawner(state, dt);
+  updateWeapons(state, dt);
+  updateContactDamage(state);
+  updateRegen(state, dt);
+  updateGems(state, dt);
+
+  state.enemies = removeDead(state.enemies);
+  state.projectiles = removeDead(state.projectiles);
+  state.gems = removeDead(state.gems);
+  state.weaponEffects = removeDead(state.weaponEffects);
+}
+
+function checkTransitions(state) {
+  if (state.player.hp <= 0) {
+    state.mode = STATE.GAME_OVER;
+    UI.showGameOver(state, false);
+    return;
+  }
+  if (ENABLE_VICTORY && state.timer >= VICTORY_TIME_SEC) {
+    state.mode = STATE.VICTORY;
+    UI.showGameOver(state, true);
+    return;
+  }
+  if (state.pendingLevelUps > 0) {
+    state.mode = STATE.LEVEL_UP;
+    state.levelUpChoices = generateLevelUpChoices(state);
+    UI.showLevelUp(state.levelUpChoices);
+  }
+}
+
+function selectLevelUpChoice(index) {
+  const choice = state.levelUpChoices[index];
+  if (!choice) return;
+
+  applyLevelUpChoice(state, choice);
+
+  if (state.pendingLevelUps > 0) {
+    state.levelUpChoices = generateLevelUpChoices(state);
+    UI.showLevelUp(state.levelUpChoices);
+  } else {
+    UI.hideLevelUp();
+    state.mode = STATE.PLAYING;
+  }
+}
+
+function startGame() {
+  state = createInitialState();
+  state.mode = STATE.PLAYING;
+  UI.hideAllScreens();
+  UI.setHudVisible(true);
+}
+
+function restartGame() {
+  startGame();
+}
+
+function frame(now) {
+  const dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
+
+  if (state.mode === STATE.PLAYING) {
+    update(state, dt);
+    checkTransitions(state);
+  }
+
+  render(ctx, state);
+  UI.syncHud(state);
+
+  requestAnimationFrame(frame);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  canvas = document.getElementById('game');
+  ctx = canvas.getContext('2d');
+
+  UI.init();
+  UI.setHudVisible(false);
+  state = createInitialState();
+
+  setLevelUpKeyHandler((index) => {
+    if (state.mode === STATE.LEVEL_UP) selectLevelUpChoice(index);
+  });
+
+  lastTime = performance.now();
+  requestAnimationFrame(frame);
+});
