@@ -20,19 +20,25 @@ const UI = (function () {
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', restartGame);
 
-    els.gameWrap = document.getElementById('game-wrap');
-    applyResponsiveScale();
-    window.addEventListener('resize', applyResponsiveScale);
-    window.addEventListener('orientationchange', applyResponsiveScale);
+    els.canvas = document.getElementById('game');
+    applyCanvasSize();
+    window.addEventListener('resize', applyCanvasSize);
+    window.addEventListener('orientationchange', applyCanvasSize);
   }
 
-  // Canvas keeps a fixed internal resolution (CANVAS_W x CANVAS_H); on small
-  // screens we just shrink the whole #game-wrap (canvas + HUD + joystick)
-  // uniformly via CSS transform so every element scales together in place.
-  function applyResponsiveScale() {
-    const margin = 0.98;
-    const scale = Math.min(1, (window.innerWidth * margin) / CANVAS_W, (window.innerHeight * margin) / CANVAS_H);
-    els.gameWrap.style.transform = `scale(${scale})`;
+  // Resizes the canvas's actual drawing buffer (not just its CSS box) to
+  // match the device viewport, and keeps CANVAS_W/CANVAS_H (used everywhere
+  // for camera clamping, background drawing, off-screen spawn points, etc.)
+  // in sync. This replaces scaling a fixed 960x540 box down to fit — that
+  // left most of a tall phone screen as empty letterbox space since the
+  // game's aspect ratio didn't match a portrait phone's.
+  function applyCanvasSize() {
+    const w = clamp(Math.round(window.innerWidth), 320, 1600);
+    const h = clamp(Math.round(window.innerHeight), 320, 1000);
+    CANVAS_W = w;
+    CANVAS_H = h;
+    els.canvas.width = w;
+    els.canvas.height = h;
   }
 
   function hideAllScreens() {

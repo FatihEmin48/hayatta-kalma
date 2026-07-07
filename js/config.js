@@ -1,5 +1,7 @@
-const CANVAS_W = 960;
-const CANVAS_H = 540;
+// Mutable: ui.js resizes these (and the canvas's drawing buffer) to match
+// the actual device viewport, so the game fills the screen on any device.
+let CANVAS_W = 960;
+let CANVAS_H = 540;
 const WORLD_W = 3000;
 const WORLD_H = 3000;
 

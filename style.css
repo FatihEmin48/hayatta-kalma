@@ -18,26 +18,29 @@ html, body {
 
 body {
   margin: 0;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 100vh;
+  height: 100dvh;
   background: var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+/* Fills the actual device viewport (whatever its size/orientation) instead
+   of a fixed 960x540 box scaled down — a landscape-shaped fixed canvas left
+   huge unused letterbox space on tall phone screens. The canvas's internal
+   drawing resolution is kept in sync with this box size by ui.js. */
 #game-wrap {
   position: relative;
-  width: 960px;
-  height: 540px;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
-  transform-origin: center center;
-  flex: none;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 canvas {
   display: block;
+  width: 100%;
+  height: 100%;
   background: #0a0c10;
 }
 
@@ -132,6 +135,15 @@ button:hover { filter: brightness(1.1); }
 .choice-btn .choice-key { color: var(--accent); font-weight: bold; }
 .choice-btn .choice-name { font-weight: bold; margin: 4px 0; }
 .choice-btn .choice-desc { font-size: 12px; color: var(--muted); }
+
+@media (max-width: 640px) {
+  #levelup-choices { flex-direction: column; }
+  .choice-btn { width: min(320px, 78vw); }
+  .screen h1 { font-size: 24px; }
+  .screen h2 { font-size: 20px; }
+  .screen p { font-size: 14px; max-width: 90vw; }
+  #hud-mid { font-size: 12px; }
+}
 
 #joystick {
   display: none;
