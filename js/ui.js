@@ -1,8 +1,10 @@
 const UI = (function () {
   let els = {};
+  let toastTimer = null;
 
   function init() {
     els.hud = document.getElementById('hud');
+    els.toast = document.getElementById('toast');
     els.hpFill = document.getElementById('hp-fill');
     els.hpText = document.getElementById('hp-text');
     els.xpFill = document.getElementById('xp-fill');
@@ -93,5 +95,12 @@ const UI = (function () {
     els.screenGameOver.classList.remove('hidden');
   }
 
-  return { init, hideAllScreens, setHudVisible, syncHud, showLevelUp, hideLevelUp, showGameOver };
+  function showToast(text) {
+    els.toast.textContent = text;
+    els.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2500);
+  }
+
+  return { init, hideAllScreens, setHudVisible, syncHud, showLevelUp, hideLevelUp, showGameOver, showToast };
 })();

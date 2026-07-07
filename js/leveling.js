@@ -98,7 +98,7 @@ function applyLevelUpChoice(state, choice) {
   const player = state.player;
 
   if (choice.type === 'new_weapon') {
-    player.weapons.push({ defId: choice.defId, level: 1, cooldownLeft: 0 });
+    player.weapons.push({ defId: choice.defId, level: 1, cooldownLeft: 0, evolved: false });
   } else if (choice.type === 'weapon_upgrade') {
     const w = player.weapons.find(pw => pw.defId === choice.defId);
     w.level += 1;
@@ -107,4 +107,21 @@ function applyLevelUpChoice(state, choice) {
   }
 
   state.pendingLevelUps -= 1;
+  checkEvolutions(state);
+}
+
+function checkEvolutions(state) {
+  const player = state.player;
+  for (const evo of EVOLUTION_DEFS) {
+    const w = player.weapons.find(pw => pw.defId === evo.weaponId);
+    if (!w || w.evolved) continue;
+
+    const weaponDef = getWeaponDef(w.defId);
+    const passiveMaxed = player.passives[evo.passiveId] >= getPassiveDef(evo.passiveId).maxCount;
+
+    if (w.level >= weaponDef.maxLevel && passiveMaxed) {
+      w.evolved = true;
+      UI.showToast(`${evo.name}'na evrimleşti!`);
+    }
+  }
 }
