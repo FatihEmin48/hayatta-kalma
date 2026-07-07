@@ -2,7 +2,7 @@
 
 ## Context
 
-Kullanıcı web'de oynanan bir oyun istedi; platformer fikrinden vazgeçip "Vampire Survivors" tarzı, üstten görünümlü, otomatik saldırılı bir horde-survival oyununa karar verdi. Bu oturumda kullanım limiti dolmak üzere olduğu için önce bu planı (kod yazmadan) netleştirip GitHub'a private bir repo olarak push etmek istiyor. Yarın sabah okula gitmeden önce implementasyonu **tek bir mesajla, soru sormadan tamamen otonom** başlatmak istiyor, çünkü 8 saat boyunca bilgisayara erişimi olmayacak ve döndüğünde oyunun hazır olmasını istiyor.
+Kullanıcı web'de oynanan bir oyun istedi; platformer fikrinden vazgeçip üstten görünümlü, otomatik saldırılı bir horde-survival oyununa karar verdi. Bu oturumda kullanım limiti dolmak üzere olduğu için önce bu planı (kod yazmadan) netleştirip GitHub'a private bir repo olarak push etmek istiyor. Yarın sabah okula gitmeden önce implementasyonu **tek bir mesajla, soru sormadan tamamen otonom** başlatmak istiyor, çünkü 8 saat boyunca bilgisayara erişimi olmayacak ve döndüğünde oyunun hazır olmasını istiyor.
 
 Doğrulanan ortam bilgileri:
 - `/workspace` boş bir proje alanı; paylaşılan build tooling/konvansiyon yok.
