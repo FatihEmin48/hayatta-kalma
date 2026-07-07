@@ -30,7 +30,9 @@ function inWhipArc(px, py, fx, fy, range, arcDeg, ex, ey) {
   if (d2 > range * range) return false;
   const d = Math.sqrt(d2) || 1;
   const dot = (dx / d) * fx + (dy / d) * fy;
-  return dot >= Math.cos((arcDeg * Math.PI / 180) / 2);
+  // Small epsilon so a 360deg (fully-evolved) arc reliably passes every
+  // angle across engines, not just where V8 happens to round cos(pi) to -1.
+  return dot >= Math.cos((arcDeg * Math.PI / 180) / 2) - 1e-9;
 }
 
 function pickRandomUnique(arr, count) {

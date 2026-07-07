@@ -88,3 +88,19 @@ const PASSIVE_DEFS = [
 function xpToNextLevel(level) {
   return 5 * level * level + 15 * level + 10;
 }
+
+const OBSTACLE_CONFIG = {
+  count: 40, minRadius: 20, maxRadius: 45,
+  edgeMargin: 60, minDistFromCenter: 250, passageBuffer: 50,
+  color: '#4a3f35',
+};
+
+const CHEST_CONFIG = {
+  spawnEverySec: 90, maxConcurrent: 2, radius: 16, xpReward: 40, color: '#d4af37',
+};
+
+const EVOLUTION_DEFS = [
+  { weaponId: 'whip', passiveId: 'damage', name: 'Kırbaç Fırtınası', damageMult: 1.8, rangeMult: 1.1 },
+  { weaponId: 'knife', passiveId: 'pickup', name: 'Bıçak Yağmuru', extraProjectiles: 2 },
+  { weaponId: 'aura', passiveId: 'regen', name: 'Yaşam Auraı', radiusMult: 1.5, lifestealPct: 0.15 },
+];

@@ -70,6 +70,28 @@ function drawEnemies(ctx, state) {
   }
 }
 
+function drawObstacles(ctx, state) {
+  ctx.fillStyle = OBSTACLE_CONFIG.color;
+  for (const o of state.obstacles) {
+    const pos = worldToScreen(state.camera, o.x, o.y);
+    if (pos.x < -60 || pos.x > CANVAS_W + 60 || pos.y < -60 || pos.y > CANVAS_H + 60) continue;
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, o.radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawChests(ctx, state) {
+  const pulse = 1 + Math.sin(performance.now() / 300) * 0.08;
+  ctx.fillStyle = CHEST_CONFIG.color;
+  for (const c of state.chests) {
+    const pos = worldToScreen(state.camera, c.x, c.y);
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, c.radius * pulse, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 function drawGems(ctx, state) {
   ctx.fillStyle = '#3fa9f5';
   for (const g of state.gems) {
@@ -106,12 +128,27 @@ function drawWeaponEffects(ctx, state) {
     if (fx.type === 'whip') {
       const pos = worldToScreen(state.camera, fx.x, fx.y);
       const alpha = clamp(fx.timeLeft / fx.duration, 0, 1);
-      const angle = Math.atan2(fx.facingY, fx.facingX);
-      const half = (fx.arcDeg * Math.PI / 180) / 2;
+
+      if (fx.arcDeg >= 360) {
+        // Evolved (360°) whip: a plain moveTo-center/closePath wedge path
+        // degenerates at a full circle — start and end angle are the same
+        // point, so the stroke leaves a stray line back to the center.
+        // Draw a clean ring instead.
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, fx.range, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${alpha * 0.35})`;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        continue;
+      }
 
       // Filled wedge, not just the outer arc line — the whole slice between
       // the player and the arc is the actual hit area (see inWhipArc), so
       // the visual should cover it too instead of implying only the edge hits.
+      const angle = Math.atan2(fx.facingY, fx.facingX);
+      const half = (fx.arcDeg * Math.PI / 180) / 2;
       ctx.beginPath();
       ctx.moveTo(pos.x, pos.y);
       ctx.arc(pos.x, pos.y, fx.range, angle - half, angle + half);
@@ -130,7 +167,8 @@ function drawAura(ctx, state) {
   const auraWeapon = state.player.weapons.find(w => getWeaponDef(w.defId).kind === 'aura');
   if (!auraWeapon) return;
 
-  const radius = weaponStatAt(auraWeapon.defId, 'radius', auraWeapon.level);
+  const evo = auraWeapon.evolved ? getEvolutionDef(auraWeapon.defId) : null;
+  const radius = weaponStatAt(auraWeapon.defId, 'radius', auraWeapon.level) * (evo ? evo.radiusMult : 1);
   const pos = worldToScreen(state.camera, state.player.x, state.player.y);
 
   ctx.fillStyle = 'rgba(155, 89, 182, 0.15)';
@@ -146,7 +184,9 @@ function render(ctx, state) {
   if (state.mode === STATE.START) return;
 
   drawBackground(ctx, state.camera);
+  drawObstacles(ctx, state);
   drawGems(ctx, state);
+  drawChests(ctx, state);
   drawWeaponEffects(ctx, state);
   drawEnemies(ctx, state);
   drawProjectiles(ctx, state);

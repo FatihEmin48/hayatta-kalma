@@ -12,7 +12,7 @@ function createPlayer() {
     facingX: 0, facingY: -1,
     invulnUntil: 0,
     xp: 0, level: 1, xpToNext: xpToNextLevel(1),
-    weapons: [{ defId: 'whip', level: 1, cooldownLeft: 0 }],
+    weapons: [{ defId: 'whip', level: 1, cooldownLeft: 0, evolved: false }],
     passives: { speed: 0, maxHp: 0, pickup: 0, damage: 0, regen: 0 },
   };
 }
@@ -27,6 +27,9 @@ function createInitialState() {
     projectiles: [],
     gems: [],
     weaponEffects: [],
+    obstacles: generateObstacles(),
+    chests: [],
+    chestTimer: CHEST_CONFIG.spawnEverySec,
     camera: { x: 0, y: 0 },
     spawnTimer: SPAWN.baseIntervalSec,
     eliteTimer: ELITE_DEF.every,
@@ -50,8 +53,11 @@ function updatePlayerMovement(state, dt) {
     player.facingY = move.y;
   }
 
-  player.x = clamp(player.x + move.x * speed * dt, 0, WORLD_W);
-  player.y = clamp(player.y + move.y * speed * dt, 0, WORLD_H);
+  const newX = player.x + move.x * speed * dt;
+  const newY = player.y + move.y * speed * dt;
+  const resolved = resolveObstacles(newX, newY, player.radius, state.obstacles);
+  player.x = clamp(resolved.x, 0, WORLD_W);
+  player.y = clamp(resolved.y, 0, WORLD_H);
 }
 
 // `now` is captured once per frame, so a whole cluster of enemies touching the
@@ -88,11 +94,13 @@ function update(state, dt) {
   updateContactDamage(state);
   updateRegen(state, dt);
   updateGems(state, dt);
+  updateChests(state, dt);
 
   state.enemies = removeDead(state.enemies);
   state.projectiles = removeDead(state.projectiles);
   state.gems = removeDead(state.gems);
   state.weaponEffects = removeDead(state.weaponEffects);
+  state.chests = removeDead(state.chests);
 }
 
 function checkTransitions(state) {

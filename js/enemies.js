@@ -18,6 +18,7 @@ function createEnemy(defId, x, y, elite, scale) {
     erratic: !!def.erratic,
     elite: !!elite,
     jitterPhase: Math.random() * Math.PI * 2,
+    nudgeSign: Math.random() < 0.5 ? -1 : 1,
     dead: false,
   };
 }
@@ -77,8 +78,18 @@ function updateEnemies(state, dt) {
       vy += perpY * wobble;
     }
 
-    e.x += vx * dt;
-    e.y += vy * dt;
+    const resolved = resolveObstacles(e.x + vx * dt, e.y + vy * dt, e.radius, state.obstacles);
+    if (resolved.corrected) {
+      // Cheap hedge against a rare freeze when player/obstacle/enemy line up
+      // exactly (push-out direction ends up parallel to travel direction
+      // every frame): nudge perpendicular with a fixed per-enemy sign so it
+      // doesn't oscillate. Not real pathfinding, just enough to route around.
+      const perpX = -dir.y, perpY = dir.x;
+      resolved.x += perpX * e.nudgeSign * e.speed * dt * 0.6;
+      resolved.y += perpY * e.nudgeSign * e.speed * dt * 0.6;
+    }
+    e.x = resolved.x;
+    e.y = resolved.y;
   }
 }
 
