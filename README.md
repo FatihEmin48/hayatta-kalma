@@ -14,9 +14,14 @@ sonra tarayıcıda `http://localhost:8000/` aç. `index.html`'e doğrudan çift 
 
 ## Kontroller
 
-- **WASD** veya **ok tuşları**: hareket
+- **WASD** veya **ok tuşları**: hareket (masaüstü)
+- **Sol alt köşedeki sanal joystick**: hareket (dokunmatik cihazlarda otomatik görünür)
 - Silahlar otomatik saldırır, hedef seçmene gerek yok
-- Seviye atladığında **1 / 2 / 3** tuşları veya fare tıklaması ile seçim yap
+- Seviye atladığında **1 / 2 / 3** tuşları veya fare/dokunma ile seçim yap
+
+## Mobil / telefon desteği
+
+`#game-wrap` (canvas + HUD + joystick) ekran boyutuna göre `transform: scale()` ile bütün olarak küçültülüyor, bu yüzden telefonda da orantılı görünür. Dokunmatik cihaz tespit edilince (`navigator.maxTouchPoints` / `ontouchstart`) sol alt köşede otomatik bir sanal joystick beliriyor; klavye her zaman önceliklidir (ikisi çakışmaz). Bu, bu ortamda gerçek bir telefon/tarayıcıda test edilemedi — aşağıdaki checklist'e mobil adımları da eklendi.
 
 ## Bu ortamda yapılan doğrulama
 
@@ -40,6 +45,13 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değildi, bu yüzden
 6. Zamanla `fast` (~60sn), `tank` (~120sn) düşmanları ve elite'lerin (~180sn) sırayla belirdiği, spawn yoğunluğunun arttığı gözlemlenir (hızlı test için `js/config.js`'teki `unlockAt`/`rampSeconds`/`ELITE_DEF.every` değerleri geçici kısaltılabilir).
 7. Genel "oyun hissi": `js/config.js` içindeki sayılar (hasar, cooldown, spawn hızı) ilk oynanışta muhtemelen ince ayar isteyecektir — bu adım gerçek oynanış gerektirir, kod incelemesiyle yapılamaz.
 
+**Mobil test (telefonda, aynı Wi-Fi ağındaysan `http://<bilgisayarının-ip'si>:8000` ile erişebilirsin):**
+
+8. Sayfa telefon ekranına sığacak şekilde küçülüyor mu, taşma/scroll oluyor mu kontrol et.
+9. Sol alt köşede joystick görünüyor mu (masaüstünde görünmemeli, sadece dokunmatik cihazda).
+10. Joystick'e parmağını koyup sürükleyince karakter o yönde hareket ediyor mu, parmağını çekince duruyor mu.
+11. Klavyesi olmayan telefonda seviye atlama seçimini dokunarak (tıklama) seçebiliyor musun.
+
 ## v1 kapsamı dışında bırakılanlar
 
-Silah evrimleri/birleşimleri, localStorage ile kalıcı meta-ilerleme, engel/terrain çarpışması, sandık/hazine odaları, ses/müzik, mobil dokunmatik kontroller.
+Silah evrimleri/birleşimleri, localStorage ile kalıcı meta-ilerleme, engel/terrain çarpışması, sandık/hazine odaları, ses/müzik.

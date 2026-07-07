@@ -19,6 +19,20 @@ const UI = (function () {
 
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', restartGame);
+
+    els.gameWrap = document.getElementById('game-wrap');
+    applyResponsiveScale();
+    window.addEventListener('resize', applyResponsiveScale);
+    window.addEventListener('orientationchange', applyResponsiveScale);
+  }
+
+  // Canvas keeps a fixed internal resolution (CANVAS_W x CANVAS_H); on small
+  // screens we just shrink the whole #game-wrap (canvas + HUD + joystick)
+  // uniformly via CSS transform so every element scales together in place.
+  function applyResponsiveScale() {
+    const margin = 0.98;
+    const scale = Math.min(1, (window.innerWidth * margin) / CANVAS_W, (window.innerHeight * margin) / CANVAS_H);
+    els.gameWrap.style.transform = `scale(${scale})`;
   }
 
   function hideAllScreens() {
