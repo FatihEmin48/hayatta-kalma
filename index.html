@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hayatta Kalma</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-wrap">
+    <canvas id="game" width="960" height="540"></canvas>
+
+    <div id="hud" class="hidden">
+      <div id="hud-top">
+        <div id="hp-bar" class="bar">
+          <div id="hp-fill" class="bar-fill hp"></div>
+          <span id="hp-text" class="bar-text"></span>
+        </div>
+        <div id="hud-mid">
+          <span id="level-text">Seviye 1</span>
+          <span id="timer-text">00:00</span>
+          <span id="kills-text">Öldürülen: 0</span>
+        </div>
+        <div id="xp-bar" class="bar">
+          <div id="xp-fill" class="bar-fill xp"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-start" class="screen">
+      <h1>Hayatta Kalma</h1>
+      <p>WASD veya ok tuşlarıyla hareket et. Silahların otomatik saldırır, hedef seçmene gerek yok.</p>
+      <p>Düşman dalgalarından kaçın, deneyim toplayıp güçlen, mümkün olduğunca uzun süre hayatta kal!</p>
+      <button id="start-btn">Oyunu Başlat</button>
+    </div>
+
+    <div id="screen-levelup" class="screen hidden">
+      <h2>Seviye Atladın!</h2>
+      <div id="levelup-choices"></div>
+    </div>
+
+    <div id="screen-gameover" class="screen hidden">
+      <h2 id="gameover-title">Öldün</h2>
+      <p id="gameover-stats"></p>
+      <button id="restart-btn">Tekrar Oyna</button>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/weapons.js"></script>
+  <script src="js/enemies.js"></script>
+  <script src="js/leveling.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
