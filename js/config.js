@@ -41,21 +41,26 @@ const ENEMY_DEFS = [
   { id: 'tank', unlockAt: 120, hp: 55, speed: 32, damage: 13, radius: 18, xp: 8, color: '#c0392b' },
 ];
 
-// Enemies are weaker at the start and gradually ramp up to their full
-// ENEMY_DEFS stats, then keep slowly growing beyond that for endless runs.
+// Enemies are weaker at the start and ramp up to their full ENEMY_DEFS
+// stats over `rampSeconds`, then keep growing slowly for endless runs.
+// On top of that, every player level adds a flat strength bonus, so
+// getting stronger (weapons/passives) is matched by tougher enemies
+// instead of runs getting trivially easy after a few level-ups.
 // The scale is baked into each enemy's stats at spawn time, so enemies
 // already on screen don't retroactively get stronger.
 const DIFFICULTY = {
   startScale: 0.55,
-  rampSeconds: 300,
-  postRampGrowthPerSec: 0.0012,
+  rampSeconds: 180,
+  postRampGrowthPerSec: 0.002,
+  perPlayerLevel: 0.06,
 };
 
-function getDifficultyScale(timer) {
+function getDifficultyScale(timer, playerLevel) {
   const t = clamp(timer / DIFFICULTY.rampSeconds, 0, 1);
-  const base = lerp(DIFFICULTY.startScale, 1, t);
-  const extra = Math.max(0, timer - DIFFICULTY.rampSeconds) * DIFFICULTY.postRampGrowthPerSec;
-  return base + extra;
+  const timeScale = lerp(DIFFICULTY.startScale, 1, t)
+    + Math.max(0, timer - DIFFICULTY.rampSeconds) * DIFFICULTY.postRampGrowthPerSec;
+  const levelBonus = Math.max(0, playerLevel - 1) * DIFFICULTY.perPlayerLevel;
+  return timeScale + levelBonus;
 }
 
 const ELITE_DEF = {

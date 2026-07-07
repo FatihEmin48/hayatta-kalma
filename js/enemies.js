@@ -39,7 +39,7 @@ function spawnEnemy(state, elite) {
   const available = ENEMY_DEFS.filter(d => d.unlockAt <= state.timer);
   const def = available[randInt(0, available.length - 1)];
   const pos = randomOffscreenPoint(state.camera);
-  const scale = getDifficultyScale(state.timer);
+  const scale = getDifficultyScale(state.timer, state.player.level);
   state.enemies.push(createEnemy(def.id, pos.x, pos.y, !!elite, scale));
 }
 

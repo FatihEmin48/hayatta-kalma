@@ -80,6 +80,27 @@ function drawGems(ctx, state) {
   }
 }
 
+function drawProjectiles(ctx, state) {
+  for (const p of state.projectiles) {
+    const pos = worldToScreen(state.camera, p.x, p.y);
+    const speed = Math.hypot(p.vx, p.vy) || 1;
+    const dirX = p.vx / speed, dirY = p.vy / speed;
+    const trailLen = p.radius * 3;
+
+    ctx.strokeStyle = '#f5f5f5';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(pos.x - dirX * trailLen, pos.y - dirY * trailLen);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#f5f5f5';
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, p.radius * 0.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 function drawWeaponEffects(ctx, state) {
   for (const fx of state.weaponEffects) {
     if (fx.type === 'whip') {
@@ -128,6 +149,7 @@ function render(ctx, state) {
   drawGems(ctx, state);
   drawWeaponEffects(ctx, state);
   drawEnemies(ctx, state);
+  drawProjectiles(ctx, state);
   drawAura(ctx, state);
   drawPlayer(ctx, state);
 }
