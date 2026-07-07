@@ -88,24 +88,26 @@ Spawner: zamanla artan spawn hızı (`baseIntervalSec → minIntervalSec`, `ramp
 
 **v1 kapsamı dışında bırakılanlar:** Silah evrimleri/birleşimleri, localStorage ile kalıcı meta-ilerleme, engel/terrain çarpışması, sandık/hazine odaları, ses/müzik, mobil dokunmatik kontroller.
 
-## İnşa sırası (yarın sabah otonom olarak uygulanacak)
+## İnşa sırası — TAMAMLANDI ✅ (2026-07-07 sabahı, tek mesajla otonom olarak uygulandı)
 
-0. ~~`platform-oyunu` sil~~ ✅, ~~`hayatta-kalma/js/` iskeleti~~ ✅ (bu gece yapıldı).
-1. `index.html` iskeleti (canvas + overlay div'ler + script tag'leri) — konsolda hata vermeden yüklendiğini doğrula.
-2. `style.css` — layout, tema, `.screen` toggle, bar CSS.
-3. `config.js` — tüm sabitler/tanımlar.
-4. `utils.js` — matematik/random/çarpışma yardımcıları (`node --check` + küçük `node -e` ile sağlama).
-5. `input.js` — klavye durumu + hareket vektörü.
-6. `main.js` iskeleti — `state`, `STATE` enum, dt-clamp'li rAF döngüsü; boş arenada oyuncu kamerayla dolaşabilsin (uçtan uca ilk çalışan versiyon).
-7. `render.js` — kamera dönüşümü + arkaplan/oyuncu çizimi.
-8. `enemies.js` — factory + steering + spawner (henüz çarpışma yok, sadece görünüp yaklaşsınlar).
-9. `main.js`'e temas hasarı + i-frame + `GAME_OVER` stub'ı bağla.
-10. `weapons.js` — önce kırbaç (en basit), sonra aura, sonra bıçak (mermi dizisi gerektirir).
-11. `enemies.js` — ölüm→gem drop.
-12. `leveling.js` — mıknatıs/toplama, XP, level-up tetikleme + seçenek üretimi/uygulama.
-13. `ui.js` — HUD senkronu, tüm ekranlar, `main.js` geçişlerine bağlama.
-14. Kod-seviyesi doğrulama: her JS dosyasında `node --check`, kritik mantığı (state machine, i-frame, pendingLevelUps) tekrar okuyup izleme.
-15. Her adımdan sonra checkpoint commit + push; son adımda kullanıcı için elle test checklist'ini bu dosyaya/`README.md` içine yaz (adımlar aşağıda, Doğrulama bölümünde).
+Tüm adımlar uygulandı, checkpoint'ler halinde commit+push edildi (6 commit, bkz. `git log`). Kod-seviyesi doğrulama `node --check` + Node `vm` modülüyle headless simülasyondan geçti (bulgular `README.md`'de). Gerçek tarayıcı testi kullanıcının dönüşünü bekliyor — `README.md`'deki manuel test checklist'i kullan.
+
+0. ~~`platform-oyunu` sil~~ ✅, ~~`hayatta-kalma/js/` iskeleti~~ ✅
+1. ~~`index.html` iskeleti~~ ✅
+2. ~~`style.css`~~ ✅
+3. ~~`config.js`~~ ✅
+4. ~~`utils.js`~~ ✅
+5. ~~`input.js`~~ ✅
+6. ~~`main.js`~~ ✅ (state machine, dt-clamp'li rAF döngüsü, kamera, oyuncu hareketi)
+7. ~~`render.js`~~ ✅
+8. ~~`enemies.js` — factory + steering + spawner~~ ✅
+9. ~~temas hasarı + i-frame + `GAME_OVER`~~ ✅ (`main.js` içinde)
+10. ~~`weapons.js` — kırbaç, bıçak, aura~~ ✅
+11. ~~`enemies.js` — ölüm→gem drop~~ ✅
+12. ~~`leveling.js` — mıknatıs/toplama, XP, level-up~~ ✅
+13. ~~`ui.js` — HUD, tüm ekranlar~~ ✅
+14. ~~Kod-seviyesi doğrulama~~ ✅ — `node --check` tüm dosyalarda geçti; ayrıca Node `vm` ile headless simülasyon çalıştırıldı (600 saniyelik oyun içi süre, hatasız); bu sırada test harness'imin kendi saat senkron hatası bulunup düzeltildi (i-frame mantığının kendisi doğruydu, bkz. README).
+15. ~~Checkpoint commit'ler + README.md manuel test checklist~~ ✅
 
 ## Doğrulama
 
