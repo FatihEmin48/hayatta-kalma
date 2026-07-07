@@ -1,4 +1,4 @@
-function createEnemy(defId, x, y, elite) {
+function createEnemy(defId, x, y, elite, scale) {
   const def = ENEMY_DEFS.find(e => e.id === defId);
   const hpMult = elite ? ELITE_DEF.hpMult : 1;
   const dmgMult = elite ? ELITE_DEF.dmgMult : 1;
@@ -8,10 +8,10 @@ function createEnemy(defId, x, y, elite) {
   return {
     defId,
     x, y,
-    hp: def.hp * hpMult,
-    maxHp: def.hp * hpMult,
-    speed: def.speed * speedMult,
-    damage: def.damage * dmgMult,
+    hp: def.hp * hpMult * scale,
+    maxHp: def.hp * hpMult * scale,
+    speed: def.speed * speedMult * scale,
+    damage: def.damage * dmgMult * scale,
     radius: def.radius * radiusMult,
     xp: def.xp,
     color: elite ? ELITE_DEF.color : def.color,
@@ -39,7 +39,8 @@ function spawnEnemy(state, elite) {
   const available = ENEMY_DEFS.filter(d => d.unlockAt <= state.timer);
   const def = available[randInt(0, available.length - 1)];
   const pos = randomOffscreenPoint(state.camera);
-  state.enemies.push(createEnemy(def.id, pos.x, pos.y, !!elite));
+  const scale = getDifficultyScale(state.timer);
+  state.enemies.push(createEnemy(def.id, pos.x, pos.y, !!elite, scale));
 }
 
 function updateSpawner(state, dt) {

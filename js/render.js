@@ -85,12 +85,21 @@ function drawWeaponEffects(ctx, state) {
     if (fx.type === 'whip') {
       const pos = worldToScreen(state.camera, fx.x, fx.y);
       const alpha = clamp(fx.timeLeft / fx.duration, 0, 1);
-      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-      ctx.lineWidth = 4;
       const angle = Math.atan2(fx.facingY, fx.facingX);
       const half = (fx.arcDeg * Math.PI / 180) / 2;
+
+      // Filled wedge, not just the outer arc line — the whole slice between
+      // the player and the arc is the actual hit area (see inWhipArc), so
+      // the visual should cover it too instead of implying only the edge hits.
       ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
       ctx.arc(pos.x, pos.y, fx.range, angle - half, angle + half);
+      ctx.closePath();
+      ctx.fillStyle = `rgba(255,255,255,${alpha * 0.35})`;
+      ctx.fill();
+
+      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+      ctx.lineWidth = 3;
       ctx.stroke();
     }
   }

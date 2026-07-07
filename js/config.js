@@ -36,10 +36,27 @@ const WEAPON_DEFS = [
 ];
 
 const ENEMY_DEFS = [
-  { id: 'basic', unlockAt: 0, hp: 12, speed: 60, damage: 8, radius: 12, xp: 3, color: '#7fbf3f' },
-  { id: 'fast', unlockAt: 60, hp: 8, speed: 130, damage: 6, radius: 9, xp: 4, color: '#3fa9f5', erratic: true },
-  { id: 'tank', unlockAt: 120, hp: 60, speed: 35, damage: 16, radius: 18, xp: 8, color: '#c0392b' },
+  { id: 'basic', unlockAt: 0, hp: 10, speed: 55, damage: 6, radius: 12, xp: 3, color: '#7fbf3f' },
+  { id: 'fast', unlockAt: 60, hp: 7, speed: 120, damage: 5, radius: 9, xp: 4, color: '#3fa9f5', erratic: true },
+  { id: 'tank', unlockAt: 120, hp: 55, speed: 32, damage: 13, radius: 18, xp: 8, color: '#c0392b' },
 ];
+
+// Enemies are weaker at the start and gradually ramp up to their full
+// ENEMY_DEFS stats, then keep slowly growing beyond that for endless runs.
+// The scale is baked into each enemy's stats at spawn time, so enemies
+// already on screen don't retroactively get stronger.
+const DIFFICULTY = {
+  startScale: 0.55,
+  rampSeconds: 300,
+  postRampGrowthPerSec: 0.0012,
+};
+
+function getDifficultyScale(timer) {
+  const t = clamp(timer / DIFFICULTY.rampSeconds, 0, 1);
+  const base = lerp(DIFFICULTY.startScale, 1, t);
+  const extra = Math.max(0, timer - DIFFICULTY.rampSeconds) * DIFFICULTY.postRampGrowthPerSec;
+  return base + extra;
+}
 
 const ELITE_DEF = {
   every: 180, hpMult: 6, dmgMult: 2, speedMult: 0.9, radiusMult: 1.6, xpMult: 5, color: '#f1c40f',
