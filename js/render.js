@@ -107,6 +107,20 @@ function drawGems(ctx, state) {
 function drawProjectiles(ctx, state) {
   for (const p of state.projectiles) {
     const pos = worldToScreen(state.camera, p.x, p.y);
+
+    if (p.boomerang) {
+      const t = performance.now() / 55;
+      ctx.strokeStyle = '#f0c040';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, p.radius, t, t + Math.PI * 1.3);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, p.radius, t + Math.PI, t + Math.PI * 2.3);
+      ctx.stroke();
+      continue;
+    }
+
     const speed = Math.hypot(p.vx, p.vy) || 1;
     const dirX = p.vx / speed, dirY = p.vy / speed;
     const trailLen = p.radius * 3;
@@ -163,6 +177,18 @@ function drawBossBar(ctx, state) {
 
 function drawWeaponEffects(ctx, state) {
   for (const fx of state.weaponEffects) {
+    if (fx.type === 'chain') {
+      const alpha = clamp(fx.timeLeft / fx.duration, 0, 1);
+      ctx.strokeStyle = `rgba(93,173,226,${alpha})`;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      fx.points.forEach((pt, i) => {
+        const s = worldToScreen(state.camera, pt.x, pt.y);
+        if (i === 0) ctx.moveTo(s.x, s.y); else ctx.lineTo(s.x, s.y);
+      });
+      ctx.stroke();
+      continue;
+    }
     if (fx.type === 'whip') {
       const pos = worldToScreen(state.camera, fx.x, fx.y);
       const alpha = clamp(fx.timeLeft / fx.duration, 0, 1);
@@ -217,6 +243,28 @@ function drawAura(ctx, state) {
   ctx.stroke();
 }
 
+// Dönen Kalkan toplarını oyuncunun etrafında güncel açıda çizer.
+function drawOrbit(ctx, state) {
+  for (const w of state.player.weapons) {
+    if (getWeaponDef(w.defId).kind !== 'orbit') continue;
+    const evo = w.evolved ? getEvolutionDef(w.defId) : null;
+    const count = Math.max(1, Math.round(weaponStatAt(w.defId, 'count', w.level)) + (evo ? evo.extraOrbs : 0));
+    const orbitR = weaponStatAt(w.defId, 'radius', w.level) * (evo ? evo.radiusMult : 1);
+    const angle = w.angle || 0;
+    for (let i = 0; i < count; i++) {
+      const a = angle + (i / count) * Math.PI * 2;
+      const pos = worldToScreen(state.camera, state.player.x + Math.cos(a) * orbitR, state.player.y + Math.sin(a) * orbitR);
+      ctx.fillStyle = evo ? '#f1c40f' : '#5dade2';
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+}
+
 function render(ctx, state) {
   ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
   if (state.mode === STATE.START) return;
@@ -235,6 +283,7 @@ function render(ctx, state) {
   drawProjectiles(ctx, state);
   drawEnemyProjectiles(ctx, state);
   drawAura(ctx, state);
+  drawOrbit(ctx, state);
   drawPlayer(ctx, state);
   drawParticles(ctx, state);
   drawDamageNumbers(ctx, state);

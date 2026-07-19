@@ -31,6 +31,14 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v7 — Yeni silahlar
+
+Toplam silah sayısı 3'ten 6'ya çıktı (`WEAPON_DEFS` + `fireWeapon` switch'i; her biri 5 seviye + evrim):
+
+- **Dönen Kalkan (`orbit`):** Oyuncunun etrafında dönen top(lar); değdikleri düşmanlara hasar verir. Seviye arttıkça top sayısı/yarıçapı büyür. Evrim: **Yıldız Kalkanı** (Hareket Hızı maks → +2 top, daha büyük yarıçap, daha çok hasar).
+- **Zincir Şimşek (`chain`):** En yakın düşmana vurur, oradan yakındaki düşmanlara sıçrar (her sıçramada hasar azalır). Evrim: **Fırtına Zinciri** (Maks. Can maks → +3 sıçrama, daha çok hasar).
+- **Bumerang (`boomerang`):** En yakın düşmana fırlatılır, menzil sonunda oyuncunun güncel konumuna geri döner; gidiş-dönüş boyunca değdiği düşmanları deler (aynı düşmana kısa aralıkla). Evrim: **Çift Bumerang** (Toplama Yarıçapı maks → aynı anda 2 bumerang, daha çok hasar).
+
 ## v6 — Boss düşmanlar
 
 - **Boss (`BOSS_DEF`, `js/enemies.js`):** Her `every` saniyede bir (varsayılan 180) ekran-dışından güçlü, iri, mor bir boss belirir ("⚠️ Boss geliyor!" bildirimi). Yüksek canı vardır, oyuncuya yürür ve periyodik olarak **tam çember (radyal) mermi saldırısı** yapar — oyuncuya hizalanır, bu yüzden boşluklardan sıyrılmak için hareket etmek gerekir. Stat'lar spawn anındaki zorluk ölçeğiyle çarpılır, geç bosslar daha ölümcüldür. Aynı anda tek boss olur.
@@ -122,6 +130,11 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 26. Boss periyodik olarak çember şeklinde kırmızı mermi saçıyor mu; mermiler oyuncuya değince hasar veriyor mu (i-frame çalışıyor mu).
 27. Boss ölünce altın + sandık + XP bırakıyor, güçlü patlama/sarsıntı oluyor mu.
 
-## v6 sonrası hâlâ kapsam dışı
+**v7 test (yeni silahlar):**
+
+28. Level-up seçeneklerinde Dönen Kalkan / Zincir Şimşek / Bumerang çıkıyor mu; alınınca çalışıyor mu (kalkan topları dönüp değince öldürüyor, şimşek düşmandan düşmana sıçrıyor, bumerang gidip geri dönüyor mu).
+29. İlgili silah maks + eşleşen pasif maks olunca evrim (Yıldız Kalkanı / Fırtına Zinciri / Çift Bumerang) gerçekleşiyor mu.
+
+## v7 sonrası hâlâ kapsam dışı
 
 Ek haritalar/biyomlar, farklı oyun modları.

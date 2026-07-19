@@ -35,6 +35,24 @@ const WEAPON_DEFS = [
     perLevel: { damage: 1.5, radius: 10 },
     maxLevel: 5,
   },
+  {
+    id: 'orbit', name: 'Dönen Kalkan', kind: 'orbit',
+    baseStats: { damage: 6, cooldown: 0.25, radius: 70, count: 2, rotSpeed: 2.2 },
+    perLevel: { damage: 3, radius: 6, count: 0.5 },
+    maxLevel: 5,
+  },
+  {
+    id: 'chain', name: 'Zincir Şimşek', kind: 'chain',
+    baseStats: { damage: 14, cooldown: 1.4, range: 260, jumps: 3, jumpRange: 140 },
+    perLevel: { damage: 5, cooldown: -0.08, jumps: 0.5 },
+    maxLevel: 5,
+  },
+  {
+    id: 'boomerang', name: 'Bumerang', kind: 'boomerang',
+    baseStats: { damage: 12, cooldown: 1.6, speed: 300, range: 260 },
+    perLevel: { damage: 4, cooldown: -0.08, speed: 15 },
+    maxLevel: 5,
+  },
 ];
 
 const ENEMY_DEFS = [
@@ -167,4 +185,7 @@ const EVOLUTION_DEFS = [
   { weaponId: 'whip', passiveId: 'damage', name: 'Kırbaç Fırtınası', damageMult: 1.8, rangeMult: 1.1 },
   { weaponId: 'knife', passiveId: 'pickup', name: 'Bıçak Yağmuru', extraProjectiles: 2 },
   { weaponId: 'aura', passiveId: 'regen', name: 'Yaşam Auraı', radiusMult: 1.5, lifestealPct: 0.15 },
+  { weaponId: 'orbit', passiveId: 'speed', name: 'Yıldız Kalkanı', extraOrbs: 2, radiusMult: 1.3, damageMult: 1.4 },
+  { weaponId: 'chain', passiveId: 'maxHp', name: 'Fırtına Zinciri', extraJumps: 3, damageMult: 1.5 },
+  { weaponId: 'boomerang', passiveId: 'pickup', name: 'Çift Bumerang', extraProjectiles: 1, damageMult: 1.3 },
 ];
