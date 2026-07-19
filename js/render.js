@@ -56,9 +56,9 @@ function drawEnemies(ctx, state) {
     ctx.arc(pos.x, pos.y, e.radius, 0, Math.PI * 2);
     ctx.fill();
 
-    if (e.elite) {
+    if (e.elite || e.boss) {
       ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = e.boss ? 3 : 2;
       ctx.stroke();
     }
 
@@ -123,6 +123,42 @@ function drawProjectiles(ctx, state) {
     ctx.arc(pos.x, pos.y, p.radius * 0.6, 0, Math.PI * 2);
     ctx.fill();
   }
+}
+
+function drawEnemyProjectiles(ctx, state) {
+  for (const p of state.enemyProjectiles) {
+    const pos = worldToScreen(state.camera, p.x, p.y);
+    if (pos.x < -20 || pos.x > CANVAS_W + 20 || pos.y < -20 || pos.y > CANVAS_H + 20) continue;
+    ctx.fillStyle = 'rgba(231,76,60,0.35)';
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, p.radius * 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, p.radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Ekranda boss varken alt-orta sabit can barı (kameradan/sarsıntıdan bağımsız
+// çizildiği için render()'da ctx.restore()'dan SONRA çağrılır).
+function drawBossBar(ctx, state) {
+  const boss = state.enemies.find(e => e.boss && !e.dead);
+  if (!boss) return;
+  const w = Math.min(CANVAS_W * 0.6, 420);
+  const x = (CANVAS_W - w) / 2;
+  const y = CANVAS_H - 34;
+
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 12px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('BOSS', CANVAS_W / 2, y - 3);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.fillRect(x - 2, y - 2, w + 4, 14);
+  ctx.fillStyle = '#8e44ad';
+  ctx.fillRect(x, y, w * clamp(boss.hp / boss.maxHp, 0, 1), 10);
 }
 
 function drawWeaponEffects(ctx, state) {
@@ -197,6 +233,7 @@ function render(ctx, state) {
   drawWeaponEffects(ctx, state);
   drawEnemies(ctx, state);
   drawProjectiles(ctx, state);
+  drawEnemyProjectiles(ctx, state);
   drawAura(ctx, state);
   drawPlayer(ctx, state);
   drawParticles(ctx, state);
@@ -204,6 +241,7 @@ function render(ctx, state) {
 
   ctx.restore();
 
-  // Vinyet sarsıntıdan bağımsız, tüm ekranı kaplar → transform dışında.
+  // Vinyet ve boss barı sarsıntıdan bağımsız → transform dışında.
   drawHurtVignette(ctx, state);
+  drawBossBar(ctx, state);
 }

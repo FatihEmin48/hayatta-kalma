@@ -31,6 +31,13 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v6 — Boss düşmanlar
+
+- **Boss (`BOSS_DEF`, `js/enemies.js`):** Her `every` saniyede bir (varsayılan 180) ekran-dışından güçlü, iri, mor bir boss belirir ("⚠️ Boss geliyor!" bildirimi). Yüksek canı vardır, oyuncuya yürür ve periyodik olarak **tam çember (radyal) mermi saldırısı** yapar — oyuncuya hizalanır, bu yüzden boşluklardan sıyrılmak için hareket etmek gerekir. Stat'lar spawn anındaki zorluk ölçeğiyle çarpılır, geç bosslar daha ölümcüldür. Aynı anda tek boss olur.
+- **Düşman mermileri:** Yeni `state.enemyProjectiles` sistemi — oyuncuya hasar veren kırmızı mermiler (i-frame'e saygılı, `applyPlayerDamage` ile temas hasarıyla ortak). Boss saldırısı bunu kullanır (ileride mesafeli düşmanlar da kullanacak).
+- **Boss barı:** Ekranda boss varken alt-ortada sabit bir can barı çizilir (kameradan/sarsıntıdan bağımsız).
+- **Ödül:** Boss öldürülünce altın (`goldReward`) + bir sandık + XP bırakır, güçlü parçacık patlaması ve ekran sarsıntısı olur.
+
 ## v5 — Kalıcı ilerleme (meta-progression)
 
 - **Altın (`js/meta.js`, localStorage):** Her run sonunda performansa göre altın kazanılır (`öldürme·1 + saniye·0.2 + (seviye−1)·3`, "Altın Bulma" yükseltmesiyle çarpan; `GOLD_CONFIG`). Toplam altın cihazda saklanır.
@@ -109,6 +116,12 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 23. Başlangıç ekranında 🛒 Mağaza açılıp altınla yükseltme alınabiliyor mu; yeterli altın yoksa/maks seviyede buton pasif mi; alım sonrası altın düşüp seviye artıyor mu ve sayfa yenilenince kalıcı mı.
 24. Yükseltme alınca sonraki run gerçekten daha güçlü mü başlıyor (örn. Başlangıç Canı alınca daha yüksek maks canla).
 
-## v5 sonrası hâlâ kapsam dışı
+**v6 test (boss):**
+
+25. ~180. saniyede "⚠️ Boss geliyor!" bildirimi ve iri mor boss beliriyor mu; alt-ortada boss can barı görünüyor mu (hızlı test için `BOSS_DEF.every` düşürülebilir).
+26. Boss periyodik olarak çember şeklinde kırmızı mermi saçıyor mu; mermiler oyuncuya değince hasar veriyor mu (i-frame çalışıyor mu).
+27. Boss ölünce altın + sandık + XP bırakıyor, güçlü patlama/sarsıntı oluyor mu.
+
+## v6 sonrası hâlâ kapsam dışı
 
 Ek haritalar/biyomlar, farklı oyun modları.

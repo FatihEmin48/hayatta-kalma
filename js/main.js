@@ -27,6 +27,7 @@ function createInitialState() {
     player: createPlayer(),
     enemies: [],
     projectiles: [],
+    enemyProjectiles: [],
     gems: [],
     weaponEffects: [],
     obstacles: generateObstacles(),
@@ -39,6 +40,7 @@ function createInitialState() {
     camera: { x: 0, y: 0 },
     spawnTimer: SPAWN.baseIntervalSec,
     eliteTimer: ELITE_DEF.every,
+    bossTimer: BOSS_DEF.every,
     pendingLevelUps: 0,
     levelUpChoices: [],
   };
@@ -66,21 +68,42 @@ function updatePlayerMovement(state, dt) {
   player.y = clamp(resolved.y, 0, WORLD_H);
 }
 
-// `now` is captured once per frame, so a whole cluster of enemies touching the
-// player simultaneously only ever lands one hit per invulnerability window.
-function updateContactDamage(state) {
+// Oyuncuya hasar uygula (i-frame + ses/sarsıntı/vinyet). i-frame açıkken no-op.
+// Hem temas hem düşman mermileri bunu kullanır; `now` her çağrıda okunsa da
+// invulnUntil ilk isabette ayarlandığı için aynı kare içindeki küme tek vurur.
+function applyPlayerDamage(state, amount) {
   const player = state.player;
   const now = performance.now();
+  if (now < player.invulnUntil) return false;
+  player.hp -= amount;
+  player.invulnUntil = now + PLAYER_BASE.invulnMs;
+  Sound.sfx('hurt');
+  addShake(state, EFFECTS.shakeOnHurt);
+  state.hurtFlash = EFFECTS.hurtFlashTime;
+  return true;
+}
+
+function updateContactDamage(state) {
+  const player = state.player;
   for (const e of state.enemies) {
     if (e.dead) continue;
     if (circleHit(player.x, player.y, player.radius, e.x, e.y, e.radius)) {
-      if (now >= player.invulnUntil) {
-        player.hp -= e.damage;
-        player.invulnUntil = now + PLAYER_BASE.invulnMs;
-        Sound.sfx('hurt');
-        addShake(state, EFFECTS.shakeOnHurt);
-        state.hurtFlash = EFFECTS.hurtFlashTime;
-      }
+      applyPlayerDamage(state, e.damage);
+    }
+  }
+}
+
+function updateEnemyProjectiles(state, dt) {
+  const player = state.player;
+  for (const p of state.enemyProjectiles) {
+    if (p.dead) continue;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.life -= dt;
+    if (p.life <= 0) { p.dead = true; continue; }
+    if (circleHit(p.x, p.y, p.radius, player.x, player.y, player.radius)) {
+      applyPlayerDamage(state, p.damage);
+      p.dead = true;
     }
   }
 }
@@ -100,6 +123,7 @@ function update(state, dt) {
   updateEnemies(state, dt);
   updateSpawner(state, dt);
   updateWeapons(state, dt);
+  updateEnemyProjectiles(state, dt);
   updateContactDamage(state);
   updateRegen(state, dt);
   updateGems(state, dt);
@@ -111,6 +135,7 @@ function update(state, dt) {
 
   state.enemies = removeDead(state.enemies);
   state.projectiles = removeDead(state.projectiles);
+  state.enemyProjectiles = removeDead(state.enemyProjectiles);
   state.gems = removeDead(state.gems);
   state.weaponEffects = removeDead(state.weaponEffects);
   state.chests = removeDead(state.chests);

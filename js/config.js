@@ -69,6 +69,27 @@ const ELITE_DEF = {
   every: 180, hpMult: 6, dmgMult: 2, speedMult: 0.9, radiusMult: 1.6, xpMult: 5, color: '#f1c40f',
 };
 
+// Boss düşmanlar (js/enemies.js). `every` saniyede bir, ekran-dışından güçlü,
+// can barlı, periyodik radyal mermi saldırısı yapan bir boss belirir; öldürünce
+// altın + sandık + büyük XP bırakır. Stat'lar spawn anındaki zorluk ölçeğiyle
+// çarpılır ki geç gelen bosslar da tehdit olsun.
+const BOSS_DEF = {
+  every: 180,
+  baseHp: 800,
+  speed: 42,
+  damage: 22,
+  radius: 42,
+  xp: 60,
+  color: '#8e44ad',
+  fireEvery: 2.6,
+  projectileCount: 12,
+  projectileSpeed: 150,
+  projectileDamage: 12,
+  projectileRadius: 8,
+  projectileLife: 4,
+  goldReward: 30,
+};
+
 const SPAWN = {
   maxConcurrent: 180,
   baseIntervalSec: 1.1,

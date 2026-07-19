@@ -23,6 +23,58 @@ function createEnemy(defId, x, y, elite, scale) {
   };
 }
 
+function createBoss(x, y, scale) {
+  const d = BOSS_DEF;
+  const hp = d.baseHp * scale;
+  return {
+    defId: 'boss', boss: true,
+    x, y,
+    hp, maxHp: hp,
+    speed: d.speed,
+    damage: d.damage * scale,
+    projDamage: d.projectileDamage * scale,
+    radius: d.radius,
+    xp: d.xp,
+    color: d.color,
+    erratic: false, elite: false,
+    jitterPhase: 0, nudgeSign: 1,
+    fireTimer: d.fireEvery,
+    dead: false,
+  };
+}
+
+function hasBoss(state) {
+  return state.enemies.some(e => e.boss && !e.dead);
+}
+
+function spawnBoss(state) {
+  const pos = randomOffscreenPoint(state.camera);
+  const scale = getDifficultyScale(state.timer, state.player.level);
+  state.enemies.push(createBoss(pos.x, pos.y, scale));
+  Sound.sfx('evolve');
+  UI.showToast('⚠️ Boss geliyor!');
+}
+
+// Boss'un tam çember (radyal) mermi saldırısı — oyuncuya doğru hizalanır ki
+// oyuncu boşluklardan sıyrılmak için hareket etmek zorunda kalsın.
+function fireBossBurst(state, boss) {
+  const n = BOSS_DEF.projectileCount;
+  const base = Math.atan2(state.player.y - boss.y, state.player.x - boss.x);
+  for (let i = 0; i < n; i++) {
+    const a = base + (i / n) * Math.PI * 2;
+    state.enemyProjectiles.push({
+      x: boss.x, y: boss.y,
+      vx: Math.cos(a) * BOSS_DEF.projectileSpeed,
+      vy: Math.sin(a) * BOSS_DEF.projectileSpeed,
+      damage: boss.projDamage,
+      radius: BOSS_DEF.projectileRadius,
+      life: BOSS_DEF.projectileLife,
+      dead: false,
+    });
+  }
+  Sound.sfx('shoot');
+}
+
 function randomOffscreenPoint(camera) {
   const margin = SPAWN.spawnMargin;
   const side = randInt(0, 3);
@@ -59,12 +111,28 @@ function updateSpawner(state, dt) {
     }
     state.eliteTimer = ELITE_DEF.every;
   }
+
+  // Aynı anda tek boss: zamanı gelse de mevcut boss ölene kadar bekle,
+  // sonra hemen spawn edip sayacı sıfırla.
+  state.bossTimer -= dt;
+  if (state.bossTimer <= 0 && !hasBoss(state)) {
+    spawnBoss(state);
+    state.bossTimer = BOSS_DEF.every;
+  }
 }
 
 function updateEnemies(state, dt) {
   const player = state.player;
   for (const e of state.enemies) {
     if (e.dead) continue;
+
+    if (e.boss) {
+      e.fireTimer -= dt;
+      if (e.fireTimer <= 0) {
+        e.fireTimer = BOSS_DEF.fireEvery;
+        fireBossBurst(state, e);
+      }
+    }
 
     const dir = normalize(player.x - e.x, player.y - e.y);
     let vx = dir.x * e.speed;
@@ -111,6 +179,17 @@ function killEnemy(state, enemy) {
   state.kills += 1;
   Sound.sfx('death');
   spawnParticles(state, enemy.x, enemy.y, enemy.color, EFFECTS.deathParticleCount, { life: 0.5 });
+
+  if (enemy.boss) {
+    Sound.sfx('evolve');
+    addShake(state, EFFECTS.shakeOnEliteDeath * 2.2);
+    spawnParticles(state, enemy.x, enemy.y, enemy.color, 32, { speedMin: 80, speedMax: 260, life: 0.85 });
+    Meta.addGold(BOSS_DEF.goldReward);
+    state.chests.push({ x: enemy.x, y: enemy.y, radius: CHEST_CONFIG.radius, dead: false });
+    UI.showToast(`Boss yenildi! +${BOSS_DEF.goldReward} altın + sandık`);
+    state.gems.push(createGem(enemy.x, enemy.y, enemy.xp));
+    return;
+  }
   if (enemy.elite) addShake(state, EFFECTS.shakeOnEliteDeath);
   const value = enemy.xp * (enemy.elite ? ELITE_DEF.xpMult : 1);
   state.gems.push(createGem(enemy.x, enemy.y, value));
