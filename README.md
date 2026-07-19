@@ -31,6 +31,13 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v5 — Kalıcı ilerleme (meta-progression)
+
+- **Altın (`js/meta.js`, localStorage):** Her run sonunda performansa göre altın kazanılır (`öldürme·1 + saniye·0.2 + (seviye−1)·3`, "Altın Bulma" yükseltmesiyle çarpan; `GOLD_CONFIG`). Toplam altın cihazda saklanır.
+- **Kalıcı yükseltme mağazası:** Başlangıç ekranındaki 🛒 Mağaza'da altın **run'lar arası kalıcı** yükseltmelere harcanır: Başlangıç Canı, Hasar, Hareket Hızı, Can Yenilenmesi, Altın Bulma (`META_UPGRADES`). Her seviyenin maliyeti üstel artar (`baseCost·costGrowth^seviye`). Bonuslar oyuncunun stat fonksiyonlarına (`getPlayerMaxHp/DamageMult/Speed/Regen`) eklenir; oyuncu her run'a bu kalıcı güçle ve tam (yükseltilmiş) canla başlar.
+- **Ana Menü:** Game-over ekranında kazanılan altın gösterilir; "Ana Menü" butonu başlangıç ekranına dönüp mağazada harcama yapmayı sağlar ("Tekrar Oyna" ise doğrudan yeni run başlatır).
+- Bozuk/eksik localStorage verisine karşı savunmacı okuma (parse hatası → varsayılan boş durum).
+
 ## v4 — En yüksek puanlar tablosu
 
 - **Yerel skor tablosu (`js/scores.js`, localStorage):** Her run sonunda bir **puan** hesaplanır: `öldürme·10 + saniye·3 + (seviye−1)·20` (ağırlıklar `js/config.js` → `SCORE_CONFIG`). En yüksek 10 skor tarayıcıda saklanır. Backend yok — skorlar cihaz/tarayıcı başınadır.
@@ -96,6 +103,12 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 20. Birkaç run oynayınca ilk-10 tablosu doluyor mu, sıralama puana göre azalan mı, en son run'ın satırı vurgulanıyor mu.
 21. Sayfayı yenileyince skorlar başlangıç ekranında hatırlanıyor mu; "Skorları Temizle" hepsini silip tabloyu gizliyor mu.
 
-## v4 sonrası hâlâ kapsam dışı
+**v5 test (kalıcı ilerleme):**
 
-Run'lar arası kalıcı **yükseltme** meta-progression'ı (skor kaydı v4'te geldi; kalıcı güç yükseltmeleri hâlâ yok), ek haritalar/biyomlar.
+22. Öldükten sonra game-over ekranında "+N altın kazandın · Toplam: M" görünüyor mu; "Ana Menü" başlangıç ekranına dönüyor mu.
+23. Başlangıç ekranında 🛒 Mağaza açılıp altınla yükseltme alınabiliyor mu; yeterli altın yoksa/maks seviyede buton pasif mi; alım sonrası altın düşüp seviye artıyor mu ve sayfa yenilenince kalıcı mı.
+24. Yükseltme alınca sonraki run gerçekten daha güçlü mü başlıyor (örn. Başlangıç Canı alınca daha yüksek maks canla).
+
+## v5 sonrası hâlâ kapsam dışı
+
+Ek haritalar/biyomlar, farklı oyun modları.

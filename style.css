@@ -186,6 +186,41 @@ button:hover { filter: brightness(1.1); }
 }
 
 .score-line { font-size: 18px; font-weight: bold; color: var(--accent); }
+.gold-line { font-size: 15px; font-weight: bold; color: #d4af37; }
+
+.gameover-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+/* Kalıcı yükseltme mağazası */
+.shop { width: min(380px, 88vw); text-align: left; }
+.shop.hidden { display: none; }
+.shop-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.shop-head h3 { margin: 0; font-size: 16px; color: var(--accent); }
+.shop-head .gold { color: #d4af37; font-weight: bold; }
+.shop-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  margin-bottom: 5px;
+}
+.shop-name { font-weight: bold; font-size: 14px; }
+.shop-lvl { color: var(--muted); font-size: 12px; margin-left: 6px; }
+.shop-desc { color: var(--muted); font-size: 12px; }
+.shop-buy {
+  background: #d4af37;
+  color: #1c2029;
+  border: none;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 6px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.shop-buy:disabled { background: #3a3f4a; color: var(--muted); cursor: default; }
 
 .ghost-btn {
   background: transparent;

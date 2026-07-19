@@ -19,12 +19,22 @@ const UI = (function () {
     els.gameOverTitle = document.getElementById('gameover-title');
     els.gameOverStats = document.getElementById('gameover-stats');
     els.gameOverScore = document.getElementById('gameover-score');
+    els.gameOverGold = document.getElementById('gameover-gold');
     els.gameOverHighScores = document.getElementById('gameover-highscores');
     els.startHighScores = document.getElementById('start-highscores');
     els.clearScoresBtn = document.getElementById('clear-scores-btn');
+    els.shop = document.getElementById('shop');
+    els.shopToggle = document.getElementById('shop-toggle');
 
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', restartGame);
+    document.getElementById('menu-btn').addEventListener('click', returnToMenu);
+
+    renderShop();
+    els.shopToggle.addEventListener('click', () => {
+      els.shop.classList.toggle('hidden');
+      renderShop();
+    });
 
     refreshStartHighScores();
     els.clearScoresBtn.addEventListener('click', () => {
@@ -166,15 +176,66 @@ const UI = (function () {
     els.sideRightBtn.classList.toggle('active', side === 'right');
   }
 
+  // Kalıcı yükseltme mağazası (başlangıç ekranı). Toggle butonunda güncel
+  // altın gösterilir; her satırda seviye + maliyet, karşılanamıyorsa/maks ise
+  // buton pasif.
+  function renderShop() {
+    if (!els.shop) return;
+    const gold = Meta.getGold();
+    els.shopToggle.textContent = `🛒 Mağaza · 🪙 ${gold}`;
+    if (els.shop.classList.contains('hidden')) return;
+
+    let rows = '';
+    for (const u of META_UPGRADES) {
+      const lvl = Meta.getLevel(u.id);
+      const cost = Meta.costFor(u.id);
+      const maxed = cost === null;
+      const afford = !maxed && gold >= cost;
+      const label = maxed ? 'MAKS' : `🪙 ${cost}`;
+      const disabled = maxed || !afford ? 'disabled' : '';
+      rows +=
+        `<div class="shop-row">` +
+        `<div class="shop-info"><span class="shop-name">${u.name}</span>` +
+        `<span class="shop-lvl">Sv ${lvl}/${u.maxLevel}</span>` +
+        `<div class="shop-desc">${u.desc}</div></div>` +
+        `<button class="shop-buy" data-id="${u.id}" ${disabled}>${label}</button>`;
+      rows += `</div>`;
+    }
+    els.shop.innerHTML = `<div class="shop-head"><h3>Mağaza</h3><span class="gold">🪙 ${gold}</span></div>${rows}`;
+
+    const buyBtns = els.shop.querySelectorAll ? els.shop.querySelectorAll('.shop-buy') : [];
+    buyBtns.forEach(b => b.addEventListener('click', () => {
+      if (Meta.buy(b.getAttribute('data-id'))) {
+        Sound.resume();
+        Sound.sfx('chest');
+        renderShop();
+      }
+    }));
+  }
+
+  // Game-over ekranından başlangıç menüsüne dönünce çağrılır.
+  function showStartMenu() {
+    hideAllScreens();
+    els.screenStart.classList.remove('hidden');
+    renderShop();
+    refreshStartHighScores();
+  }
+
   function refreshStartHighScores() {
     const list = Scores.load();
     renderHighScores(els.startHighScores, list, -1);
     els.clearScoresBtn.classList.toggle('hidden', list.length === 0);
   }
 
-  function showGameOver(state, victory, scoreResult) {
+  function showGameOver(state, victory, scoreResult, goldEarned) {
     els.gameOverTitle.textContent = victory ? 'Hayatta Kaldın!' : 'Öldün';
     els.gameOverStats.textContent = `Süre: ${formatTime(state.timer)} · Seviye: ${state.player.level} · Öldürülen: ${state.kills}`;
+
+    if (goldEarned !== undefined) {
+      els.gameOverGold.textContent = `🪙 +${goldEarned} altın kazandın · Toplam: ${Meta.getGold()}`;
+    } else {
+      els.gameOverGold.textContent = '';
+    }
 
     if (scoreResult) {
       let line = `Puan: ${scoreResult.entry.score}`;
@@ -208,5 +269,5 @@ const UI = (function () {
     toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2500);
   }
 
-  return { init, hideAllScreens, setHudVisible, syncHud, showLevelUp, hideLevelUp, showGameOver, showToast, updateSoundControls };
+  return { init, hideAllScreens, setHudVisible, syncHud, showLevelUp, hideLevelUp, showGameOver, showToast, updateSoundControls, showStartMenu };
 })();

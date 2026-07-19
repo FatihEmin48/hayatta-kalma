@@ -99,6 +99,23 @@ const CHEST_CONFIG = {
   spawnEverySec: 90, maxConcurrent: 2, radius: 16, xpReward: 40, color: '#d4af37',
 };
 
+// Kalıcı ilerleme (js/meta.js). Run sonunda altın kazanılır, başlangıç
+// ekranındaki mağazada run'lar arası KALICI yükseltmelere harcanır. Her
+// yükseltmenin maliyeti seviyeyle üstel artar (baseCost·costGrowth^seviye).
+const GOLD_CONFIG = {
+  perKill: 1,
+  perSecond: 0.2,
+  perLevel: 3,
+};
+
+const META_UPGRADES = [
+  { id: 'hp',     name: 'Başlangıç Canı',  desc: '+15 maks. can',     step: 15,   maxLevel: 5, baseCost: 40, costGrowth: 1.6 },
+  { id: 'damage', name: 'Hasar',           desc: '+%6 hasar',         step: 0.06, maxLevel: 5, baseCost: 50, costGrowth: 1.7 },
+  { id: 'speed',  name: 'Hareket Hızı',    desc: '+%4 hız',           step: 0.04, maxLevel: 5, baseCost: 45, costGrowth: 1.6 },
+  { id: 'regen',  name: 'Can Yenilenmesi', desc: '+0.3/sn yenilenme', step: 0.3,  maxLevel: 3, baseCost: 60, costGrowth: 1.9 },
+  { id: 'greed',  name: 'Altın Bulma',     desc: '+%12 altın',        step: 0.12, maxLevel: 5, baseCost: 55, costGrowth: 1.7 },
+];
+
 // Puanlama (js/scores.js). Puan = öldürme·perKill + saniye·perSecond +
 // (seviye-1)·perLevel. En yüksek maxEntries skor localStorage'da tutulur.
 const SCORE_CONFIG = {

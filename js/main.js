@@ -5,7 +5,7 @@ let lastTime = 0;
 let state = null;
 
 function createPlayer() {
-  return {
+  const p = {
     x: WORLD_W / 2, y: WORLD_H / 2,
     radius: PLAYER_BASE.radius,
     hp: PLAYER_BASE.maxHp,
@@ -15,6 +15,8 @@ function createPlayer() {
     weapons: [{ defId: 'whip', level: 1, cooldownLeft: 0, evolved: false }],
     passives: { speed: 0, maxHp: 0, pickup: 0, damage: 0, regen: 0 },
   };
+  p.hp = getPlayerMaxHp(p); // kalıcı "Başlangıç Canı" yükseltmesiyle tam dolu başla
+  return p;
 }
 
 function createInitialState() {
@@ -121,13 +123,17 @@ function checkTransitions(state) {
     state.mode = STATE.GAME_OVER;
     Sound.sfx('gameover');
     Sound.stopMusic();
-    UI.showGameOver(state, false, Scores.submit(state));
+    const earned = Meta.goldForRun(state);
+    Meta.addGold(earned);
+    UI.showGameOver(state, false, Scores.submit(state), earned);
     return;
   }
   if (ENABLE_VICTORY && state.timer >= VICTORY_TIME_SEC) {
     state.mode = STATE.VICTORY;
     Sound.stopMusic();
-    UI.showGameOver(state, true, Scores.submit(state));
+    const earned = Meta.goldForRun(state);
+    Meta.addGold(earned);
+    UI.showGameOver(state, true, Scores.submit(state), earned);
     return;
   }
   if (state.pendingLevelUps > 0) {
@@ -166,6 +172,14 @@ function startGame() {
 
 function restartGame() {
   startGame();
+}
+
+// Game-over'dan başlangıç menüsüne dön (mağazada altını harcamak için).
+function returnToMenu() {
+  state = createInitialState();
+  Sound.stopMusic();
+  UI.setHudVisible(false);
+  UI.showStartMenu();
 }
 
 function frame(now) {
