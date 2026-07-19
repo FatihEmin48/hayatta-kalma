@@ -79,7 +79,34 @@ function initJoystick() {
   window.addEventListener('touchcancel', resetKnob);
 }
 
+// Joystick'in ekranda hangi tarafta çıkacağı (dokunmatik). Tercih
+// localStorage'da tutulur; ilk kez oynayanlar için varsayılan SAĞ (sol el
+// oyuncuyu zorluyordu). Konumlandırma CSS'te body.joystick-left/right ile.
+const JOYSTICK_SIDE_KEY = 'hk_joystick_side';
+
+function getJoystickSide() {
+  try {
+    const s = localStorage.getItem(JOYSTICK_SIDE_KEY);
+    if (s === 'left' || s === 'right') return s;
+  } catch (e) { /* localStorage yok */ }
+  return 'right';
+}
+
+function applyJoystickSide(side) {
+  if (typeof document === 'undefined' || !document.body) return;
+  document.body.classList.toggle('joystick-left', side === 'left');
+  document.body.classList.toggle('joystick-right', side === 'right');
+}
+
+function setJoystickSide(side) {
+  side = side === 'left' ? 'left' : 'right';
+  try { localStorage.setItem(JOYSTICK_SIDE_KEY, side); } catch (e) { /* yok say */ }
+  applyJoystickSide(side);
+  return side;
+}
+
 window.addEventListener('DOMContentLoaded', () => {
+  applyJoystickSide(getJoystickSide());
   if ('ontouchstart' in window || (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0)) {
     document.body.classList.add('touch-enabled');
     initJoystick();

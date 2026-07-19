@@ -32,18 +32,42 @@ const UI = (function () {
       refreshStartHighScores();
     });
 
-    els.muteBtn = document.getElementById('mute-btn');
-    updateMuteButton();
-    els.muteBtn.addEventListener('click', () => {
-      Sound.resume();       // tıklama bir kullanıcı jesti → context'i de aç
-      Sound.toggleMute();
-      updateMuteButton();
+    // Joystick tarafı seçici (yalnız dokunmatikte görünür, CSS ile).
+    els.sideLeftBtn = document.getElementById('side-left');
+    els.sideRightBtn = document.getElementById('side-right');
+    updateSideButtons(getJoystickSide());
+    els.sideLeftBtn.addEventListener('click', () => updateSideButtons(setJoystickSide('left')));
+    els.sideRightBtn.addEventListener('click', () => updateSideButtons(setJoystickSide('right')));
+
+    // Ses ayarları: ⚙️ butonu, efekt sesi ve müziği bağımsız açıp kapatan
+    // iki anahtarlı bir panel açar. Her ekranda (start/oyun/game-over) erişilir.
+    els.settingsBtn = document.getElementById('settings-btn');
+    els.settingsPanel = document.getElementById('settings-panel');
+    els.toggleSfx = document.getElementById('toggle-sfx');
+    els.toggleMusic = document.getElementById('toggle-music');
+    updateSoundControls();
+    els.settingsBtn.addEventListener('click', () => {
+      Sound.resume();       // tıklama bir kullanıcı jesti → ses kilidini aç
+      els.settingsPanel.classList.toggle('hidden');
     });
-    // 'M' klavye kısayolu (level-up sırasında 1/2/3 ile çakışmaz).
+    els.toggleSfx.addEventListener('click', () => {
+      Sound.resume();
+      Sound.setSfxEnabled(!Sound.isSfxEnabled());
+      updateSoundControls();
+    });
+    els.toggleMusic.addEventListener('click', () => {
+      Sound.resume();
+      Sound.setMusicEnabled(!Sound.isMusicEnabled());
+      updateSoundControls();
+    });
+    // 'M' klavye kısayolu: her ikisini birden aç/kapat (level-up'taki 1/2/3
+    // ile çakışmaz).
     window.addEventListener('keydown', (e) => {
       if (e.key === 'm' || e.key === 'M') {
-        Sound.toggleMute();
-        updateMuteButton();
+        const anyOn = Sound.isSfxEnabled() || Sound.isMusicEnabled();
+        Sound.setSfxEnabled(!anyOn);
+        Sound.setMusicEnabled(!anyOn);
+        updateSoundControls();
       }
     });
 
@@ -136,6 +160,12 @@ const UI = (function () {
       `<tbody>${rows}</tbody></table>`;
   }
 
+  function updateSideButtons(side) {
+    if (!els.sideLeftBtn) return;
+    els.sideLeftBtn.classList.toggle('active', side === 'left');
+    els.sideRightBtn.classList.toggle('active', side === 'right');
+  }
+
   function refreshStartHighScores() {
     const list = Scores.load();
     renderHighScores(els.startHighScores, list, -1);
@@ -159,11 +189,16 @@ const UI = (function () {
     els.screenGameOver.classList.remove('hidden');
   }
 
-  function updateMuteButton() {
-    if (!els.muteBtn) return;
-    const muted = Sound.isMuted();
-    els.muteBtn.textContent = muted ? '🔇' : '🔊';
-    els.muteBtn.classList.toggle('muted', muted);
+  function updateSoundControls() {
+    if (!els.toggleSfx) return;
+    const sfxOn = Sound.isSfxEnabled();
+    const musicOn = Sound.isMusicEnabled();
+    els.toggleSfx.textContent = `${sfxOn ? '🔊' : '🔇'} Efektler: ${sfxOn ? 'Açık' : 'Kapalı'}`;
+    els.toggleSfx.classList.toggle('off', !sfxOn);
+    els.toggleMusic.textContent = `${musicOn ? '🎵' : '🔇'} Müzik: ${musicOn ? 'Açık' : 'Kapalı'}`;
+    els.toggleMusic.classList.toggle('off', !musicOn);
+    // Ayarların tümü kapalıysa ⚙️ butonuna sessiz işareti koy.
+    els.settingsBtn.textContent = (!sfxOn && !musicOn) ? '🔇' : '⚙️';
   }
 
   function showToast(text) {
@@ -173,5 +208,5 @@ const UI = (function () {
     toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2500);
   }
 
-  return { init, hideAllScreens, setHudVisible, syncHud, showLevelUp, hideLevelUp, showGameOver, showToast, updateMuteButton };
+  return { init, hideAllScreens, setHudVisible, syncHud, showLevelUp, hideLevelUp, showGameOver, showToast, updateSoundControls };
 })();

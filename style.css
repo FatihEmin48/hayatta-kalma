@@ -198,14 +198,17 @@ button:hover { filter: brightness(1.1); }
 .ghost-btn:hover { color: var(--text); filter: none; }
 .ghost-btn.hidden { display: none; }
 
-/* Sağ altta ses aç/kapat — joystick sol altta olduğu için çakışmaz. Her
-   ekranda (start/oyun/game-over) görünür ve tıklanabilir kalsın diye yüksek
-   z-index + pointer-events. */
-#mute-btn {
+/* Ses ayarları — ⚙️ butonu + efekt/müzik anahtarlı panel. Sağ altta durur
+   (joystick sağa alınırsa sola geçer, aşağıda). Her ekranda erişilebilir. */
+#sound-controls {
   position: absolute;
   right: 14px;
   bottom: 16px;
   z-index: 60;
+}
+body.joystick-right #sound-controls { left: 14px; right: auto; }
+
+#settings-btn {
   width: 44px;
   height: 44px;
   padding: 0;
@@ -217,13 +220,43 @@ button:hover { filter: brightness(1.1); }
   border-radius: 8px;
   cursor: pointer;
 }
-#mute-btn:hover { background: rgba(0, 0, 0, 0.72); filter: none; }
-#mute-btn.muted { opacity: 0.65; }
+#settings-btn:hover { background: rgba(0, 0, 0, 0.72); filter: none; }
+
+#settings-panel {
+  position: absolute;
+  bottom: 52px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  min-width: 168px;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+body.joystick-right #settings-panel { right: auto; left: 0; }
+#settings-panel.hidden { display: none; }
+
+.toggle-row {
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: normal;
+  border-radius: 6px;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.toggle-row:hover { background: rgba(0, 0, 0, 0.5); filter: none; }
+.toggle-row.off { opacity: 0.55; }
 
 #joystick {
   display: none;
   position: absolute;
-  left: 24px;
+  left: 24px;      /* varsayılan; body.joystick-left/right ile ezilir */
   bottom: 24px;
   width: 120px;
   height: 120px;
@@ -231,6 +264,30 @@ button:hover { filter: brightness(1.1); }
   touch-action: none;
 }
 body.touch-enabled #joystick { display: block; }
+/* Oyuncunun başlangıç ekranında seçtiği taraf. */
+body.joystick-left #joystick { left: 24px; right: auto; }
+body.joystick-right #joystick { left: auto; right: 24px; }
+/* Ses ayar butonu joystick'in karşı tarafına geçer; kuralı #sound-controls
+   bloğunda (aşağıda). */
+
+/* Başlangıç ekranındaki "Kontrolcü: Sol / Sağ" seçici — sadece dokunmatik
+   cihazlarda göster (masaüstünde joystick yok, gereksiz). */
+.control-side { display: none; flex-direction: column; align-items: center; gap: 8px; }
+body.touch-enabled .control-side { display: flex; }
+.control-side span { color: var(--muted); font-size: 14px; }
+.side-btns { display: flex; gap: 10px; }
+.side-btn {
+  background: var(--panel);
+  color: var(--text);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.side-btn.active { border-color: var(--accent); color: var(--accent); }
+.side-btn:hover { filter: brightness(1.1); }
 
 #joystick-base {
   position: absolute;

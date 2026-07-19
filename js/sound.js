@@ -4,14 +4,20 @@
 // Modül adı bilerek `Audio` DEĞİL: tarayıcının yerleşik `window.Audio`
 // (HTMLAudioElement) yapıcısını gölgelememek için `Sound`.
 //
-// AudioContext ancak bir kullanıcı jesti (start/tekrar oyna/mute tıklaması)
-// içinde başlatılabilir (autoplay politikası), bu yüzden context ilk
-// `resume()` çağrısına kadar oluşturulmaz. Ses kapalıysa ya da context
-// desteklenmiyorsa (headless/eski tarayıcı) tüm çağrılar sessizce no-op olur.
+// Efekt sesleri ve müzik BAĞIMSIZ olarak açılıp kapatılabilir (ayrı gain
+// düğümleri + ayrı localStorage tercihi).
+//
+// Mobil not: iOS/Android tarayıcılarında AudioContext bir kullanıcı jestiyle
+// "unlock" edilmeden ses çıkmaz. Bu yüzden ilk dokunuş/tıklama/tuşta
+// `unlock()` çağıran global dinleyiciler kuruyoruz (context'i resume edip bir
+// sessiz buffer çalarak kilidi açar). Desteklenmeyen/headless ortamda tüm ses
+// çağrıları sessizce no-op olur.
 const Sound = (function () {
   let ctx = null;
   let masterGain = null, musicGain = null, sfxGain = null;
-  let muted = false;
+  let sfxEnabled = true;
+  let musicEnabled = true;
+  let unlocked = false;
   let musicOn = false;
   let schedulerId = null;
   let nextNoteTime = 0;
@@ -19,15 +25,18 @@ const Sound = (function () {
   const lastPlayed = {};
 
   const MASTER_VOL = 0.85;
-  const STEP_DUR = 0.21;      // saniye/adım (~ sekizlik nota, ~71 BPM hissi)
+  const MUSIC_VOL = 0.25;
+  const STEP_DUR = 0.21;      // saniye/adım (~ sekizlik nota)
   const LOOKAHEAD = 0.15;     // ne kadar ileriyi zamanlayalım (s)
 
-  // A minör beşli — ölüm-kalım temasına uygun, karanlık ama sakin.
   const BASS = [110.00, 110.00, 130.81, 98.00];          // A2 A2 C3 G2
   const ARP = [220.00, 261.63, 329.63, 261.63,
                293.66, 329.63, 261.63, 220.00];          // A3 C4 E4 C4 D4 E4 C4 A3
 
-  try { muted = localStorage.getItem('hk_muted') === '1'; } catch (e) { /* localStorage yok */ }
+  try {
+    sfxEnabled = localStorage.getItem('hk_sfx') !== '0';
+    musicEnabled = localStorage.getItem('hk_music') !== '0';
+  } catch (e) { /* localStorage yok */ }
 
   function supported() {
     return typeof window !== 'undefined' && !!(window.AudioContext || window.webkitAudioContext);
@@ -39,13 +48,13 @@ const Sound = (function () {
       const AC = window.AudioContext || window.webkitAudioContext;
       ctx = new AC();
       masterGain = ctx.createGain();
-      masterGain.gain.value = muted ? 0 : MASTER_VOL;
+      masterGain.gain.value = MASTER_VOL;
       masterGain.connect(ctx.destination);
       musicGain = ctx.createGain();
-      musicGain.gain.value = 0.25;
+      musicGain.gain.value = musicEnabled ? MUSIC_VOL : 0;
       musicGain.connect(masterGain);
       sfxGain = ctx.createGain();
-      sfxGain.gain.value = 1;
+      sfxGain.gain.value = sfxEnabled ? 1 : 0;
       sfxGain.connect(masterGain);
     } catch (e) {
       ctx = null;
@@ -53,23 +62,36 @@ const Sound = (function () {
     return ctx;
   }
 
-  // Bir kullanıcı jestinden çağrılmalı (tarayıcı autoplay kilidi).
-  function resume() {
+  // Bir kullanıcı jestinden çağrılır (tarayıcı autoplay/mobil kilidi). Context'i
+  // resume eder ve ilk seferinde bir sessiz buffer çalarak iOS kilidini açar.
+  function unlock() {
     ensureCtx();
-    if (ctx && ctx.state === 'suspended') ctx.resume();
+    if (!ctx) return;
+    if (ctx.state === 'suspended') ctx.resume();
+    if (unlocked) return;
+    unlocked = true;
+    try {
+      const buf = ctx.createBuffer(1, 1, 22050);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start(0);
+    } catch (e) { /* yok say */ }
   }
 
-  function isMuted() { return muted; }
-
-  function setMuted(v) {
-    muted = !!v;
-    try { localStorage.setItem('hk_muted', muted ? '1' : '0'); } catch (e) { /* yok say */ }
-    if (masterGain && ctx) {
-      masterGain.gain.setTargetAtTime(muted ? 0 : MASTER_VOL, ctx.currentTime, 0.02);
-    }
+  function setSfxEnabled(v) {
+    sfxEnabled = !!v;
+    try { localStorage.setItem('hk_sfx', sfxEnabled ? '1' : '0'); } catch (e) { /* yok say */ }
+    if (sfxGain && ctx) sfxGain.gain.setTargetAtTime(sfxEnabled ? 1 : 0, ctx.currentTime, 0.02);
   }
+  function isSfxEnabled() { return sfxEnabled; }
 
-  function toggleMute() { setMuted(!muted); return muted; }
+  function setMusicEnabled(v) {
+    musicEnabled = !!v;
+    try { localStorage.setItem('hk_music', musicEnabled ? '1' : '0'); } catch (e) { /* yok say */ }
+    if (musicGain && ctx) musicGain.gain.setTargetAtTime(musicEnabled ? MUSIC_VOL : 0, ctx.currentTime, 0.02);
+  }
+  function isMusicEnabled() { return musicEnabled; }
 
   // Tek osilatörlük kısa "blip": hızlı attack + üstel decay.
   function blip(freq, dur, type, gainVal, dest, when) {
@@ -89,7 +111,7 @@ const Sound = (function () {
   }
 
   // Aynı SFX'i minGap saniyeden hızlı tekrar tetikleme (yüzlerce düşman aynı
-  // anda ölürken sesin bir gürültü makinesine dönüşmesini engeller).
+  // anda ölürken sesin gürültü makinesine dönüşmesini engeller).
   function throttled(name, minGap) {
     const now = ctx ? ctx.currentTime : 0;
     if (lastPlayed[name] !== undefined && now - lastPlayed[name] < minGap) return false;
@@ -98,7 +120,7 @@ const Sound = (function () {
   }
 
   function sfx(name) {
-    if (!ctx || muted) return;
+    if (!ctx || !sfxEnabled) return;
     const now = ctx.currentTime;
     switch (name) {
       case 'hit':
@@ -140,7 +162,7 @@ const Sound = (function () {
   }
 
   function scheduleMusicStep(time, s) {
-    if (!ctx) return;
+    if (!ctx || !musicEnabled) return;
     // Bas nota her 2 adımda bir.
     if (s % 2 === 0) {
       const bi = Math.floor(s / 2) % BASS.length;
@@ -163,6 +185,8 @@ const Sound = (function () {
     }
   }
 
+  // Scheduler oyun başında hep çalışır; müzik kapalıyken sadece nota üretmez,
+  // böylece oyun sırasında müziği açınca anında devreye girer.
   function startMusic() {
     ensureCtx();
     if (!ctx || musicOn) return;
@@ -177,5 +201,16 @@ const Sound = (function () {
     if (schedulerId) { clearInterval(schedulerId); schedulerId = null; }
   }
 
-  return { resume, sfx, startMusic, stopMusic, toggleMute, isMuted, setMuted, supported };
+  // İlk kullanıcı jestinde ses kilidini aç (özellikle mobil için kritik).
+  if (typeof window !== 'undefined' && window.addEventListener) {
+    const onFirstGesture = () => unlock();
+    ['pointerdown', 'touchend', 'mousedown', 'keydown'].forEach(ev => {
+      window.addEventListener(ev, onFirstGesture, { passive: true });
+    });
+  }
+
+  return {
+    resume: unlock, unlock, sfx, startMusic, stopMusic,
+    setSfxEnabled, isSfxEnabled, setMusicEnabled, isMusicEnabled, supported,
+  };
 })();

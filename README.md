@@ -23,7 +23,7 @@ sonra tarayıcıda `http://localhost:8000/` aç. `index.html`'e doğrudan çift 
 
 ## Mobil / telefon desteği
 
-Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **gerçek cihaz ekranına göre dinamik olarak** ayarlanıyor (`js/ui.js` → `applyCanvasSize`, `320`–`1600` piksel arası sınırlarla, `resize`/`orientationchange` olaylarında yeniden hesaplanıyor). Böylece telefonda (dikey ya da yatay) ekranın büyük kısmı boş kalmıyor, oyun alanı gerçekten ekranı dolduruyor. Dokunmatik cihaz tespit edilince (`navigator.maxTouchPoints` / `ontouchstart`) sol alt köşede otomatik bir sanal joystick beliriyor; klavye her zaman önceliklidir (ikisi çakışmaz).
+Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **gerçek cihaz ekranına göre dinamik olarak** ayarlanıyor (`js/ui.js` → `applyCanvasSize`, `320`–`1600` piksel arası sınırlarla, `resize`/`orientationchange` olaylarında yeniden hesaplanıyor). Böylece telefonda (dikey ya da yatay) ekranın büyük kısmı boş kalmıyor, oyun alanı gerçekten ekranı dolduruyor. Dokunmatik cihaz tespit edilince (`navigator.maxTouchPoints` / `ontouchstart`) bir sanal joystick beliriyor; klavye her zaman önceliklidir (ikisi çakışmaz). **Joystick'in tarafı seçilebilir:** başlangıç ekranında (yalnız dokunmatik cihazlarda görünen) "Kontrolcü nerede olsun? Sol / Sağ" seçicisiyle joystick sağ ya da sol alt köşeye alınır; tercih `localStorage`'a (`hk_joystick_side`) yazılıp hatırlanır, ilk kez oynayanlar için varsayılan **sağ**. Joystick sağa alındığında ses aç/kapat butonu çakışmaması için otomatik olarak sol alta geçer.
 
 ## v2 — Silah evrimleri + harita içeriği
 
@@ -39,8 +39,9 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 
 ## v3 — Ses & görsel efektler
 
-- **Ses (WebAudio, dosyasız):** Tüm sesler `js/sound.js` içinde çalışma anında sentezlenir — harici asset yok, build adımı yine yok. SFX'ler: düşman vuruşu/ölümü, oyuncu hasar alması, level-up, sandık, silah evrimi, bıçak atışı, game-over. Ayrıca A-minör tonda hafif, döngüsel bir arka plan müziği (lookahead scheduler ile zamanlanır). Autoplay politikası gereği ses ancak bir kullanıcı jestiyle (Başlat / Tekrar Oyna / mute butonu) açılır; desteklenmeyen/headless ortamda tüm ses çağrıları sessizce no-op olur. Aynı SFX çok sık tetiklenirse (yüzlerce düşman aynı anda ölürken) throttle edilir, gürültü makinesine dönüşmez.
-- **Ses aç/kapat:** Sağ alt köşede bir buton (🔊/🔇) veya **M** tuşu. Tercih `localStorage`'a yazılır, sonraki açılışta hatırlanır.
+- **Ses (WebAudio, dosyasız):** Tüm sesler `js/sound.js` içinde çalışma anında sentezlenir — harici asset yok, build adımı yine yok. SFX'ler: düşman vuruşu/ölümü, oyuncu hasar alması, level-up, sandık, silah evrimi, bıçak atışı, game-over. Ayrıca A-minör tonda hafif, döngüsel bir arka plan müziği (lookahead scheduler ile zamanlanır). Aynı SFX çok sık tetiklenirse (yüzlerce düşman aynı anda ölürken) throttle edilir, gürültü makinesine dönüşmez. Desteklenmeyen/headless ortamda tüm ses çağrıları sessizce no-op olur.
+- **Mobil ses:** iOS/Android tarayıcılarında AudioContext ancak bir kullanıcı jestiyle "unlock" edilirse ses çıkarır. Bu yüzden ilk dokunuş/tıklama/tuşta (`pointerdown`/`touchend`/`mousedown`/`keydown`) context resume edilip bir sessiz buffer çalınarak kilit açılır — böylece telefonda da sesler duyulur. (Not: iOS'ta cihazın fiziksel sessiz/zil anahtarı açıksa WebAudio sesleri yine kısılır; bu donanımsal, koddan aşılamaz.)
+- **Efekt sesi ve müzik ayrı ayrı:** Sağ alttaki ⚙️ butonu, **efekt seslerini** ve **müziği** bağımsız açıp kapatan iki anahtarlı bir panel açar (ayrı gain düğümleri). **M** tuşu ikisini birden aç/kapatır. Her iki tercih de `localStorage`'a (`hk_sfx` / `hk_music`) yazılır, sonraki açılışta hatırlanır.
 - **Görsel efektler (`js/effects.js`):** Düşman ölümünde renk uyumlu parçacık patlaması, vuruşta küçük kıvılcım, uçuşan hasar sayıları (elit vuruşları sarı/büyük), hasar alınca ekran kenarında kırmızı vinyet + kısa **ekran sarsıntısı** (elit ölümü ve sandıkta da hafif sarsıntı). Parçacık ve hasar-sayısı adetleri `js/config.js`'teki `EFFECTS` ile sert biçimde üst sınırlanır, böylece kalabalık sahnede bile kare hızı sabit kalır. `EFFECTS.showDamageNumbers = false` ile hasar rakamları tamamen kapatılabilir.
 
 ## Son güncellemeler (gerçek oynanış geri bildirimine göre)
@@ -72,7 +73,7 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 **Mobil test:**
 
 8. Telefonda sayfa açıldığında oyun alanı ekranı gerçekten dolduruyor mu (dikey ve yatay modda), boş/letterbox alan kalmıyor mu.
-9. Sol alt köşede joystick görünüyor mu (masaüstünde görünmemeli, sadece dokunmatik cihazda), parmakla sürükleyince karakter o yönde hareket edip parmak çekilince duruyor mu.
+9. Başlangıç ekranında "Kontrolcü nerede olsun? Sol / Sağ" seçicisi görünüyor mu (dokunmatikte, masaüstünde görünmemeli); seçilen alt köşede (varsayılan sağ) joystick beliriyor, ses butonu karşı tarafa geçiyor, parmakla sürükleyince karakter o yönde hareket edip çekilince duruyor ve sayfa yenilenince taraf tercihi hatırlanıyor mu.
 10. Seviye atlama seçenekleri dar ekranda alt alta dizilip dokunarak seçilebiliyor mu.
 
 **v2 test:**
@@ -85,7 +86,7 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 **v3 test (ses & efektler):**
 
 15. Başlat'a basınca müzik başlıyor mu; düşman öldürünce/vurunca, hasar alınca, level-up/sandık/evrimde farklı SFX'ler duyuluyor mu.
-16. Sağ alttaki 🔊 butonu (veya **M** tuşu) sesi kapatıp açıyor mu; sayfa yenilenince tercih hatırlanıyor mu.
+16. Sağ alttaki ⚙️ butonu ses ayar panelini açıyor mu; "Efektler" ve "Müzik" anahtarları bağımsız çalışıyor mu (biri kapalıyken diğeri açık kalabiliyor mu); **M** tuşu ikisini birden aç/kapatıyor mu; sayfa yenilenince tercihler hatırlanıyor mu. Telefonda ilk dokunuştan sonra sesler geliyor mu.
 17. Düşman ölümünde parçacık, vuruşta hasar sayısı görünüyor mu; hasar alınca ekran kızarıp hafifçe sarsılıyor mu; elit ölümü/sandık daha belirgin sarsıyor mu.
 18. Yoğun sahnede (çok sayıda düşman) efektler kare hızını düşürmüyor mu (adetler `EFFECTS` ile sınırlı).
 
