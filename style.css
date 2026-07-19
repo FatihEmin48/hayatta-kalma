@@ -288,6 +288,27 @@ body.joystick-right #settings-panel { right: auto; left: 0; }
 .toggle-row:hover { background: rgba(0, 0, 0, 0.5); filter: none; }
 .toggle-row.off { opacity: 0.55; }
 
+/* Duraklat butonu — sol üstte, HUD barlarının altında (çakışmaz). Yalnız
+   oyun içinde görünür (setHudVisible ile). */
+#pause-btn {
+  position: absolute;
+  left: 12px;
+  top: 72px;
+  z-index: 60;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+}
+#pause-btn:hover { background: rgba(0, 0, 0, 0.72); filter: none; }
+#pause-btn.hidden { display: none; }
+
 #joystick {
   display: none;
   position: absolute;

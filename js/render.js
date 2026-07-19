@@ -293,6 +293,38 @@ function drawOrbit(ctx, state) {
   }
 }
 
+// Sağ üstte küçük mini-harita: tüm dünyayı özetler (oyuncu, düşmanlar, boss,
+// elit, sandık, engeller). Kameradan/sarsıntıdan bağımsız → transform dışında.
+function drawMinimap(ctx, state) {
+  const size = Math.min(120, CANVAS_W * 0.28);
+  const pad = 10;
+  const x = CANVAS_W - size - pad;
+  const y = 60;
+  const sx = size / WORLD_W, sy = size / WORLD_H;
+
+  ctx.fillStyle = 'rgba(0,0,0,0.42)';
+  ctx.fillRect(x, y, size, size);
+  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x, y, size, size);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.16)';
+  for (const o of state.obstacles) ctx.fillRect(x + o.x * sx - 1, y + o.y * sy - 1, 2, 2);
+
+  ctx.fillStyle = '#d4af37';
+  for (const c of state.chests) if (!c.dead) ctx.fillRect(x + c.x * sx - 1.5, y + c.y * sy - 1.5, 3, 3);
+
+  for (const e of state.enemies) {
+    if (e.dead) continue;
+    const s = e.boss ? 5 : (e.elite ? 3 : 2);
+    ctx.fillStyle = e.boss ? '#8e44ad' : (e.elite ? '#f1c40f' : 'rgba(231,76,60,0.85)');
+    ctx.fillRect(x + e.x * sx - s / 2, y + e.y * sy - s / 2, s, s);
+  }
+
+  ctx.fillStyle = '#4ade80';
+  ctx.fillRect(x + state.player.x * sx - 2, y + state.player.y * sy - 2, 4, 4);
+}
+
 function render(ctx, state) {
   ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
   if (state.mode === STATE.START) return;
@@ -319,7 +351,8 @@ function render(ctx, state) {
 
   ctx.restore();
 
-  // Vinyet ve boss barı sarsıntıdan bağımsız → transform dışında.
+  // Vinyet, boss barı ve mini-harita sarsıntıdan bağımsız → transform dışında.
   drawHurtVignette(ctx, state);
   drawBossBar(ctx, state);
+  drawMinimap(ctx, state);
 }

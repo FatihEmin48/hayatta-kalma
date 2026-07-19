@@ -15,6 +15,8 @@ const UI = (function () {
     els.screenStart = document.getElementById('screen-start');
     els.screenLevelUp = document.getElementById('screen-levelup');
     els.screenGameOver = document.getElementById('screen-gameover');
+    els.screenPause = document.getElementById('screen-pause');
+    els.pauseBtn = document.getElementById('pause-btn');
     els.levelUpChoices = document.getElementById('levelup-choices');
     els.gameOverTitle = document.getElementById('gameover-title');
     els.gameOverStats = document.getElementById('gameover-stats');
@@ -29,6 +31,12 @@ const UI = (function () {
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', restartGame);
     document.getElementById('menu-btn').addEventListener('click', returnToMenu);
+    document.getElementById('resume-btn').addEventListener('click', togglePause);
+    document.getElementById('pause-menu-btn').addEventListener('click', returnToMenu);
+    els.pauseBtn.addEventListener('click', togglePause);
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') togglePause();
+    });
 
     renderShop();
     els.shopToggle.addEventListener('click', () => {
@@ -106,11 +114,16 @@ const UI = (function () {
     els.screenStart.classList.add('hidden');
     els.screenLevelUp.classList.add('hidden');
     els.screenGameOver.classList.add('hidden');
+    els.screenPause.classList.add('hidden');
   }
 
   function setHudVisible(visible) {
     els.hud.classList.toggle('hidden', !visible);
+    els.pauseBtn.classList.toggle('hidden', !visible); // ⏸️ yalnız oyun içinde
   }
+
+  function showPause() { els.screenPause.classList.remove('hidden'); }
+  function hidePause() { els.screenPause.classList.add('hidden'); }
 
   function formatTime(sec) {
     const m = Math.floor(sec / 60).toString().padStart(2, '0');
@@ -269,5 +282,5 @@ const UI = (function () {
     toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2500);
   }
 
-  return { init, hideAllScreens, setHudVisible, syncHud, showLevelUp, hideLevelUp, showGameOver, showToast, updateSoundControls, showStartMenu };
+  return { init, hideAllScreens, setHudVisible, syncHud, showLevelUp, hideLevelUp, showGameOver, showToast, updateSoundControls, showStartMenu, showPause, hidePause };
 })();

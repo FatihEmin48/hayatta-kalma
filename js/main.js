@@ -1,4 +1,4 @@
-const STATE = { START: 'START', PLAYING: 'PLAYING', LEVEL_UP: 'LEVEL_UP', GAME_OVER: 'GAME_OVER', VICTORY: 'VICTORY' };
+const STATE = { START: 'START', PLAYING: 'PLAYING', LEVEL_UP: 'LEVEL_UP', GAME_OVER: 'GAME_OVER', VICTORY: 'VICTORY', PAUSED: 'PAUSED' };
 
 let canvas, ctx;
 let lastTime = 0;
@@ -208,6 +208,19 @@ function returnToMenu() {
   Sound.stopMusic();
   UI.setHudVisible(false);
   UI.showStartMenu();
+}
+
+// ESC veya ⏸️ butonu ile duraklat/devam (yalnız oyun sırasında).
+function togglePause() {
+  if (state.mode === STATE.PLAYING) {
+    state.mode = STATE.PAUSED;
+    Sound.stopMusic();
+    UI.showPause();
+  } else if (state.mode === STATE.PAUSED) {
+    state.mode = STATE.PLAYING;
+    Sound.startMusic();
+    UI.hidePause();
+  }
 }
 
 function frame(now) {
