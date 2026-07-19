@@ -94,6 +94,24 @@ function drawChests(ctx, state) {
   }
 }
 
+const PICKUP_ICON = { health: '➕', bomb: '💣', magnet: '🧲' };
+const PICKUP_COLOR = { health: '#2ecc71', bomb: '#e67e22', magnet: '#1abc9c' };
+
+function drawPickups(ctx, state) {
+  const pulse = 1 + Math.sin(performance.now() / 250) * 0.1;
+  for (const p of state.pickups) {
+    const pos = worldToScreen(state.camera, p.x, p.y);
+    ctx.fillStyle = PICKUP_COLOR[p.type] || '#fff';
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, p.radius * pulse, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = `${Math.round(p.radius * 1.2)}px system-ui, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(PICKUP_ICON[p.type] || '?', pos.x, pos.y);
+  }
+}
+
 function drawGems(ctx, state) {
   ctx.fillStyle = '#3fa9f5';
   for (const g of state.gems) {
@@ -177,6 +195,16 @@ function drawBossBar(ctx, state) {
 
 function drawWeaponEffects(ctx, state) {
   for (const fx of state.weaponEffects) {
+    if (fx.type === 'explosion') {
+      const t = 1 - clamp(fx.timeLeft / fx.duration, 0, 1); // 0 → 1 genişler
+      const pos = worldToScreen(state.camera, fx.x, fx.y);
+      ctx.strokeStyle = `rgba(231,76,60,${1 - t})`;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, fx.radius * t, 0, Math.PI * 2);
+      ctx.stroke();
+      continue;
+    }
     if (fx.type === 'chain') {
       const alpha = clamp(fx.timeLeft / fx.duration, 0, 1);
       ctx.strokeStyle = `rgba(93,173,226,${alpha})`;
@@ -278,6 +306,7 @@ function render(ctx, state) {
   drawObstacles(ctx, state);
   drawGems(ctx, state);
   drawChests(ctx, state);
+  drawPickups(ctx, state);
   drawWeaponEffects(ctx, state);
   drawEnemies(ctx, state);
   drawProjectiles(ctx, state);

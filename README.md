@@ -31,6 +31,17 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v8 — Düşman & pickup çeşitliliği
+
+- **Yeni düşman davranışları (`ENEMY_DEFS`):**
+  - **Bölünen (`splitter`, 90sn):** Ölünce birkaç küçük/zayıf düşmana ayrılır.
+  - **Mesafeli (`ranged`, 150sn):** Tercih ettiği menzili korur (uzaksa yaklaşır, yakınsa uzaklaşır, menzildeyse yanlamasına kayar) ve oyuncuya nişan alıp mermi atar (düşman mermisi sistemi, boss'la ortak).
+  - **Patlayan (`exploder`, 200sn):** Hızlı; ölünce yakındaysa oyuncuya alan hasarı verir + genişleyen patlama halkası.
+- **Pickup'lar (`PICKUP_CONFIG`, `js/world.js`):** Düşman ölünce küçük olasılıkla düşer, üzerine yürüyünce etki eder:
+  - **Can iksiri (➕):** Maks canın %30'unu iyileştirir.
+  - **Bomba (💣):** Ekrandaki düşmanları yok eder (boss'a büyük hasar).
+  - **Mıknatıs (🧲):** Haritadaki tüm elmasları oyuncuya çeker.
+
 ## v7 — Yeni silahlar
 
 Toplam silah sayısı 3'ten 6'ya çıktı (`WEAPON_DEFS` + `fireWeapon` switch'i; her biri 5 seviye + evrim):
@@ -135,6 +146,11 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 28. Level-up seçeneklerinde Dönen Kalkan / Zincir Şimşek / Bumerang çıkıyor mu; alınınca çalışıyor mu (kalkan topları dönüp değince öldürüyor, şimşek düşmandan düşmana sıçrıyor, bumerang gidip geri dönüyor mu).
 29. İlgili silah maks + eşleşen pasif maks olunca evrim (Yıldız Kalkanı / Fırtına Zinciri / Çift Bumerang) gerçekleşiyor mu.
 
-## v7 sonrası hâlâ kapsam dışı
+**v8 test (düşman & pickup çeşitliliği):**
 
-Ek haritalar/biyomlar, farklı oyun modları.
+30. Zamanla bölünen (turuncu, ölünce parçalanan), mesafeli (mor, uzaktan mermi atan) ve patlayan (ölünce halka açan) düşmanlar beliriyor mu; mesafeli düşman mermileri hasar veriyor mu.
+31. Düşman ölümlerinden ara sıra can iksiri (➕) / bomba (💣) / mıknatıs (🧲) düşüyor mu; üzerine gidince sırasıyla can dolduruyor, ekranı temizliyor, elmasları çekiyor mu.
+
+## v8 sonrası hâlâ kapsam dışı
+
+Ek haritalar/biyomlar, farklı oyun modları, mini-harita, karakter seçimi, duraklat menüsü.

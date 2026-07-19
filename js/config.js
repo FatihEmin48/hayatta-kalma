@@ -58,7 +58,10 @@ const WEAPON_DEFS = [
 const ENEMY_DEFS = [
   { id: 'basic', unlockAt: 0, hp: 10, speed: 55, damage: 6, radius: 12, xp: 3, color: '#7fbf3f' },
   { id: 'fast', unlockAt: 60, hp: 7, speed: 120, damage: 5, radius: 9, xp: 4, color: '#3fa9f5', erratic: true },
+  { id: 'splitter', unlockAt: 90, hp: 26, speed: 60, damage: 8, radius: 15, xp: 6, color: '#e67e22', splitter: true, splitInto: 3 },
   { id: 'tank', unlockAt: 120, hp: 55, speed: 32, damage: 13, radius: 18, xp: 8, color: '#c0392b' },
+  { id: 'ranged', unlockAt: 150, hp: 16, speed: 70, damage: 6, radius: 11, xp: 7, color: '#9b59b6', ranged: true, preferredRange: 240, fireEvery: 2.2, projSpeed: 170, projDamage: 8 },
+  { id: 'exploder', unlockAt: 200, hp: 14, speed: 95, damage: 6, radius: 12, xp: 7, color: '#d35400', exploder: true, explodeRadius: 70, explodeDamage: 18 },
 ];
 
 // Enemies are weaker at the start and ramp up to their full ENEMY_DEFS
@@ -136,6 +139,19 @@ const OBSTACLE_CONFIG = {
 
 const CHEST_CONFIG = {
   spawnEverySec: 90, maxConcurrent: 2, radius: 16, xpReward: 40, color: '#d4af37',
+};
+
+// Düşman ölünce küçük olasılıkla düşen pickup'lar (js/world.js).
+//  - health: maks canın bir kısmını iyileştirir
+//  - bomb:   ekrandaki düşmanları yok eder (boss'a büyük hasar)
+//  - magnet: tüm elmasları oyuncuya çeker
+const PICKUP_CONFIG = {
+  dropChance: 0.015,
+  radius: 11,
+  healPct: 0.3,
+  bombBossDamage: 200,
+  types: ['health', 'bomb', 'magnet'],
+  weights: [0.6, 0.15, 0.25],
 };
 
 // Kalıcı ilerleme (js/meta.js). Run sonunda altın kazanılır, başlangıç

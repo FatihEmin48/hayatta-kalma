@@ -56,6 +56,10 @@ function updateChests(state, dt) {
     state.chestTimer = CHEST_CONFIG.spawnEverySec;
   }
 
+  collectChests(state);
+}
+
+function collectChests(state) {
   const player = state.player;
   for (const c of state.chests) {
     if (c.dead) continue;
@@ -69,5 +73,41 @@ function updateChests(state, dt) {
       addShake(state, EFFECTS.shakeOnChest);
       UI.showToast(`Sandık açıldı! +${CHEST_CONFIG.xpReward} XP, can tamamen yenilendi`);
     }
+  }
+}
+
+function updatePickups(state) {
+  const player = state.player;
+  for (const p of state.pickups) {
+    if (p.dead) continue;
+    if (circleHit(player.x, player.y, player.radius, p.x, p.y, p.radius)) {
+      p.dead = true;
+      applyPickup(state, p.type);
+    }
+  }
+}
+
+function applyPickup(state, type) {
+  const player = state.player;
+  if (type === 'health') {
+    const maxHp = getPlayerMaxHp(player);
+    const heal = maxHp * PICKUP_CONFIG.healPct;
+    player.hp = Math.min(maxHp, player.hp + heal);
+    Sound.sfx('chest');
+    UI.showToast(`Can iksiri! +${Math.round(heal)} can`);
+  } else if (type === 'bomb') {
+    let cleared = 0;
+    for (const e of state.enemies) {
+      if (e.dead) continue;
+      if (e.boss) { damageEnemy(state, e, PICKUP_CONFIG.bombBossDamage); }
+      else { damageEnemy(state, e, e.hp + 1); cleared++; }
+    }
+    addShake(state, 10);
+    Sound.sfx('evolve');
+    UI.showToast(`Bomba! ${cleared} düşman yok edildi`);
+  } else if (type === 'magnet') {
+    for (const g of state.gems) g.magnetized = true;
+    Sound.sfx('chest');
+    UI.showToast('Mıknatıs! Tüm elmaslar çekiliyor');
   }
 }

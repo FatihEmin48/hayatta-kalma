@@ -33,6 +33,7 @@ function createInitialState() {
     obstacles: generateObstacles(),
     chests: [],
     chestTimer: CHEST_CONFIG.spawnEverySec,
+    pickups: [],
     particles: [],
     damageNumbers: [],
     shake: { mag: 0 },
@@ -128,6 +129,7 @@ function update(state, dt) {
   updateRegen(state, dt);
   updateGems(state, dt);
   updateChests(state, dt);
+  updatePickups(state);
   updateParticles(state, dt);
   updateDamageNumbers(state, dt);
   updateShake(state, dt);
@@ -139,6 +141,7 @@ function update(state, dt) {
   state.gems = removeDead(state.gems);
   state.weaponEffects = removeDead(state.weaponEffects);
   state.chests = removeDead(state.chests);
+  state.pickups = removeDead(state.pickups);
   state.particles = removeDead(state.particles);
   state.damageNumbers = removeDead(state.damageNumbers);
 }

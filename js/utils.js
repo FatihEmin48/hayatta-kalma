@@ -50,3 +50,15 @@ function pickRandomUnique(arr, count) {
 function removeDead(arr) {
   return arr.filter(item => !item.dead);
 }
+
+// Ağırlıklı rastgele seçim (items ve weights aynı uzunlukta).
+function weightedPick(items, weights) {
+  let total = 0;
+  for (const w of weights) total += w;
+  let r = Math.random() * total;
+  for (let i = 0; i < items.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return items[i];
+  }
+  return items[items.length - 1];
+}
