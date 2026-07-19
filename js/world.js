@@ -63,6 +63,10 @@ function updateChests(state, dt) {
       c.dead = true;
       player.hp = getPlayerMaxHp(player);
       addXp(state, CHEST_CONFIG.xpReward);
+      Sound.sfx('chest');
+      spawnParticles(state, c.x, c.y, CHEST_CONFIG.color, 18,
+        { speedMin: 60, speedMax: 190, life: 0.7 });
+      addShake(state, EFFECTS.shakeOnChest);
       UI.showToast(`Sandık açıldı! +${CHEST_CONFIG.xpReward} XP, can tamamen yenilendi`);
     }
   }

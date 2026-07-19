@@ -52,6 +52,7 @@ function fireKnife(state, w, def) {
     .sort((a, b) => a.d2 - b.d2)
     .slice(0, shotCount);
 
+  if (targets.length > 0) Sound.sfx('shoot');
   for (const { e } of targets) {
     const dir = normalize(e.x - player.x, e.y - player.y);
     state.projectiles.push({

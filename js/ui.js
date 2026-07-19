@@ -18,9 +18,34 @@ const UI = (function () {
     els.levelUpChoices = document.getElementById('levelup-choices');
     els.gameOverTitle = document.getElementById('gameover-title');
     els.gameOverStats = document.getElementById('gameover-stats');
+    els.gameOverScore = document.getElementById('gameover-score');
+    els.gameOverHighScores = document.getElementById('gameover-highscores');
+    els.startHighScores = document.getElementById('start-highscores');
+    els.clearScoresBtn = document.getElementById('clear-scores-btn');
 
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', restartGame);
+
+    refreshStartHighScores();
+    els.clearScoresBtn.addEventListener('click', () => {
+      Scores.clear();
+      refreshStartHighScores();
+    });
+
+    els.muteBtn = document.getElementById('mute-btn');
+    updateMuteButton();
+    els.muteBtn.addEventListener('click', () => {
+      Sound.resume();       // tıklama bir kullanıcı jesti → context'i de aç
+      Sound.toggleMute();
+      updateMuteButton();
+    });
+    // 'M' klavye kısayolu (level-up sırasında 1/2/3 ile çakışmaz).
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'm' || e.key === 'M') {
+        Sound.toggleMute();
+        updateMuteButton();
+      }
+    });
 
     els.canvas = document.getElementById('game');
     applyCanvasSize();
@@ -89,10 +114,56 @@ const UI = (function () {
     els.screenLevelUp.classList.add('hidden');
   }
 
-  function showGameOver(state, victory) {
+  // Bir yüksek-skor listesini bir kaba <table> olarak basar; highlightIndex
+  // satırı (o an biten run) vurgulanır. Liste boşsa kabı gizler.
+  function renderHighScores(container, list, highlightIndex) {
+    if (!container) return;
+    if (!list || list.length === 0) {
+      container.innerHTML = '';
+      container.classList.add('hidden');
+      return;
+    }
+    container.classList.remove('hidden');
+    let rows = '';
+    list.forEach((e, i) => {
+      const cls = i === highlightIndex ? ' class="me"' : '';
+      rows += `<tr${cls}><td>${i + 1}</td><td>${e.score}</td><td>${formatTime(e.time)}</td><td>${e.level}</td><td>${e.kills}</td></tr>`;
+    });
+    container.innerHTML =
+      `<h3>En Yüksek Puanlar</h3>` +
+      `<table class="hs-table">` +
+      `<thead><tr><th>#</th><th>Puan</th><th>Süre</th><th>Sv</th><th>Öldürme</th></tr></thead>` +
+      `<tbody>${rows}</tbody></table>`;
+  }
+
+  function refreshStartHighScores() {
+    const list = Scores.load();
+    renderHighScores(els.startHighScores, list, -1);
+    els.clearScoresBtn.classList.toggle('hidden', list.length === 0);
+  }
+
+  function showGameOver(state, victory, scoreResult) {
     els.gameOverTitle.textContent = victory ? 'Hayatta Kaldın!' : 'Öldün';
     els.gameOverStats.textContent = `Süre: ${formatTime(state.timer)} · Seviye: ${state.player.level} · Öldürülen: ${state.kills}`;
+
+    if (scoreResult) {
+      let line = `Puan: ${scoreResult.entry.score}`;
+      if (scoreResult.isRecord) line += ' 🏆 Yeni Rekor!';
+      else if (scoreResult.madeList) line += ` · ${scoreResult.index + 1}. sıraya girdin!`;
+      els.gameOverScore.textContent = line;
+      renderHighScores(els.gameOverHighScores, scoreResult.list, scoreResult.index);
+    } else {
+      els.gameOverScore.textContent = '';
+      renderHighScores(els.gameOverHighScores, Scores.load(), -1);
+    }
     els.screenGameOver.classList.remove('hidden');
+  }
+
+  function updateMuteButton() {
+    if (!els.muteBtn) return;
+    const muted = Sound.isMuted();
+    els.muteBtn.textContent = muted ? '🔇' : '🔊';
+    els.muteBtn.classList.toggle('muted', muted);
   }
 
   function showToast(text) {
@@ -102,5 +173,5 @@ const UI = (function () {
     toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2500);
   }
 
-  return { init, hideAllScreens, setHudVisible, syncHud, showLevelUp, hideLevelUp, showGameOver, showToast };
+  return { init, hideAllScreens, setHudVisible, syncHud, showLevelUp, hideLevelUp, showGameOver, showToast, updateMuteButton };
 })();

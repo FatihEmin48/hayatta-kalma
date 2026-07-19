@@ -30,6 +30,10 @@ function createInitialState() {
     obstacles: generateObstacles(),
     chests: [],
     chestTimer: CHEST_CONFIG.spawnEverySec,
+    particles: [],
+    damageNumbers: [],
+    shake: { mag: 0 },
+    hurtFlash: 0,
     camera: { x: 0, y: 0 },
     spawnTimer: SPAWN.baseIntervalSec,
     eliteTimer: ELITE_DEF.every,
@@ -71,6 +75,9 @@ function updateContactDamage(state) {
       if (now >= player.invulnUntil) {
         player.hp -= e.damage;
         player.invulnUntil = now + PLAYER_BASE.invulnMs;
+        Sound.sfx('hurt');
+        addShake(state, EFFECTS.shakeOnHurt);
+        state.hurtFlash = EFFECTS.hurtFlashTime;
       }
     }
   }
@@ -95,27 +102,37 @@ function update(state, dt) {
   updateRegen(state, dt);
   updateGems(state, dt);
   updateChests(state, dt);
+  updateParticles(state, dt);
+  updateDamageNumbers(state, dt);
+  updateShake(state, dt);
+  updateHurtFlash(state, dt);
 
   state.enemies = removeDead(state.enemies);
   state.projectiles = removeDead(state.projectiles);
   state.gems = removeDead(state.gems);
   state.weaponEffects = removeDead(state.weaponEffects);
   state.chests = removeDead(state.chests);
+  state.particles = removeDead(state.particles);
+  state.damageNumbers = removeDead(state.damageNumbers);
 }
 
 function checkTransitions(state) {
   if (state.player.hp <= 0) {
     state.mode = STATE.GAME_OVER;
-    UI.showGameOver(state, false);
+    Sound.sfx('gameover');
+    Sound.stopMusic();
+    UI.showGameOver(state, false, Scores.submit(state));
     return;
   }
   if (ENABLE_VICTORY && state.timer >= VICTORY_TIME_SEC) {
     state.mode = STATE.VICTORY;
-    UI.showGameOver(state, true);
+    Sound.stopMusic();
+    UI.showGameOver(state, true, Scores.submit(state));
     return;
   }
   if (state.pendingLevelUps > 0) {
     state.mode = STATE.LEVEL_UP;
+    Sound.sfx('levelup');
     state.levelUpChoices = generateLevelUpChoices(state);
     UI.showLevelUp(state.levelUpChoices);
   }
@@ -128,6 +145,7 @@ function selectLevelUpChoice(index) {
   applyLevelUpChoice(state, choice);
 
   if (state.pendingLevelUps > 0) {
+    Sound.sfx('levelup');
     state.levelUpChoices = generateLevelUpChoices(state);
     UI.showLevelUp(state.levelUpChoices);
   } else {
@@ -141,6 +159,9 @@ function startGame() {
   state.mode = STATE.PLAYING;
   UI.hideAllScreens();
   UI.setHudVisible(true);
+  // Start/Tekrar Oyna butonu bir kullanıcı jesti — autoplay kilidini burada aç.
+  Sound.resume();
+  Sound.startMusic();
 }
 
 function restartGame() {

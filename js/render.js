@@ -4,7 +4,9 @@ function worldToScreen(camera, x, y) {
 
 function drawBackground(ctx, camera) {
   ctx.fillStyle = '#0a0c10';
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+  // Screen shake sırasında kamera birkaç piksel kayınca kenarlarda boşluk
+  // görünmesin diye biraz taşırarak doldur.
+  ctx.fillRect(-30, -30, CANVAS_W + 60, CANVAS_H + 60);
 
   ctx.strokeStyle = 'rgba(255,255,255,0.05)';
   ctx.lineWidth = 1;
@@ -183,6 +185,11 @@ function render(ctx, state) {
   ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
   if (state.mode === STATE.START) return;
 
+  // Screen shake: dünya çizimini birkaç piksel kaydır. HUD (DOM) sarsılmaz.
+  const shake = getShakeOffset(state);
+  ctx.save();
+  ctx.translate(shake.x, shake.y);
+
   drawBackground(ctx, state.camera);
   drawObstacles(ctx, state);
   drawGems(ctx, state);
@@ -192,4 +199,11 @@ function render(ctx, state) {
   drawProjectiles(ctx, state);
   drawAura(ctx, state);
   drawPlayer(ctx, state);
+  drawParticles(ctx, state);
+  drawDamageNumbers(ctx, state);
+
+  ctx.restore();
+
+  // Vinyet sarsıntıdan bağımsız, tüm ekranı kaplar → transform dışında.
+  drawHurtVignette(ctx, state);
 }

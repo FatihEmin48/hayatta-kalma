@@ -96,6 +96,11 @@ function updateEnemies(state, dt) {
 function damageEnemy(state, enemy, amount) {
   if (enemy.dead) return;
   enemy.hp -= amount;
+  spawnDamageNumber(state, enemy.x, enemy.y - enemy.radius - 4, amount,
+    enemy.elite ? { color: '#f1c40f', size: 15 } : undefined);
+  Sound.sfx('hit');
+  spawnParticles(state, enemy.x, enemy.y, '#ffffff', EFFECTS.hitParticleCount,
+    { speedMin: 20, speedMax: 70, life: 0.22, radius: 1.5 });
   if (enemy.hp <= 0) {
     killEnemy(state, enemy);
   }
@@ -104,6 +109,9 @@ function damageEnemy(state, enemy, amount) {
 function killEnemy(state, enemy) {
   enemy.dead = true;
   state.kills += 1;
+  Sound.sfx('death');
+  spawnParticles(state, enemy.x, enemy.y, enemy.color, EFFECTS.deathParticleCount, { life: 0.5 });
+  if (enemy.elite) addShake(state, EFFECTS.shakeOnEliteDeath);
   const value = enemy.xp * (enemy.elite ? ELITE_DEF.xpMult : 1);
   state.gems.push(createGem(enemy.x, enemy.y, value));
 }

@@ -31,6 +31,18 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v4 — En yüksek puanlar tablosu
+
+- **Yerel skor tablosu (`js/scores.js`, localStorage):** Her run sonunda bir **puan** hesaplanır: `öldürme·10 + saniye·3 + (seviye−1)·20` (ağırlıklar `js/config.js` → `SCORE_CONFIG`). En yüksek 10 skor tarayıcıda saklanır. Backend yok — skorlar cihaz/tarayıcı başınadır.
+- **Nerede görünür:** Başlangıç ekranında "En Yüksek Puanlar" tablosu (skor varsa) + "Skorları Temizle" butonu; game-over ekranında o an biten run'ın puanı, tüm zamanların rekoruysa **🏆 Yeni Rekor!** ya da kaçıncı sıraya girdiği, ve senin satırının vurgulandığı ilk-10 tablosu (sıra · puan · süre · seviye · öldürme).
+- Bozuk/eksik localStorage verisine karşı okuma savunmacıdır (parse hatası → boş liste, oyun çökmez).
+
+## v3 — Ses & görsel efektler
+
+- **Ses (WebAudio, dosyasız):** Tüm sesler `js/sound.js` içinde çalışma anında sentezlenir — harici asset yok, build adımı yine yok. SFX'ler: düşman vuruşu/ölümü, oyuncu hasar alması, level-up, sandık, silah evrimi, bıçak atışı, game-over. Ayrıca A-minör tonda hafif, döngüsel bir arka plan müziği (lookahead scheduler ile zamanlanır). Autoplay politikası gereği ses ancak bir kullanıcı jestiyle (Başlat / Tekrar Oyna / mute butonu) açılır; desteklenmeyen/headless ortamda tüm ses çağrıları sessizce no-op olur. Aynı SFX çok sık tetiklenirse (yüzlerce düşman aynı anda ölürken) throttle edilir, gürültü makinesine dönüşmez.
+- **Ses aç/kapat:** Sağ alt köşede bir buton (🔊/🔇) veya **M** tuşu. Tercih `localStorage`'a yazılır, sonraki açılışta hatırlanır.
+- **Görsel efektler (`js/effects.js`):** Düşman ölümünde renk uyumlu parçacık patlaması, vuruşta küçük kıvılcım, uçuşan hasar sayıları (elit vuruşları sarı/büyük), hasar alınca ekran kenarında kırmızı vinyet + kısa **ekran sarsıntısı** (elit ölümü ve sandıkta da hafif sarsıntı). Parçacık ve hasar-sayısı adetleri `js/config.js`'teki `EFFECTS` ile sert biçimde üst sınırlanır, böylece kalabalık sahnede bile kare hızı sabit kalır. `EFFECTS.showDamageNumbers = false` ile hasar rakamları tamamen kapatılabilir.
+
 ## Son güncellemeler (gerçek oynanış geri bildirimine göre)
 
 İlk sürüm bu ortamda sadece headless simülasyonla test edilmişti; gerçek tarayıcıda oynandıktan sonra şu düzeltmeler yapıldı:
@@ -70,6 +82,19 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 13. Bir silahı max seviyeye (5) ve eşleşen pasifi max sayıya (5) çıkarınca otomatik evrim gerçekleşiyor mu (bildirim + kırbaç tam çember vuruyor mu, bıçak aynı anda birden fazla düşmana gidiyor mu, aura oyuncunun canını yeniliyor mu).
 14. Çoklu seviye atlama sırasında (bir sandık/elite öldürme sonrası) bildirimin level-up ekranının üstünde görünüp görünmediği.
 
-## v2 sonrası hâlâ kapsam dışı
+**v3 test (ses & efektler):**
 
-Kalıcı ilerleme (localStorage meta-progression), ses/müzik.
+15. Başlat'a basınca müzik başlıyor mu; düşman öldürünce/vurunca, hasar alınca, level-up/sandık/evrimde farklı SFX'ler duyuluyor mu.
+16. Sağ alttaki 🔊 butonu (veya **M** tuşu) sesi kapatıp açıyor mu; sayfa yenilenince tercih hatırlanıyor mu.
+17. Düşman ölümünde parçacık, vuruşta hasar sayısı görünüyor mu; hasar alınca ekran kızarıp hafifçe sarsılıyor mu; elit ölümü/sandık daha belirgin sarsıyor mu.
+18. Yoğun sahnede (çok sayıda düşman) efektler kare hızını düşürmüyor mu (adetler `EFFECTS` ile sınırlı).
+
+**v4 test (skor tablosu):**
+
+19. Öldükten sonra game-over ekranında bir puan görünüyor mu; ilk oyunda "🏆 Yeni Rekor!" çıkıyor mu.
+20. Birkaç run oynayınca ilk-10 tablosu doluyor mu, sıralama puana göre azalan mı, en son run'ın satırı vurgulanıyor mu.
+21. Sayfayı yenileyince skorlar başlangıç ekranında hatırlanıyor mu; "Skorları Temizle" hepsini silip tabloyu gizliyor mu.
+
+## v4 sonrası hâlâ kapsam dışı
+
+Run'lar arası kalıcı **yükseltme** meta-progression'ı (skor kaydı v4'te geldi; kalıcı güç yükseltmeleri hâlâ yok), ek haritalar/biyomlar.

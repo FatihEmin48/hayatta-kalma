@@ -121,6 +121,7 @@ function checkEvolutions(state) {
 
     if (w.level >= weaponDef.maxLevel && passiveMaxed) {
       w.evolved = true;
+      Sound.sfx('evolve');
       UI.showToast(`${evo.name}'na evrimleşti!`);
     }
   }

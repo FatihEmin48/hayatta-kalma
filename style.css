@@ -98,6 +98,7 @@ canvas {
   background: rgba(10, 12, 16, 0.85);
   text-align: center;
   padding: 20px;
+  overflow-y: auto;
 }
 .screen.hidden { display: none; }
 
@@ -163,6 +164,61 @@ button:hover { filter: brightness(1.1); }
   max-width: 80vw;
 }
 #toast.show { opacity: 1; }
+
+/* En yüksek puanlar tablosu (start + game-over ekranları) */
+.highscores { width: min(360px, 86vw); }
+.highscores.hidden { display: none; }
+.highscores h3 { margin: 6px 0; font-size: 16px; color: var(--accent); }
+
+.hs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.hs-table th, .hs-table td { padding: 3px 6px; text-align: right; }
+.hs-table th:first-child, .hs-table td:first-child { text-align: left; }
+.hs-table thead th {
+  color: var(--muted);
+  font-weight: normal;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+.hs-table tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.04); }
+.hs-table tr.me {
+  background: rgba(241, 196, 15, 0.22);
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.score-line { font-size: 18px; font-weight: bold; color: var(--accent); }
+
+.ghost-btn {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: normal;
+}
+.ghost-btn:hover { color: var(--text); filter: none; }
+.ghost-btn.hidden { display: none; }
+
+/* Sağ altta ses aç/kapat — joystick sol altta olduğu için çakışmaz. Her
+   ekranda (start/oyun/game-over) görünür ve tıklanabilir kalsın diye yüksek
+   z-index + pointer-events. */
+#mute-btn {
+  position: absolute;
+  right: 14px;
+  bottom: 16px;
+  z-index: 60;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+}
+#mute-btn:hover { background: rgba(0, 0, 0, 0.72); filter: none; }
+#mute-btn.muted { opacity: 0.65; }
 
 #joystick {
   display: none;

@@ -99,6 +99,32 @@ const CHEST_CONFIG = {
   spawnEverySec: 90, maxConcurrent: 2, radius: 16, xpReward: 40, color: '#d4af37',
 };
 
+// Puanlama (js/scores.js). Puan = öldürme·perKill + saniye·perSecond +
+// (seviye-1)·perLevel. En yüksek maxEntries skor localStorage'da tutulur.
+const SCORE_CONFIG = {
+  perKill: 10,
+  perSecond: 3,
+  perLevel: 20,
+  maxEntries: 10,
+};
+
+// Görsel geri bildirim ayarları (js/effects.js). maxParticles/maxDamageNumbers
+// sert üst sınırlardır: 180 eşzamanlı düşman aynı anda ölse bile efekt sayısı
+// (ve dolayısıyla çizim maliyeti) sınırlı kalır. showDamageNumbers ile uçuşan
+// hasar rakamları tamamen kapatılabilir.
+const EFFECTS = {
+  maxParticles: 220,
+  maxDamageNumbers: 40,
+  showDamageNumbers: true,
+  deathParticleCount: 9,
+  hitParticleCount: 2,
+  shakeOnHurt: 9,
+  shakeOnEliteDeath: 7,
+  shakeOnChest: 5,
+  shakeDecay: 42,        // px/sn azalma → ~0.2sn'lik kısa, tok sarsıntı
+  hurtFlashTime: 0.4,
+};
+
 const EVOLUTION_DEFS = [
   { weaponId: 'whip', passiveId: 'damage', name: 'Kırbaç Fırtınası', damageMult: 1.8, rangeMult: 1.1 },
   { weaponId: 'knife', passiveId: 'pickup', name: 'Bıçak Yağmuru', extraProjectiles: 2 },
