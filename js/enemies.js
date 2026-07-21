@@ -222,6 +222,7 @@ function killEnemy(state, enemy) {
   spawnParticles(state, enemy.x, enemy.y, enemy.color, EFFECTS.deathParticleCount, { life: 0.5 });
 
   if (enemy.boss) {
+    state.bossKills += 1;
     Sound.sfx('evolve');
     addShake(state, EFFECTS.shakeOnEliteDeath * 2.2);
     spawnParticles(state, enemy.x, enemy.y, enemy.color, 32, { speedMin: 80, speedMax: 260, life: 0.85 });

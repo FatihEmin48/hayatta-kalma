@@ -31,6 +31,12 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v14 — Başarımlar + kilit açma
+
+- **Başarımlar (`ACHIEVEMENTS`, `js/achievements.js`):** Run sonunda değerlendirilir (`kills`, `timer`, `level`, `bossKills`, toplam altın). Örnekler: İlk Kan, Kıyıcı (100 öldürme), Katliam (500), Dayanıklı (5dk), Kaya Gibi (10dk), Tecrübeli (sv 20), Boss Avcısı, Zengin (300 altın). Kazanıldıkça localStorage'a yazılır ve bildirim çıkar.
+- **Kilit açma:** Başarımlar karakter açabilir — **Büyücü** karakteri (Dönen Kalkanla başlar, güçlü ama narin) "Boss Avcısı" başarımıyla açılır. Kilitli karakterler başlangıç ekranında 🔒 ile pasif görünür.
+- **Başarım listesi:** Başlangıç ekranında 🏆 Başarımlar panelinde tüm başarımlar ve tamamlanma durumu (✅/🔒) + sayaç.
+
 ## v13 — Atılma (dash) yeteneği
 
 - **Dash (`DASH`, `js/main.js` + `input.js`):** **Boşluk** tuşu (masaüstü) veya alt-ortadaki ⚡ butonu (dokunmatik) ile hareket yönünde (yoksa bakış yönünde) kısa süreli hızlı hamle. Dash sırasında kısa **i-frame** (dokunulmazlık) vardır, yani düşman kümesinden sıyrılmak için kullanılır. Cooldown'lu; alt-ortadaki halka göstergesi cooldown dolunca yeşile döner.
@@ -205,6 +211,11 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 
 38. Boşluk (veya ⚡ butonu) hareket yönünde hızlı atılma yapıyor mu; atılma anında düşmandan hasar almıyor (i-frame) mu; alt-ortadaki halka cooldown dolunca yeşile dönüyor ve tekrar atılınabiliyor mu.
 
-## v10 sonrası hâlâ kapsam dışı
+**v14 test (başarımlar):**
 
-Farklı oyun modları, çevrimiçi skor tablosu.
+39. İlgili şartlar sağlanınca (ör. 100 öldürme, 5 dk, boss öldürme) run sonunda "🏆 <ad>" bildirimi çıkıyor mu; başlangıç ekranındaki 🏆 Başarımlar panelinde ✅ oluyor mu ve sayaç artıyor mu.
+40. Boss öldürüp Boss Avcısı başarımını alınca Büyücü karakteri kilidi açılıp seçilebiliyor mu; sayfa yenilenince başarımlar/kilit açılışı hatırlanıyor mu.
+
+## v14 sonrası hâlâ kapsam dışı
+
+Farklı oyun modları (boss rush / süre saldırısı), çevrimiçi skor tablosu, gamepad desteği, animasyonlu sprite'lar.

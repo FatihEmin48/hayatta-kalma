@@ -251,6 +251,25 @@ button:hover { filter: brightness(1.1); }
 }
 .shop-buy:disabled { background: #3a3f4a; color: var(--muted); cursor: default; }
 
+/* Başarımlar listesi */
+.ach-list { width: min(380px, 88vw); text-align: left; }
+.ach-list.hidden { display: none; }
+.ach-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  margin-bottom: 5px;
+  opacity: 0.6;
+}
+.ach-row.done { opacity: 1; }
+.ach-icon { font-size: 18px; }
+.ach-info { display: flex; flex-direction: column; }
+.ach-name { font-weight: bold; font-size: 14px; }
+.ach-desc { color: var(--muted); font-size: 12px; }
+
 .ghost-btn {
   background: transparent;
   color: var(--muted);

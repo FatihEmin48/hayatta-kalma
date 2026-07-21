@@ -24,6 +24,21 @@ const CHARACTERS = [
   { id: 'warrior', name: 'Savaşçı', desc: 'Dengeli. Kırbaçla başlar.', startWeapon: 'whip', mods: { hp: 0, speed: 0, damage: 0 } },
   { id: 'ranger', name: 'Nişancı', desc: 'Hızlı ama narin. Fırlatan Bıçakla başlar.', startWeapon: 'knife', mods: { hp: -20, speed: 0.15, damage: 0.05 } },
   { id: 'brute', name: 'Tank', desc: 'Yavaş ama dayanıklı. Alan Hasarıyla başlar.', startWeapon: 'aura', mods: { hp: 45, speed: -0.1, damage: 0 } },
+  { id: 'mage', name: 'Büyücü', desc: 'Güçlü ama narin. Dönen Kalkanla başlar. (Boss Avcısı başarımıyla açılır)', startWeapon: 'orbit', mods: { hp: -25, speed: 0.05, damage: 0.15 }, unlock: 'boss_slayer' },
+];
+
+// Başarımlar (js/achievements.js): run sonunda değerlendirilir; bazıları
+// karakter açar (bkz. CHARACTERS unlock). test(stats) doğruysa kazanılır.
+// stats = { kills, timer, level, bossKills, totalGold }.
+const ACHIEVEMENTS = [
+  { id: 'first_blood', name: 'İlk Kan',    desc: 'Bir düşman öldür',           test: s => s.kills >= 1 },
+  { id: 'slayer_100',  name: 'Kıyıcı',     desc: 'Tek oyunda 100 öldürme',     test: s => s.kills >= 100 },
+  { id: 'slayer_500',  name: 'Katliam',    desc: 'Tek oyunda 500 öldürme',     test: s => s.kills >= 500 },
+  { id: 'survivor_5',  name: 'Dayanıklı',  desc: '5 dakika hayatta kal',       test: s => s.timer >= 300 },
+  { id: 'survivor_10', name: 'Kaya Gibi',  desc: '10 dakika hayatta kal',      test: s => s.timer >= 600 },
+  { id: 'level_20',    name: 'Tecrübeli',  desc: '20. seviyeye ulaş',          test: s => s.level >= 20 },
+  { id: 'boss_slayer', name: 'Boss Avcısı', desc: 'Bir boss öldür (Büyücü açılır)', test: s => s.bossKills >= 1 },
+  { id: 'rich',        name: 'Zengin',     desc: 'Toplam 300 altına ulaş',     test: s => s.totalGold >= 300 },
 ];
 
 // Atılma (dash) yeteneği (js/main.js + input.js): kısa süreli hızlı hamle +

@@ -25,6 +25,7 @@ function createInitialState() {
     mode: STATE.START,
     timer: 0,
     kills: 0,
+    bossKills: 0,
     player: createPlayer(),
     enemies: [],
     projectiles: [],
@@ -179,22 +180,37 @@ function update(state, dt) {
   state.damageNumbers = removeDead(state.damageNumbers);
 }
 
+// Run bitince: altın ekle + başarımları değerlendir (yeni açılanları bildir).
+function endRunRewards(state) {
+  const earned = Meta.goldForRun(state);
+  Meta.addGold(earned);
+  const stats = {
+    kills: state.kills,
+    timer: state.timer,
+    level: state.player.level,
+    bossKills: state.bossKills,
+    totalGold: Meta.getGold(),
+  };
+  const newly = Achievements.evaluate(stats);
+  if (newly.length) {
+    Sound.sfx('evolve');
+    UI.showToast(`🏆 ${newly.map(a => a.name).join(', ')}`);
+  }
+  return earned;
+}
+
 function checkTransitions(state) {
   if (state.player.hp <= 0) {
     state.mode = STATE.GAME_OVER;
     Sound.sfx('gameover');
     Sound.stopMusic();
-    const earned = Meta.goldForRun(state);
-    Meta.addGold(earned);
-    UI.showGameOver(state, false, Scores.submit(state), earned);
+    UI.showGameOver(state, false, Scores.submit(state), endRunRewards(state));
     return;
   }
   if (ENABLE_VICTORY && state.timer >= VICTORY_TIME_SEC) {
     state.mode = STATE.VICTORY;
     Sound.stopMusic();
-    const earned = Meta.goldForRun(state);
-    Meta.addGold(earned);
-    UI.showGameOver(state, true, Scores.submit(state), earned);
+    UI.showGameOver(state, true, Scores.submit(state), endRunRewards(state));
     return;
   }
   if (state.pendingLevelUps > 0) {

@@ -30,6 +30,8 @@ const UI = (function () {
     els.shop = document.getElementById('shop');
     els.shopToggle = document.getElementById('shop-toggle');
     els.charSelect = document.getElementById('char-select');
+    els.achievements = document.getElementById('achievements');
+    els.achToggle = document.getElementById('ach-toggle');
 
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', restartGame);
@@ -50,6 +52,11 @@ const UI = (function () {
       renderShop();
     });
     renderCharacters();
+    refreshAchievements();
+    els.achToggle.addEventListener('click', () => {
+      els.achievements.classList.toggle('hidden');
+      refreshAchievements();
+    });
 
     refreshStartHighScores();
     els.clearScoresBtn.addEventListener('click', () => {
@@ -307,12 +314,33 @@ const UI = (function () {
     }));
   }
 
+  function renderAchievements() {
+    if (!els.achievements) return;
+    let rows = '';
+    for (const a of Achievements.all()) {
+      const done = Achievements.isDone(a.id);
+      rows +=
+        `<div class="ach-row ${done ? 'done' : ''}">` +
+        `<span class="ach-icon">${done ? '✅' : '🔒'}</span>` +
+        `<span class="ach-info"><span class="ach-name">${a.name}</span>` +
+        `<span class="ach-desc">${a.desc}</span></span></div>`;
+    }
+    els.achievements.innerHTML = rows;
+  }
+
+  function refreshAchievements() {
+    if (!els.achToggle) return;
+    els.achToggle.textContent = `🏆 Başarımlar (${Achievements.doneCount()}/${Achievements.all().length})`;
+    if (!els.achievements.classList.contains('hidden')) renderAchievements();
+  }
+
   // Game-over ekranından başlangıç menüsüne dönünce çağrılır.
   function showStartMenu() {
     hideAllScreens();
     els.screenStart.classList.remove('hidden');
     renderShop();
     renderCharacters();
+    refreshAchievements();
     refreshStartHighScores();
   }
 
