@@ -55,11 +55,11 @@ function getPassiveDef(id) {
 // Not: kalıcı mağaza yükseltmeleri (Meta.bonus) run içi pasiflerin ÜSTÜNE
 // eklenir, böylece her run mağazada aldığın kalıcı güçle başlar.
 function getPlayerMaxHp(player) {
-  return PLAYER_BASE.maxHp + player.passives.maxHp * getPassiveDef('maxHp').step + Meta.bonus('hp');
+  return PLAYER_BASE.maxHp + player.passives.maxHp * getPassiveDef('maxHp').step + Meta.bonus('hp') + Characters.mod('hp');
 }
 
 function getPlayerSpeed(player) {
-  return PLAYER_BASE.speed * (1 + player.passives.speed * getPassiveDef('speed').step + Meta.bonus('speed'));
+  return PLAYER_BASE.speed * (1 + player.passives.speed * getPassiveDef('speed').step + Meta.bonus('speed') + Characters.mod('speed'));
 }
 
 function getPlayerPickupRadius(player) {
@@ -67,7 +67,7 @@ function getPlayerPickupRadius(player) {
 }
 
 function getPlayerDamageMult(player) {
-  return 1 + player.passives.damage * getPassiveDef('damage').step + Meta.bonus('damage');
+  return 1 + player.passives.damage * getPassiveDef('damage').step + Meta.bonus('damage') + Characters.mod('damage');
 }
 
 function getPlayerRegen(player) {

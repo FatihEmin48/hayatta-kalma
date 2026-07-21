@@ -16,6 +16,16 @@ const PLAYER_BASE = {
   invulnMs: 600,
 };
 
+// Oynanabilir karakterler (js/characters.js). Farklı başlangıç silahı +
+// stat modifikasyonları (hp düz, speed/damage oransal). Başlangıç ekranında
+// seçilir, tercih localStorage'da tutulur. `unlock` verilirse o başarım
+// açılana dek kilitli (bkz. js/achievements.js).
+const CHARACTERS = [
+  { id: 'warrior', name: 'Savaşçı', desc: 'Dengeli. Kırbaçla başlar.', startWeapon: 'whip', mods: { hp: 0, speed: 0, damage: 0 } },
+  { id: 'ranger', name: 'Nişancı', desc: 'Hızlı ama narin. Fırlatan Bıçakla başlar.', startWeapon: 'knife', mods: { hp: -20, speed: 0.15, damage: 0.05 } },
+  { id: 'brute', name: 'Tank', desc: 'Yavaş ama dayanıklı. Alan Hasarıyla başlar.', startWeapon: 'aura', mods: { hp: 45, speed: -0.1, damage: 0 } },
+];
+
 const WEAPON_DEFS = [
   {
     id: 'whip', name: 'Kırbaç', kind: 'melee_arc',

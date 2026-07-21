@@ -31,6 +31,14 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v10 — Karakter seçimi
+
+- **Karakterler (`CHARACTERS`, `js/characters.js`):** Başlangıç ekranında 3 karakterden biri seçilir (tercih localStorage'da):
+  - **Savaşçı** — dengeli, Kırbaçla başlar.
+  - **Nişancı** — +%15 hız, −20 can, +%5 hasar; Fırlatan Bıçakla başlar.
+  - **Tank** — +45 can, −%10 hız; Alan Hasarıyla başlar.
+- Karakter modları oyuncunun stat fonksiyonlarına (Meta yükseltmelerinin yanında) eklenir; başlangıç silahı da karaktere göre değişir. Karakterlere `unlock` alanı verilerek başarımla kilitlenebilir (bkz. başarımlar).
+
 ## v9 — Duraklat menüsü + mini-harita
 
 - **Duraklat:** Oyun sırasında sol üstteki ⏸️ butonu veya **ESC** / **P** tuşu oyunu duraklatır ("Duraklatıldı" ekranı + "Devam Et" / "Ana Menü"). Duraklatınca güncelleme durur, sahne donar, müzik susar; devam edince kaldığı yerden sürer. Yeni durum: `STATE.PAUSED`.
@@ -161,6 +169,11 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 32. Oyun sırasında ⏸️ / ESC / P duraklatıyor mu; "Devam Et" kaldığı yerden sürdürüyor, "Ana Menü" başlangıca dönüyor mu; duraklatınca düşmanlar donuyor mu.
 33. Sağ üstteki mini-harita oyuncu/düşman/boss/sandık konumlarını doğru gösteriyor mu.
 
-## v9 sonrası hâlâ kapsam dışı
+**v10 test (karakter seçimi):**
+
+34. Başlangıç ekranında 3 karakter görünüyor, seçilen vurgulanıp açıklaması değişiyor mu; seçim sayfa yenilenince hatırlanıyor mu.
+35. Nişancı bıçakla + daha hızlı, Tank auraile + daha çok canla, Savaşçı kırbaçla başlıyor mu.
+
+## v10 sonrası hâlâ kapsam dışı
 
 Farklı oyun modları, çevrimiçi skor tablosu.

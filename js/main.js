@@ -12,7 +12,7 @@ function createPlayer() {
     facingX: 0, facingY: -1,
     invulnUntil: 0,
     xp: 0, level: 1, xpToNext: xpToNextLevel(1),
-    weapons: [{ defId: 'whip', level: 1, cooldownLeft: 0, evolved: false }],
+    weapons: [{ defId: Characters.current().startWeapon, level: 1, cooldownLeft: 0, evolved: false }],
     passives: { speed: 0, maxHp: 0, pickup: 0, damage: 0, regen: 0 },
   };
   p.hp = getPlayerMaxHp(p); // kalıcı "Başlangıç Canı" yükseltmesiyle tam dolu başla

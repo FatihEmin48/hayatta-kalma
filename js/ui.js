@@ -27,6 +27,7 @@ const UI = (function () {
     els.clearScoresBtn = document.getElementById('clear-scores-btn');
     els.shop = document.getElementById('shop');
     els.shopToggle = document.getElementById('shop-toggle');
+    els.charSelect = document.getElementById('char-select');
 
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', restartGame);
@@ -43,6 +44,7 @@ const UI = (function () {
       els.shop.classList.toggle('hidden');
       renderShop();
     });
+    renderCharacters();
 
     refreshStartHighScores();
     els.clearScoresBtn.addEventListener('click', () => {
@@ -226,11 +228,37 @@ const UI = (function () {
     }));
   }
 
+  // Başlangıç ekranı karakter seçici: her karakter bir buton, seçili olan
+  // vurgulanır, altında açıklaması; kilitli karakterler pasif + kilit ipucu.
+  function renderCharacters() {
+    if (!els.charSelect) return;
+    const curId = Characters.getId();
+    let btns = '';
+    for (const c of CHARACTERS) {
+      const unlocked = Characters.isUnlocked(c);
+      const active = c.id === curId ? ' active' : '';
+      const lockedCls = unlocked ? '' : ' locked';
+      const label = unlocked ? c.name : `🔒 ${c.name}`;
+      btns += `<button class="char-btn${active}${lockedCls}" data-id="${c.id}" ${unlocked ? '' : 'disabled'}>${label}</button>`;
+    }
+    const cur = Characters.current();
+    els.charSelect.innerHTML =
+      `<div class="char-title">Karakter</div>` +
+      `<div class="char-btns">${btns}</div>` +
+      `<div class="char-desc">${cur.desc}</div>`;
+    const btnEls = els.charSelect.querySelectorAll ? els.charSelect.querySelectorAll('.char-btn') : [];
+    btnEls.forEach(b => b.addEventListener('click', () => {
+      Characters.select(b.getAttribute('data-id'));
+      renderCharacters();
+    }));
+  }
+
   // Game-over ekranından başlangıç menüsüne dönünce çağrılır.
   function showStartMenu() {
     hideAllScreens();
     els.screenStart.classList.remove('hidden');
     renderShop();
+    renderCharacters();
     refreshStartHighScores();
   }
 
