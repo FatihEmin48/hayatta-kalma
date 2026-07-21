@@ -147,6 +147,15 @@ const OBSTACLE_CONFIG = {
   color: '#4a3f35',
 };
 
+// Biyomlar (js/render.js): her run rastgele biri seçilir, arka plan / ızgara /
+// engel renklerini değiştirir. Oynanışı değiştirmez, görsel çeşitlilik katar.
+const BIOMES = [
+  { id: 'night',  name: 'Gece',          bg: '#0a0c10', grid: 'rgba(255,255,255,0.05)', obstacle: '#4a3f35' },
+  { id: 'desert', name: 'Çöl',           bg: '#1c1608', grid: 'rgba(230,200,120,0.06)', obstacle: '#6b5a3a' },
+  { id: 'ice',    name: 'Buz Diyarı',    bg: '#0a1620', grid: 'rgba(120,200,230,0.06)', obstacle: '#3a5b6a' },
+  { id: 'blood',  name: 'Kan Bataklığı', bg: '#140a0c', grid: 'rgba(230,120,120,0.05)', obstacle: '#4a2f35' },
+];
+
 const CHEST_CONFIG = {
   spawnEverySec: 90, maxConcurrent: 2, radius: 16, xpReward: 40, color: '#d4af37',
 };

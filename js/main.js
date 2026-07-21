@@ -39,6 +39,7 @@ function createInitialState() {
     shake: { mag: 0 },
     hurtFlash: 0,
     camera: { x: 0, y: 0 },
+    biome: BIOMES[randInt(0, BIOMES.length - 1)],
     spawnTimer: SPAWN.baseIntervalSec,
     eliteTimer: ELITE_DEF.every,
     bossTimer: BOSS_DEF.every,
@@ -196,6 +197,7 @@ function startGame() {
   // Start/Tekrar Oyna butonu bir kullanıcı jesti — autoplay kilidini burada aç.
   Sound.resume();
   Sound.startMusic();
+  UI.showToast(`Biyom: ${state.biome.name}`);
 }
 
 function restartGame() {

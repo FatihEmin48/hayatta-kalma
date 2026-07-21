@@ -31,6 +31,10 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v11 — Biyomlar
+
+- **Biyomlar (`BIOMES`, `js/render.js`):** Her run başında rastgele bir biyom seçilir (Gece / Çöl / Buz Diyarı / Kan Bataklığı) ve başta bildirim çıkar. Arka plan rengi, ızgara ve engel renkleri biyoma göre değişir. Oynanışı etkilemez, görsel çeşitlilik katar.
+
 ## v10 — Karakter seçimi
 
 - **Karakterler (`CHARACTERS`, `js/characters.js`):** Başlangıç ekranında 3 karakterden biri seçilir (tercih localStorage'da):
@@ -173,6 +177,10 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 
 34. Başlangıç ekranında 3 karakter görünüyor, seçilen vurgulanıp açıklaması değişiyor mu; seçim sayfa yenilenince hatırlanıyor mu.
 35. Nişancı bıçakla + daha hızlı, Tank auraile + daha çok canla, Savaşçı kırbaçla başlıyor mu.
+
+**v11 test (biyomlar):**
+
+36. Her oyun başında farklı bir biyom bildirimi çıkıp arka plan/engel renkleri değişiyor mu.
 
 ## v10 sonrası hâlâ kapsam dışı
 

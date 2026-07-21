@@ -2,13 +2,15 @@ function worldToScreen(camera, x, y) {
   return { x: x - camera.x, y: y - camera.y };
 }
 
-function drawBackground(ctx, camera) {
-  ctx.fillStyle = '#0a0c10';
+function drawBackground(ctx, state) {
+  const biome = state.biome || BIOMES[0];
+  const camera = state.camera;
+  ctx.fillStyle = biome.bg;
   // Screen shake sırasında kamera birkaç piksel kayınca kenarlarda boşluk
   // görünmesin diye biraz taşırarak doldur.
   ctx.fillRect(-30, -30, CANVAS_W + 60, CANVAS_H + 60);
 
-  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.strokeStyle = biome.grid;
   ctx.lineWidth = 1;
   const gridSize = 100;
   const startX = -(camera.x % gridSize);
@@ -73,7 +75,7 @@ function drawEnemies(ctx, state) {
 }
 
 function drawObstacles(ctx, state) {
-  ctx.fillStyle = OBSTACLE_CONFIG.color;
+  ctx.fillStyle = (state.biome || BIOMES[0]).obstacle;
   for (const o of state.obstacles) {
     const pos = worldToScreen(state.camera, o.x, o.y);
     if (pos.x < -60 || pos.x > CANVAS_W + 60 || pos.y < -60 || pos.y > CANVAS_H + 60) continue;
@@ -334,7 +336,7 @@ function render(ctx, state) {
   ctx.save();
   ctx.translate(shake.x, shake.y);
 
-  drawBackground(ctx, state.camera);
+  drawBackground(ctx, state);
   drawObstacles(ctx, state);
   drawGems(ctx, state);
   drawChests(ctx, state);
