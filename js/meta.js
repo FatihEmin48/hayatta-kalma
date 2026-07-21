@@ -67,6 +67,15 @@ const Meta = (function () {
     return data.gold;
   }
 
+  // Altın harca (yeterliyse). Başarılıysa true.
+  function spend(n) {
+    n = Math.max(0, Math.round(n));
+    if (data.gold < n) return false;
+    data.gold -= n;
+    save();
+    return true;
+  }
+
   function goldForRun(state) {
     const g = GOLD_CONFIG;
     const base = state.kills * g.perKill +
@@ -77,5 +86,5 @@ const Meta = (function () {
 
   function reset() { data = defState(); save(); }
 
-  return { getGold, getLevel, costFor, buy, bonus, addGold, goldForRun, reset };
+  return { getGold, getLevel, costFor, buy, bonus, addGold, spend, goldForRun, reset };
 })();

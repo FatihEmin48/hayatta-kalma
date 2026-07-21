@@ -190,6 +190,14 @@ const META_UPGRADES = [
   { id: 'greed',  name: 'Altın Bulma',     desc: '+%12 altın',        step: 0.12, maxLevel: 5, baseCost: 55, costGrowth: 1.7 },
 ];
 
+// Level-up ekranı kolaylıkları (js/leveling.js + ui.js). Yeniden çevir altına
+// mal olur, atlayınca küçük altın kazanılır, sil (banish) run başına sınırlıdır.
+const LEVELUP_QOL = {
+  rerollCost: 5,
+  skipGold: 3,
+  banishPerRun: 3,
+};
+
 // Puanlama (js/scores.js). Puan = öldürme·perKill + saniye·perSecond +
 // (seviye-1)·perLevel. En yüksek maxEntries skor localStorage'da tutulur.
 const SCORE_CONFIG = {

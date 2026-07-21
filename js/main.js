@@ -45,6 +45,9 @@ function createInitialState() {
     bossTimer: BOSS_DEF.every,
     pendingLevelUps: 0,
     levelUpChoices: [],
+    banished: [],
+    banishLeft: LEVELUP_QOL.banishPerRun,
+    lockedIndex: -1,
   };
 }
 
@@ -169,24 +172,59 @@ function checkTransitions(state) {
     state.mode = STATE.LEVEL_UP;
     Sound.sfx('levelup');
     state.levelUpChoices = generateLevelUpChoices(state);
-    UI.showLevelUp(state.levelUpChoices);
+    showLevelUpModal();
+  }
+}
+
+function showLevelUpModal() {
+  UI.showLevelUp(state.levelUpChoices, {
+    gold: Meta.getGold(),
+    rerollCost: LEVELUP_QOL.rerollCost,
+    banishLeft: state.banishLeft,
+    lockedIndex: state.lockedIndex,
+  });
+}
+
+// Bir seçim/atlama sonrası: kuyrukta level-up varsa yenisini göster, yoksa devam.
+function afterLevelUp() {
+  if (state.pendingLevelUps > 0) {
+    Sound.sfx('levelup');
+    state.levelUpChoices = generateLevelUpChoices(state);
+    showLevelUpModal();
+  } else {
+    UI.hideLevelUp();
+    state.mode = STATE.PLAYING;
   }
 }
 
 function selectLevelUpChoice(index) {
   const choice = state.levelUpChoices[index];
   if (!choice) return;
-
   applyLevelUpChoice(state, choice);
+  afterLevelUp();
+}
 
-  if (state.pendingLevelUps > 0) {
-    Sound.sfx('levelup');
-    state.levelUpChoices = generateLevelUpChoices(state);
-    UI.showLevelUp(state.levelUpChoices);
-  } else {
-    UI.hideLevelUp();
-    state.mode = STATE.PLAYING;
-  }
+function levelUpReroll() {
+  if (state.mode !== STATE.LEVEL_UP) return;
+  if (rerollChoices(state)) { Sound.sfx('shoot'); showLevelUpModal(); }
+}
+
+function levelUpSkip() {
+  if (state.mode !== STATE.LEVEL_UP) return;
+  Meta.addGold(LEVELUP_QOL.skipGold);
+  state.pendingLevelUps -= 1;
+  afterLevelUp();
+}
+
+function levelUpLock(index) {
+  if (state.mode !== STATE.LEVEL_UP) return;
+  toggleLevelUpLock(state, index);
+  showLevelUpModal();
+}
+
+function levelUpBanish(index) {
+  if (state.mode !== STATE.LEVEL_UP) return;
+  if (banishChoice(state, index)) { Sound.sfx('hit'); showLevelUpModal(); }
 }
 
 function startGame() {

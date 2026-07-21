@@ -122,17 +122,46 @@ button:hover { filter: brightness(1.1); }
   display: flex;
   gap: 12px;
 }
+.choice-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 180px;
+}
+.choice-card.locked .choice-btn { border-color: #d4af37; box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.35); }
 .choice-btn {
   background: var(--panel);
   border: 2px solid var(--accent);
   color: var(--text);
-  width: 180px;
+  width: 100%;
   padding: 14px;
   border-radius: 8px;
   cursor: pointer;
   text-align: left;
 }
 .choice-btn:hover { background: #262b38; }
+.choice-tools { display: flex; gap: 6px; justify-content: center; }
+.mini-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.mini-btn:hover { background: rgba(255, 255, 255, 0.16); filter: none; }
+.mini-btn:disabled { opacity: 0.4; cursor: default; }
+
+#levelup-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 6px;
+}
+.levelup-info { color: var(--muted); font-size: 13px; }
 .choice-btn .choice-key { color: var(--accent); font-weight: bold; }
 .choice-btn .choice-name { font-weight: bold; margin: 4px 0; }
 .choice-btn .choice-desc { font-size: 12px; color: var(--muted); }

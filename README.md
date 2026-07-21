@@ -31,6 +31,17 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v12 — Level-up kolaylıkları (çevir / atla / kilitle / sil)
+
+Seviye atlama ekranı Vampire Survivors tarzı kontrollerle zenginleşti (`LEVELUP_QOL`, `js/leveling.js`):
+
+- **🎲 Yeniden Çevir:** Altın karşılığı (varsayılan 5) üç seçeneği yeniden üretir. Klavyede **R**.
+- **Kilitle (🔒):** Bir seçeneği kilitler; yeniden çevirince o slot korunur, diğerleri değişir.
+- **Sil (✖):** Bir seçeneği bu run'ın geri kalanında havuzdan çıkarır (run başına sınırlı hak).
+- **Atla:** Seçim yapmadan geçer, küçük bir altın kazandırır.
+
+Altın harcaması `Meta.spend` ile kalıcı mağaza altınından düşülür.
+
 ## v11 — Biyomlar
 
 - **Biyomlar (`BIOMES`, `js/render.js`):** Her run başında rastgele bir biyom seçilir (Gece / Çöl / Buz Diyarı / Kan Bataklığı) ve başta bildirim çıkar. Arka plan rengi, ızgara ve engel renkleri biyoma göre değişir. Oynanışı etkilemez, görsel çeşitlilik katar.
@@ -181,6 +192,10 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 **v11 test (biyomlar):**
 
 36. Her oyun başında farklı bir biyom bildirimi çıkıp arka plan/engel renkleri değişiyor mu.
+
+**v12 test (level-up kolaylıkları):**
+
+37. Seviye atlama ekranında Yeniden Çevir (altın düşüyor mu / R tuşu), Atla (+altın), her seçenekte 🔒 kilitle ve ✖ sil çalışıyor mu; kilitli seçenek yeniden çevirince kalıyor, silinen seçenek bir daha çıkmıyor mu.
 
 ## v10 sonrası hâlâ kapsam dışı
 

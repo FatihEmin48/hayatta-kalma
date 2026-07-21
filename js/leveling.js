@@ -74,11 +74,23 @@ function getPlayerRegen(player) {
   return player.passives.regen * getPassiveDef('regen').step + Meta.bonus('regen');
 }
 
-function generateLevelUpChoices(state) {
+// Bir seçeneğin "sil" anahtarı: silahın iki varyantı (yeni/yükselt) aynı
+// silahı temsil ettiği için ortak 'w:<id>' anahtarını paylaşır; pasifler 'p:'.
+function choiceBanishKey(choice) {
+  return (choice.type === 'passive' ? 'p:' : 'w:') + choice.defId;
+}
+
+// Aynı seçeneği reroll'da elemek için kimlik.
+function choiceKey(choice) {
+  return choice.type + ':' + choice.defId;
+}
+
+function buildChoicePool(state) {
   const player = state.player;
   const pool = [];
 
   for (const w of WEAPON_DEFS) {
+    if (state.banished.includes('w:' + w.id)) continue;
     const owned = player.weapons.find(pw => pw.defId === w.id);
     if (!owned) {
       pool.push({ type: 'new_weapon', defId: w.id, name: w.name, desc: `Yeni silah: ${w.name}` });
@@ -88,12 +100,57 @@ function generateLevelUpChoices(state) {
   }
 
   for (const p of PASSIVE_DEFS) {
+    if (state.banished.includes('p:' + p.id)) continue;
     if (player.passives[p.id] < p.maxCount) {
       pool.push({ type: 'passive', defId: p.id, name: p.name, desc: p.desc });
     }
   }
 
-  return pickRandomUnique(pool, 3);
+  return pool;
+}
+
+function generateLevelUpChoices(state) {
+  state.lockedIndex = -1; // yeni modal → kilit sıfırlanır
+  return pickRandomUnique(buildChoicePool(state), 3);
+}
+
+// Yeniden çevir: altın öder, kilitli seçeneği yerinde tutup diğerlerini
+// yeniden üretir. Yeterli altın yoksa false.
+function rerollChoices(state) {
+  if (!Meta.spend(LEVELUP_QOL.rerollCost)) return false;
+  const locked = state.lockedIndex;
+  const keep = (locked >= 0 && state.levelUpChoices[locked]) ? state.levelUpChoices[locked] : null;
+
+  let pool = buildChoicePool(state);
+  if (keep) pool = pool.filter(c => choiceKey(c) !== choiceKey(keep));
+  const fresh = pickRandomUnique(pool, keep ? 2 : 3);
+
+  const result = [];
+  let fi = 0;
+  for (let i = 0; i < 3; i++) {
+    if (keep && i === locked) result.push(keep);
+    else if (fi < fresh.length) result.push(fresh[fi++]);
+  }
+  state.levelUpChoices = result;
+  state.lockedIndex = keep ? result.indexOf(keep) : -1;
+  return true;
+}
+
+// Sil (banish): seçeneği bu run'ın geri kalanında havuzdan çıkarır (run başına
+// sınırlı), sonra seçenekleri yeniden üretir.
+function banishChoice(state, index) {
+  if (state.banishLeft <= 0) return false;
+  const c = state.levelUpChoices[index];
+  if (!c) return false;
+  state.banished.push(choiceBanishKey(c));
+  state.banishLeft -= 1;
+  state.lockedIndex = -1;
+  state.levelUpChoices = pickRandomUnique(buildChoicePool(state), 3);
+  return true;
+}
+
+function toggleLevelUpLock(state, index) {
+  state.lockedIndex = (state.lockedIndex === index) ? -1 : index;
 }
 
 function applyLevelUpChoice(state, choice) {

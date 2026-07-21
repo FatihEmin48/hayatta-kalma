@@ -18,6 +18,7 @@ const UI = (function () {
     els.screenPause = document.getElementById('screen-pause');
     els.pauseBtn = document.getElementById('pause-btn');
     els.levelUpChoices = document.getElementById('levelup-choices');
+    els.levelUpActions = document.getElementById('levelup-actions');
     els.gameOverTitle = document.getElementById('gameover-title');
     els.gameOverStats = document.getElementById('gameover-stats');
     els.gameOverScore = document.getElementById('gameover-score');
@@ -37,6 +38,9 @@ const UI = (function () {
     els.pauseBtn.addEventListener('click', togglePause);
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') togglePause();
+      // 'r' = level-up'ta yeniden çevir (hareket tuşu değil, güvenli). Atlama
+      // bilerek klavyeye bağlı değil: 's' hareket tuşu, kazara atlamayı önle.
+      else if ((e.key === 'r' || e.key === 'R') && state.mode === STATE.LEVEL_UP) levelUpReroll();
     });
 
     renderShop();
@@ -147,16 +151,64 @@ const UI = (function () {
     els.killsText.textContent = `Öldürülen: ${state.kills}`;
   }
 
-  function showLevelUp(choices) {
+  function showLevelUp(choices, meta) {
     els.levelUpChoices.innerHTML = '';
     choices.forEach((choice, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'choice-btn';
-      btn.innerHTML = `<div class="choice-key">${i + 1}</div><div class="choice-name">${choice.name}</div><div class="choice-desc">${choice.desc}</div>`;
-      btn.addEventListener('click', () => selectLevelUpChoice(i));
-      els.levelUpChoices.appendChild(btn);
+      const card = document.createElement('div');
+      card.className = 'choice-card' + (meta && meta.lockedIndex === i ? ' locked' : '');
+
+      const pick = document.createElement('button');
+      pick.className = 'choice-btn';
+      pick.innerHTML = `<div class="choice-key">${i + 1}</div><div class="choice-name">${choice.name}</div><div class="choice-desc">${choice.desc}</div>`;
+      pick.addEventListener('click', () => selectLevelUpChoice(i));
+
+      const tools = document.createElement('div');
+      tools.className = 'choice-tools';
+      const lockBtn = document.createElement('button');
+      lockBtn.className = 'mini-btn';
+      lockBtn.textContent = (meta && meta.lockedIndex === i) ? '🔒' : '🔓';
+      lockBtn.title = 'Kilitle (yeniden çevirince korunur)';
+      lockBtn.addEventListener('click', () => levelUpLock(i));
+      const banBtn = document.createElement('button');
+      banBtn.className = 'mini-btn';
+      banBtn.textContent = '✖';
+      banBtn.title = 'Sil (bu oyunda bir daha çıkmaz)';
+      if (!meta || meta.banishLeft <= 0) banBtn.disabled = true;
+      banBtn.addEventListener('click', () => levelUpBanish(i));
+      tools.appendChild(lockBtn);
+      tools.appendChild(banBtn);
+
+      card.appendChild(pick);
+      card.appendChild(tools);
+      els.levelUpChoices.appendChild(card);
     });
+
+    renderLevelUpActions(meta);
     els.screenLevelUp.classList.remove('hidden');
+  }
+
+  function renderLevelUpActions(meta) {
+    if (!els.levelUpActions) return;
+    els.levelUpActions.innerHTML = '';
+
+    const reroll = document.createElement('button');
+    reroll.className = 'ghost-btn';
+    reroll.textContent = `🎲 Yeniden Çevir (🪙 ${meta ? meta.rerollCost : 0})`;
+    if (!meta || meta.gold < meta.rerollCost) reroll.disabled = true;
+    reroll.addEventListener('click', levelUpReroll);
+
+    const skip = document.createElement('button');
+    skip.className = 'ghost-btn';
+    skip.textContent = 'Atla';
+    skip.addEventListener('click', levelUpSkip);
+
+    const info = document.createElement('div');
+    info.className = 'levelup-info';
+    info.textContent = `🪙 ${meta ? meta.gold : 0} · Sil hakkı: ${meta ? meta.banishLeft : 0}`;
+
+    els.levelUpActions.appendChild(reroll);
+    els.levelUpActions.appendChild(skip);
+    els.levelUpActions.appendChild(info);
   }
 
   function hideLevelUp() {
