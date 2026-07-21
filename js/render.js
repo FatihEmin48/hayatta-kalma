@@ -327,6 +327,33 @@ function drawMinimap(ctx, state) {
   ctx.fillRect(x + state.player.x * sx - 2, y + state.player.y * sy - 2, 4, 4);
 }
 
+// Atılma göstergesi (alt-orta): cooldown dolarken halka dolar, hazırken yeşil.
+function drawDashGauge(ctx, state) {
+  const p = state.player;
+  const ready = p.dashCooldownLeft <= 0;
+  const frac = ready ? 1 : 1 - clamp(p.dashCooldownLeft / DASH.cooldown, 0, 1);
+  const r = 16;
+  const cx = CANVAS_W / 2;
+  const cy = CANVAS_H - 96;
+
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = ready ? '#4ade80' : 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2);
+  ctx.stroke();
+
+  ctx.fillStyle = ready ? '#4ade80' : 'rgba(255,255,255,0.5)';
+  ctx.font = '15px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('⚡', cx, cy);
+}
+
 function render(ctx, state) {
   ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
   if (state.mode === STATE.START) return;
@@ -357,4 +384,5 @@ function render(ctx, state) {
   drawHurtVignette(ctx, state);
   drawBossBar(ctx, state);
   drawMinimap(ctx, state);
+  drawDashGauge(ctx, state);
 }

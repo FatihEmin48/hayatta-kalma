@@ -31,6 +31,10 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v13 — Atılma (dash) yeteneği
+
+- **Dash (`DASH`, `js/main.js` + `input.js`):** **Boşluk** tuşu (masaüstü) veya alt-ortadaki ⚡ butonu (dokunmatik) ile hareket yönünde (yoksa bakış yönünde) kısa süreli hızlı hamle. Dash sırasında kısa **i-frame** (dokunulmazlık) vardır, yani düşman kümesinden sıyrılmak için kullanılır. Cooldown'lu; alt-ortadaki halka göstergesi cooldown dolunca yeşile döner.
+
 ## v12 — Level-up kolaylıkları (çevir / atla / kilitle / sil)
 
 Seviye atlama ekranı Vampire Survivors tarzı kontrollerle zenginleşti (`LEVELUP_QOL`, `js/leveling.js`):
@@ -196,6 +200,10 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 **v12 test (level-up kolaylıkları):**
 
 37. Seviye atlama ekranında Yeniden Çevir (altın düşüyor mu / R tuşu), Atla (+altın), her seçenekte 🔒 kilitle ve ✖ sil çalışıyor mu; kilitli seçenek yeniden çevirince kalıyor, silinen seçenek bir daha çıkmıyor mu.
+
+**v13 test (dash):**
+
+38. Boşluk (veya ⚡ butonu) hareket yönünde hızlı atılma yapıyor mu; atılma anında düşmandan hasar almıyor (i-frame) mu; alt-ortadaki halka cooldown dolunca yeşile dönüyor ve tekrar atılınabiliyor mu.
 
 ## v10 sonrası hâlâ kapsam dışı
 

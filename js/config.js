@@ -26,6 +26,15 @@ const CHARACTERS = [
   { id: 'brute', name: 'Tank', desc: 'Yavaş ama dayanıklı. Alan Hasarıyla başlar.', startWeapon: 'aura', mods: { hp: 45, speed: -0.1, damage: 0 } },
 ];
 
+// Atılma (dash) yeteneği (js/main.js + input.js): kısa süreli hızlı hamle +
+// i-frame, cooldown'lu. Boşluk tuşu (masaüstü) veya ⚡ butonu (dokunmatik).
+const DASH = {
+  speed: 720,
+  duration: 0.18,
+  cooldown: 2.5,
+  invulnMs: 300,
+};
+
 const WEAPON_DEFS = [
   {
     id: 'whip', name: 'Kırbaç', kind: 'melee_arc',

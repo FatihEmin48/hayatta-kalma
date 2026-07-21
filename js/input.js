@@ -7,6 +7,18 @@ window.addEventListener('keyup', (e) => {
   keyState[e.key.toLowerCase()] = false;
 });
 
+// Atılma (dash) tetikleyici — kenar tetiklemeli: bir kez basılınca bir kez
+// tüketilir. Boşluk tuşu, ⚡ dokunmatik butonu (veya kod içinden requestDash).
+let dashRequested = false;
+function requestDash() { dashRequested = true; }
+function consumeDash() {
+  if (dashRequested) { dashRequested = false; return true; }
+  return false;
+}
+window.addEventListener('keydown', (e) => {
+  if (e.key === ' ' || e.code === 'Space') { requestDash(); e.preventDefault(); }
+});
+
 function getMoveVector() {
   let x = 0, y = 0;
   if (keyState['a'] || keyState['arrowleft']) x -= 1;
@@ -110,6 +122,11 @@ window.addEventListener('DOMContentLoaded', () => {
   if ('ontouchstart' in window || (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0)) {
     document.body.classList.add('touch-enabled');
     initJoystick();
+  }
+  const dashBtn = document.getElementById('dash-btn');
+  if (dashBtn) {
+    dashBtn.addEventListener('touchstart', (e) => { e.preventDefault(); requestDash(); }, { passive: false });
+    dashBtn.addEventListener('click', requestDash);
   }
 });
 

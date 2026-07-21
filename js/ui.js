@@ -17,6 +17,7 @@ const UI = (function () {
     els.screenGameOver = document.getElementById('screen-gameover');
     els.screenPause = document.getElementById('screen-pause');
     els.pauseBtn = document.getElementById('pause-btn');
+    els.dashBtn = document.getElementById('dash-btn');
     els.levelUpChoices = document.getElementById('levelup-choices');
     els.levelUpActions = document.getElementById('levelup-actions');
     els.gameOverTitle = document.getElementById('gameover-title');
@@ -126,6 +127,7 @@ const UI = (function () {
   function setHudVisible(visible) {
     els.hud.classList.toggle('hidden', !visible);
     els.pauseBtn.classList.toggle('hidden', !visible); // ⏸️ yalnız oyun içinde
+    els.dashBtn.classList.toggle('hidden', !visible);  // ⚡ (CSS ile sadece dokunmatikte)
   }
 
   function showPause() { els.screenPause.classList.remove('hidden'); }

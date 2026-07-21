@@ -11,6 +11,7 @@ function createPlayer() {
     hp: PLAYER_BASE.maxHp,
     facingX: 0, facingY: -1,
     invulnUntil: 0,
+    dashCooldownLeft: 0, dashTimeLeft: 0, dashDirX: 0, dashDirY: 0,
     xp: 0, level: 1, xpToNext: xpToNextLevel(1),
     weapons: [{ defId: Characters.current().startWeapon, level: 1, cooldownLeft: 0, evolved: false }],
     passives: { speed: 0, maxHp: 0, pickup: 0, damage: 0, regen: 0 },
@@ -56,18 +57,45 @@ function updateCamera(state) {
   state.camera.y = clamp(state.player.y - CANVAS_H / 2, 0, WORLD_H - CANVAS_H);
 }
 
+// Atılma: boşluk/⚡ ile tetiklenir. Hareket yönünde (yoksa bakış yönünde) kısa
+// süreli yüksek hızlı hamle + i-frame; cooldown dolunca tekrar kullanılabilir.
+function updateDash(state, dt) {
+  const player = state.player;
+  if (player.dashCooldownLeft > 0) player.dashCooldownLeft -= dt;
+  if (player.dashTimeLeft > 0) player.dashTimeLeft -= dt;
+
+  if (consumeDash() && player.dashCooldownLeft <= 0 && player.dashTimeLeft <= 0) {
+    const move = getMoveVector();
+    let dx = move.x, dy = move.y;
+    if (dx === 0 && dy === 0) { dx = player.facingX; dy = player.facingY; }
+    const n = normalize(dx, dy);
+    if (n.x === 0 && n.y === 0) return;
+    player.dashDirX = n.x; player.dashDirY = n.y;
+    player.dashTimeLeft = DASH.duration;
+    player.dashCooldownLeft = DASH.cooldown;
+    player.invulnUntil = Math.max(player.invulnUntil, performance.now() + DASH.invulnMs);
+    Sound.sfx('shoot');
+    spawnParticles(state, player.x, player.y, '#4ade80', 8, { speedMin: 40, speedMax: 130, life: 0.3 });
+  }
+}
+
 function updatePlayerMovement(state, dt) {
   const player = state.player;
-  const move = getMoveVector();
-  const speed = getPlayerSpeed(player);
 
-  if (move.x !== 0 || move.y !== 0) {
-    player.facingX = move.x;
-    player.facingY = move.y;
+  let moveX, moveY, speed;
+  if (player.dashTimeLeft > 0) {
+    moveX = player.dashDirX; moveY = player.dashDirY;
+    speed = DASH.speed;
+    player.facingX = moveX; player.facingY = moveY;
+  } else {
+    const move = getMoveVector();
+    speed = getPlayerSpeed(player);
+    if (move.x !== 0 || move.y !== 0) { player.facingX = move.x; player.facingY = move.y; }
+    moveX = move.x; moveY = move.y;
   }
 
-  const newX = player.x + move.x * speed * dt;
-  const newY = player.y + move.y * speed * dt;
+  const newX = player.x + moveX * speed * dt;
+  const newY = player.y + moveY * speed * dt;
   const resolved = resolveObstacles(newX, newY, player.radius, state.obstacles);
   player.x = clamp(resolved.x, 0, WORLD_W);
   player.y = clamp(resolved.y, 0, WORLD_H);
@@ -123,6 +151,7 @@ function updateRegen(state, dt) {
 
 function update(state, dt) {
   state.timer += dt;
+  updateDash(state, dt);
   updatePlayerMovement(state, dt);
   updateCamera(state);
   updateEnemies(state, dt);

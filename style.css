@@ -338,6 +338,30 @@ body.joystick-right #settings-panel { right: auto; left: 0; }
 #pause-btn:hover { background: rgba(0, 0, 0, 0.72); filter: none; }
 #pause-btn.hidden { display: none; }
 
+/* Atılma butonu — yalnız dokunmatik cihazda, alt-orta (masaüstünde boşluk
+   tuşu kullanılır). */
+#dash-btn {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  font-size: 26px;
+  line-height: 1;
+  background: rgba(74, 222, 128, 0.25);
+  color: var(--text);
+  border: 2px solid rgba(74, 222, 128, 0.7);
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: none;
+}
+body.touch-enabled #dash-btn { display: block; }
+#dash-btn.hidden { display: none !important; }
+
 #joystick {
   display: none;
   position: absolute;
