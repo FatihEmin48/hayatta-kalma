@@ -31,6 +31,10 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v16 — Gamepad (oyun kolu) desteği
+
+- **Gamepad API (`js/input.js`):** Sol analog çubuk + D-pad ile hareket; **A / RB / RT** ile atılma (dash). Öncelik sırası: klavye > oyun kolu > dokunmatik joystick — çakışmazlar. Oyun kolu bağlanınca bildirim çıkar. Kol yokken tüm okumalar güvenle 0 döner.
+
 ## v15 — Oyun modları
 
 - **Modlar (`GAME_MODES`, `js/modes.js`):** Başlangıç ekranında seçilir (localStorage'da kalıcı), run'ın kurallarını değiştirir:
@@ -227,6 +231,10 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 **v15 test (oyun modları):**
 
 41. Başlangıç ekranında mod seçici çalışıyor mu; Boss Yağmuru'nda boss'lar çok sık gelip normal düşman azalıyor mu; Süre Saldırısı'nda ~5 dakikada "Hayatta Kaldın!" ekranı çıkıyor mu.
+
+**v16 test (gamepad):**
+
+42. Oyun kolu bağlanınca bildirim çıkıyor mu; sol analog/D-pad ile hareket, A/RB/RT ile dash çalışıyor mu; klavye/kol/dokunmatik çakışmadan çalışıyor mu.
 
 ## v14 sonrası hâlâ kapsam dışı
 

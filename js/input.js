@@ -19,6 +19,42 @@ window.addEventListener('keydown', (e) => {
   if (e.key === ' ' || e.code === 'Space') { requestDash(); e.preventDefault(); }
 });
 
+// Oyun kolu (Gamepad API). Sol analog + D-pad hareket; A/RB/RT dash. Öncelik:
+// klavye > oyun kolu > dokunmatik.
+const GAMEPAD_DEADZONE = 0.28;
+let prevGamepadDash = false;
+
+function getGamepad() {
+  if (typeof navigator === 'undefined' || !navigator.getGamepads) return null;
+  const pads = navigator.getGamepads();
+  if (!pads) return null;
+  for (const p of pads) if (p) return p;
+  return null;
+}
+
+function getGamepadVector() {
+  const gp = getGamepad();
+  if (!gp) return { x: 0, y: 0 };
+  let x = gp.axes[0] || 0, y = gp.axes[1] || 0;
+  const b = gp.buttons || [];
+  if (b[14] && b[14].pressed) x -= 1;   // D-pad sol
+  if (b[15] && b[15].pressed) x += 1;   // D-pad sağ
+  if (b[12] && b[12].pressed) y -= 1;   // D-pad yukarı
+  if (b[13] && b[13].pressed) y += 1;   // D-pad aşağı
+  if (Math.hypot(x, y) < GAMEPAD_DEADZONE) return { x: 0, y: 0 };
+  return normalize(x, y);
+}
+
+// Her frame çağrılır: dash butonlarında (A / RB / RT) kenar tetiklemesiyle dash.
+function pollGamepad() {
+  const gp = getGamepad();
+  if (!gp || !gp.buttons) { prevGamepadDash = false; return; }
+  let pressed = false;
+  for (const i of [0, 5, 7]) if (gp.buttons[i] && gp.buttons[i].pressed) pressed = true;
+  if (pressed && !prevGamepadDash) requestDash();
+  prevGamepadDash = pressed;
+}
+
 function getMoveVector() {
   let x = 0, y = 0;
   if (keyState['a'] || keyState['arrowleft']) x -= 1;
@@ -28,6 +64,10 @@ function getMoveVector() {
 
   const keyboardVec = normalize(x, y);
   if (keyboardVec.x !== 0 || keyboardVec.y !== 0) return keyboardVec;
+
+  const gp = getGamepadVector();
+  if (gp.x !== 0 || gp.y !== 0) return gp;
+
   return touchMoveVector;
 }
 
@@ -128,6 +168,10 @@ window.addEventListener('DOMContentLoaded', () => {
     dashBtn.addEventListener('touchstart', (e) => { e.preventDefault(); requestDash(); }, { passive: false });
     dashBtn.addEventListener('click', requestDash);
   }
+});
+
+window.addEventListener('gamepadconnected', () => {
+  try { if (typeof UI !== 'undefined') UI.showToast('🎮 Oyun kolu bağlandı'); } catch (e) { /* HUD henüz hazır değil */ }
 });
 
 let levelUpKeyHandler = null;

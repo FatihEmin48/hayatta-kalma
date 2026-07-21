@@ -154,6 +154,7 @@ function updateRegen(state, dt) {
 
 function update(state, dt) {
   state.timer += dt;
+  pollGamepad();
   updateDash(state, dt);
   updatePlayerMovement(state, dt);
   updateCamera(state);
