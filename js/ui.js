@@ -30,6 +30,7 @@ const UI = (function () {
     els.shop = document.getElementById('shop');
     els.shopToggle = document.getElementById('shop-toggle');
     els.charSelect = document.getElementById('char-select');
+    els.modeSelect = document.getElementById('mode-select');
     els.achievements = document.getElementById('achievements');
     els.achToggle = document.getElementById('ach-toggle');
 
@@ -52,6 +53,7 @@ const UI = (function () {
       renderShop();
     });
     renderCharacters();
+    renderModes();
     refreshAchievements();
     els.achToggle.addEventListener('click', () => {
       els.achievements.classList.toggle('hidden');
@@ -314,6 +316,26 @@ const UI = (function () {
     }));
   }
 
+  // Oyun modu seçici (karakter seçiciyle aynı stil).
+  function renderModes() {
+    if (!els.modeSelect) return;
+    const curId = Modes.getId();
+    let btns = '';
+    for (const m of GAME_MODES) {
+      const active = m.id === curId ? ' active' : '';
+      btns += `<button class="char-btn${active}" data-id="${m.id}">${m.name}</button>`;
+    }
+    els.modeSelect.innerHTML =
+      `<div class="char-title">Oyun Modu</div>` +
+      `<div class="char-btns">${btns}</div>` +
+      `<div class="char-desc">${Modes.current().desc}</div>`;
+    const btnEls = els.modeSelect.querySelectorAll ? els.modeSelect.querySelectorAll('.char-btn') : [];
+    btnEls.forEach(b => b.addEventListener('click', () => {
+      Modes.select(b.getAttribute('data-id'));
+      renderModes();
+    }));
+  }
+
   function renderAchievements() {
     if (!els.achievements) return;
     let rows = '';
@@ -340,6 +362,7 @@ const UI = (function () {
     els.screenStart.classList.remove('hidden');
     renderShop();
     renderCharacters();
+    renderModes();
     refreshAchievements();
     refreshStartHighScores();
   }

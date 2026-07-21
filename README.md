@@ -31,6 +31,14 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v15 — Oyun modları
+
+- **Modlar (`GAME_MODES`, `js/modes.js`):** Başlangıç ekranında seçilir (localStorage'da kalıcı), run'ın kurallarını değiştirir:
+  - **Normal** — klasik sonsuz hayatta kalma.
+  - **Boss Yağmuru** — boss'lar çok sık (45sn), normal düşman yoğunluğu yarıya iner.
+  - **Süre Saldırısı** — 5 dakika dayanınca "Hayatta Kaldın!" zaferi; biraz daha yoğun.
+- Mod ayarları (`bossEvery`, `victoryTime`, `spawnScale`) `state.modeConfig`'e kopyalanır; spawner ve zafer kontrolü bunları kullanır.
+
 ## v14 — Başarımlar + kilit açma
 
 - **Başarımlar (`ACHIEVEMENTS`, `js/achievements.js`):** Run sonunda değerlendirilir (`kills`, `timer`, `level`, `bossKills`, toplam altın). Örnekler: İlk Kan, Kıyıcı (100 öldürme), Katliam (500), Dayanıklı (5dk), Kaya Gibi (10dk), Tecrübeli (sv 20), Boss Avcısı, Zengin (300 altın). Kazanıldıkça localStorage'a yazılır ve bildirim çıkar.
@@ -215,6 +223,10 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 
 39. İlgili şartlar sağlanınca (ör. 100 öldürme, 5 dk, boss öldürme) run sonunda "🏆 <ad>" bildirimi çıkıyor mu; başlangıç ekranındaki 🏆 Başarımlar panelinde ✅ oluyor mu ve sayaç artıyor mu.
 40. Boss öldürüp Boss Avcısı başarımını alınca Büyücü karakteri kilidi açılıp seçilebiliyor mu; sayfa yenilenince başarımlar/kilit açılışı hatırlanıyor mu.
+
+**v15 test (oyun modları):**
+
+41. Başlangıç ekranında mod seçici çalışıyor mu; Boss Yağmuru'nda boss'lar çok sık gelip normal düşman azalıyor mu; Süre Saldırısı'nda ~5 dakikada "Hayatta Kaldın!" ekranı çıkıyor mu.
 
 ## v14 sonrası hâlâ kapsam dışı
 

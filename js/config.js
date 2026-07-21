@@ -8,6 +8,15 @@ const WORLD_H = 3000;
 const ENABLE_VICTORY = false;
 const VICTORY_TIME_SEC = 900;
 
+// Oyun modları (js/modes.js): başlangıç ekranında seçilir, run'ın kurallarını
+// değiştirir. bossEvery: boss aralığı (sn); victoryTime>0: o sürede zafer;
+// spawnScale: normal düşman yoğunluğu çarpanı (<1 = daha az).
+const GAME_MODES = [
+  { id: 'normal',      name: 'Normal',         desc: 'Klasik sonsuz hayatta kalma.',        bossEvery: 180, victoryTime: 0,   spawnScale: 1 },
+  { id: 'boss_rush',   name: 'Boss Yağmuru',   desc: 'Sık sık boss, az normal düşman.',     bossEvery: 45,  victoryTime: 0,   spawnScale: 0.5 },
+  { id: 'time_attack', name: 'Süre Saldırısı', desc: '5 dakika dayan, en yüksek skoru yap.', bossEvery: 120, victoryTime: 300, spawnScale: 1.15 },
+];
+
 const PLAYER_BASE = {
   radius: 14,
   maxHp: 100,

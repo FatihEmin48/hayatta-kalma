@@ -21,8 +21,10 @@ function createPlayer() {
 }
 
 function createInitialState() {
+  const mc = Modes.current();
   return {
     mode: STATE.START,
+    modeConfig: mc,
     timer: 0,
     kills: 0,
     bossKills: 0,
@@ -44,7 +46,7 @@ function createInitialState() {
     biome: BIOMES[randInt(0, BIOMES.length - 1)],
     spawnTimer: SPAWN.baseIntervalSec,
     eliteTimer: ELITE_DEF.every,
-    bossTimer: BOSS_DEF.every,
+    bossTimer: mc.bossEvery,
     pendingLevelUps: 0,
     levelUpChoices: [],
     banished: [],
@@ -207,7 +209,7 @@ function checkTransitions(state) {
     UI.showGameOver(state, false, Scores.submit(state), endRunRewards(state));
     return;
   }
-  if (ENABLE_VICTORY && state.timer >= VICTORY_TIME_SEC) {
+  if (state.modeConfig.victoryTime > 0 && state.timer >= state.modeConfig.victoryTime) {
     state.mode = STATE.VICTORY;
     Sound.stopMusic();
     UI.showGameOver(state, true, Scores.submit(state), endRunRewards(state));
