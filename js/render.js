@@ -367,6 +367,29 @@ function drawBossCountdown(ctx, state) {
   ctx.fillText(`⚔️ Boss: ${m}:${s.toString().padStart(2, '0')}`, CANVAS_W / 2, 66);
 }
 
+// Combo göstergesi (üst-orta, boss geri sayımının altında). combo>=2'de görünür;
+// çarpan yükseldikçe renk kızarır, altındaki bar kalan süreyi gösterir.
+function drawCombo(ctx, state) {
+  if (state.combo < 2) return;
+  const mult = comboMultiplier(state);
+  const heat = clamp((mult - 1) / COMBO_CONFIG.maxBonus, 0, 1);
+  const r = Math.round(255);
+  const g = Math.round(200 - heat * 160);
+  const cx = CANVAS_W / 2, y = 84;
+
+  ctx.font = `bold ${14 + Math.round(heat * 6)}px system-ui, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillStyle = `rgb(${r},${g},60)`;
+  ctx.fillText(`Combo x${state.combo}  (${mult.toFixed(1)}x)`, cx, y);
+
+  const bw = 90, frac = clamp(state.comboTimer / COMBO_CONFIG.window, 0, 1);
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.fillRect(cx - bw / 2, y + 22, bw, 4);
+  ctx.fillStyle = `rgb(${r},${g},60)`;
+  ctx.fillRect(cx - bw / 2, y + 22, bw * frac, 4);
+}
+
 function render(ctx, state) {
   ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
   if (state.mode === STATE.START) return;
@@ -397,6 +420,7 @@ function render(ctx, state) {
   drawHurtVignette(ctx, state);
   drawBossBar(ctx, state);
   drawBossCountdown(ctx, state);
+  drawCombo(ctx, state);
   drawMinimap(ctx, state);
   drawDashGauge(ctx, state);
 }

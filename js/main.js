@@ -30,6 +30,11 @@ function createInitialState() {
     bossKills: 0,
     totalDamage: 0,
     weaponDamage: {},
+    combo: 0,
+    comboTimer: 0,
+    maxCombo: 0,
+    comboScore: 0,
+    comboGold: 0,
     player: createPlayer(),
     enemies: [],
     projectiles: [],
@@ -116,6 +121,7 @@ function applyPlayerDamage(state, amount) {
   const dmg = Math.max(1, amount - getPlayerArmor(player)); // zırh: en az 1 hasar
   player.hp -= dmg;
   player.invulnUntil = now + PLAYER_BASE.invulnMs;
+  resetCombo(state); // hasar alınca combo sıfırlanır (risk-ödül)
   Sound.sfx('hurt');
   addShake(state, EFFECTS.shakeOnHurt);
   state.hurtFlash = EFFECTS.hurtFlashTime;
@@ -174,6 +180,10 @@ function update(state, dt) {
   updateDamageNumbers(state, dt);
   updateShake(state, dt);
   updateHurtFlash(state, dt);
+  if (state.comboTimer > 0) {
+    state.comboTimer -= dt;
+    if (state.comboTimer <= 0) state.combo = 0;
+  }
 
   state.enemies = removeDead(state.enemies);
   state.projectiles = removeDead(state.projectiles);
@@ -188,7 +198,7 @@ function update(state, dt) {
 
 // Run bitince: altın ekle + başarımları değerlendir (yeni açılanları bildir).
 function endRunRewards(state) {
-  const earned = Meta.goldForRun(state);
+  const earned = Meta.goldForRun(state) + Math.round(state.comboGold * COMBO_CONFIG.goldWeight);
   Meta.addGold(earned);
   const stats = {
     kills: state.kills,

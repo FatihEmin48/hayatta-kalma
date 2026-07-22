@@ -11,7 +11,8 @@ const Scores = (function () {
     return Math.round(
       state.kills * s.perKill +
       Math.floor(state.timer) * s.perSecond +
-      Math.max(0, state.player.level - 1) * s.perLevel
+      Math.max(0, state.player.level - 1) * s.perLevel +
+      (state.comboScore || 0) * s.comboWeight
     );
   }
 

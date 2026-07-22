@@ -52,6 +52,26 @@ function getPassiveDef(id) {
   return PASSIVE_DEFS.find(p => p.id === id);
 }
 
+// Combo çarpanı: 1 + min(maxBonus, combo·perKill).
+function comboMultiplier(state) {
+  return 1 + Math.min(COMBO_CONFIG.maxBonus, state.combo * COMBO_CONFIG.perKill);
+}
+
+// Bir öldürme comboyu ilerletir + skor/altın bonusu biriktirir. killEnemy'den.
+function registerComboKill(state) {
+  state.combo += 1;
+  state.comboTimer = COMBO_CONFIG.window;
+  if (state.combo > state.maxCombo) state.maxCombo = state.combo;
+  const mult = comboMultiplier(state);
+  state.comboScore += mult;
+  state.comboGold += (mult - 1);
+}
+
+function resetCombo(state) {
+  state.combo = 0;
+  state.comboTimer = 0;
+}
+
 // Not: kalıcı mağaza yükseltmeleri (Meta.bonus) run içi pasiflerin ÜSTÜNE
 // eklenir, böylece her run mağazada aldığın kalıcı güçle başlar.
 function getPlayerMaxHp(player) {

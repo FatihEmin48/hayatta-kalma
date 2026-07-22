@@ -241,7 +241,18 @@ const SCORE_CONFIG = {
   perKill: 10,
   perSecond: 3,
   perLevel: 20,
+  comboWeight: 4,   // biriken combo puanının skora katkı ağırlığı
   maxEntries: 10,
+};
+
+// Combo/seri çarpanı (js/leveling.js + render.js): art arda öldürme çarpanı
+// biriktirir; `window` sn içinde öldürme olmazsa veya hasar alınca sıfırlanır.
+// Çarpan skoru ve altını artırır (comboWeight / goldWeight).
+const COMBO_CONFIG = {
+  window: 3.0,
+  perKill: 0.02,
+  maxBonus: 1.5,    // en fazla +%150 → 2.5x
+  goldWeight: 0.5,
 };
 
 // Görsel geri bildirim ayarları (js/effects.js). maxParticles/maxDamageNumbers

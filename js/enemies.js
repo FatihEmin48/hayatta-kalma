@@ -236,6 +236,7 @@ function damageEnemy(state, enemy, amount, source) {
 function killEnemy(state, enemy) {
   enemy.dead = true;
   state.kills += 1;
+  registerComboKill(state);
   Sound.sfx('death');
   spawnParticles(state, enemy.x, enemy.y, enemy.color, EFFECTS.deathParticleCount, { life: 0.5 });
 

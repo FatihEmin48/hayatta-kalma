@@ -31,6 +31,12 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v21 — Combo / seri çarpanı
+
+- **Combo (`COMBO_CONFIG`, `js/leveling.js`):** Art arda öldürme bir çarpan biriktirir (her öldürme +%2, en fazla +%150 → 2.5x). `window` saniye (3sn) içinde öldürme olmazsa **veya hasar alınca** combo sıfırlanır — risk-ödül.
+- **Ödül:** Combo çarpanı hem **skoru** (`comboScore` · `comboWeight`) hem **altını** (`comboGold` · `goldWeight`) artırır. En yüksek combo game-over özetinde gösterilir.
+- **HUD:** Üst-ortada (boss geri sayımının altında) combo çarpanı ve kalan süre barı; çarpan yükseldikçe kızarır. combo ≥ 2'de görünür.
+
 ## v20 — Kayan (floating) joystick
 
 - **Gerçek oynanış geri bildirimi:** Mobilde kontroller sabit köşede değil, **parmağını bastığın yerde** çıksın istendi. Joystick artık kayan: oyun alanına dokunulan noktada belirir, parmağı takip eder, bırakınca kaybolur (`js/input.js` `initJoystick`). Görsel `pointer-events:none`, tüm giriş canvas + `window` dokunuş dinleyicileriyle işlenir; UI butonları etkilenmez.

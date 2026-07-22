@@ -364,7 +364,7 @@ const UI = (function () {
 
   function showGameOver(state, victory, scoreResult, goldEarned) {
     els.gameOverTitle.textContent = victory ? 'Hayatta Kaldın!' : 'Öldün';
-    els.gameOverStats.textContent = `Süre: ${formatTime(state.timer)} · Seviye: ${state.player.level} · Öldürülen: ${state.kills}`;
+    els.gameOverStats.textContent = `Süre: ${formatTime(state.timer)} · Seviye: ${state.player.level} · Öldürülen: ${state.kills} · En yüksek combo: x${state.maxCombo}`;
 
     // Run özeti: hasar/sn + toplam hasar + en etkili silah.
     const dps = state.timer > 0 ? state.totalDamage / state.timer : 0;
