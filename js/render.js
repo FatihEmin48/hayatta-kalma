@@ -203,11 +203,11 @@ function drawBossBar(ctx, state) {
   ctx.font = 'bold 12px system-ui, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'bottom';
-  ctx.fillText('BOSS', CANVAS_W / 2, y - 3);
+  ctx.fillText(`BOSS — ${(boss.name || '').toUpperCase()}`, CANVAS_W / 2, y - 3);
 
   ctx.fillStyle = 'rgba(0,0,0,0.55)';
   ctx.fillRect(x - 2, y - 2, w + 4, 14);
-  ctx.fillStyle = '#8e44ad';
+  ctx.fillStyle = boss.color || '#8e44ad';
   ctx.fillRect(x, y, w * clamp(boss.hp / boss.maxHp, 0, 1), 10);
 }
 

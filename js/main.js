@@ -57,6 +57,7 @@ function createInitialState() {
     spawnTimer: SPAWN.baseIntervalSec,
     eliteTimer: ELITE_DEF.every,
     bossTimer: mc.bossEvery,
+    bossesSpawned: 0,
     pendingLevelUps: 0,
     levelUpChoices: [],
     banished: [],

@@ -31,6 +31,16 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v26 — Yeni boss çeşitleri
+
+Boss'lar artık tek tip değil; her boss'ta sırayla değişen 3 çeşit (`BOSS_VARIANTS`):
+
+- **Kâhin (radial):** Tam çember mermi saçar (eski davranış).
+- **Koçbaşı (charger):** Periyodik olarak oyuncuya kilitlenip **yüksek hızla hücum** eder (`chargeSpeed`/`chargeDuration`); hücum sırasında temas ölümcül.
+- **Efendi (summoner):** Etrafına periyodik **minyon düşman çağırır** (basic/fast).
+
+Boss barı artık çeşidin adını ve rengini gösterir; run başı bildirim hangi boss'un geldiğini yazar. Boss sayacı (`state.bossesSpawned`) çeşidi döndürür.
+
 ## v25 — Codex / Rehber
 
 - **Rehber (`js/ui.js` `renderCodex`):** Başlangıç ekranında 📖 Rehber düğmesiyle açılan referans ekranı — tüm silahlar ve **evrim tarifleri** (hangi silah maks + hangi pasif maks → hangi evrim), düşman tipleri (davranışlarıyla) ve biyomlar (tehlikeleriyle). Tamamen `WEAPON_DEFS`/`EVOLUTION_DEFS`/`PASSIVE_DEFS`/`ENEMY_DEFS`/`BIOMES` config'inden üretilir, ayrı veri tutmaz.

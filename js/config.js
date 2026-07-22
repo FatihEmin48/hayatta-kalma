@@ -152,7 +152,24 @@ const BOSS_DEF = {
   projectileRadius: 8,
   projectileLife: 4,
   goldReward: 30,
+  // charger (Koçbaşı): periyodik yüksek hızlı hücum
+  chargeEvery: 3.5,
+  chargeDuration: 0.7,
+  chargeSpeed: 430,
+  // summoner (Efendi): periyodik minyon çağırma
+  summonEvery: 4.0,
+  summonCount: 4,
 };
+
+// Boss çeşitleri — her boss'ta sırayla değişir (state.bossesSpawned):
+//  radial  = Kâhin: tam çember mermi saçar
+//  charger = Koçbaşı: oyuncuya doğru hızlı hücum eder
+//  summoner= Efendi: etrafına minyon düşman çağırır
+const BOSS_VARIANTS = [
+  { id: 'radial',   name: 'Kâhin',   color: '#8e44ad' },
+  { id: 'charger',  name: 'Koçbaşı', color: '#c0392b' },
+  { id: 'summoner', name: 'Efendi',  color: '#16a085' },
+];
 
 const SPAWN = {
   maxConcurrent: 180,

@@ -47,11 +47,14 @@ function fireEnemyShot(state, e) {
   });
 }
 
-function createBoss(x, y, scale) {
+function createBoss(x, y, scale, variant) {
   const d = BOSS_DEF;
   const hp = d.baseHp * scale;
+  const firstTimer = variant.id === 'charger' ? d.chargeEvery
+    : (variant.id === 'summoner' ? d.summonEvery : d.fireEvery);
   return {
     defId: 'boss', boss: true,
+    variant: variant.id, name: variant.name,
     x, y,
     hp, maxHp: hp,
     speed: d.speed,
@@ -59,10 +62,11 @@ function createBoss(x, y, scale) {
     projDamage: d.projectileDamage * scale,
     radius: d.radius,
     xp: d.xp,
-    color: d.color,
+    color: variant.color,
     erratic: false, elite: false,
     jitterPhase: 0, nudgeSign: 1,
-    fireTimer: d.fireEvery,
+    fireTimer: firstTimer,
+    charging: 0, chargeDX: 0, chargeDY: 0,
     dead: false,
   };
 }
@@ -74,9 +78,25 @@ function hasBoss(state) {
 function spawnBoss(state) {
   const pos = randomOffscreenPoint(state.camera);
   const scale = getDifficultyScale(state.timer, state.player.level);
-  state.enemies.push(createBoss(pos.x, pos.y, scale));
+  const variant = BOSS_VARIANTS[state.bossesSpawned % BOSS_VARIANTS.length];
+  state.bossesSpawned += 1;
+  state.enemies.push(createBoss(pos.x, pos.y, scale, variant));
   Sound.sfx('evolve');
-  UI.showToast('⚠️ Boss geliyor!');
+  UI.showToast(`⚠️ Boss geliyor: ${variant.name}!`);
+}
+
+// Efendi boss'unun etrafına minyon düşman çağırması.
+function summonMinions(state, boss) {
+  if (state.enemies.length >= SPAWN.maxConcurrent) return;
+  const scale = getDifficultyScale(state.timer, state.player.level);
+  for (let i = 0; i < BOSS_DEF.summonCount; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const x = boss.x + Math.cos(a) * boss.radius * 1.5;
+    const y = boss.y + Math.sin(a) * boss.radius * 1.5;
+    state.enemies.push(createEnemy(Math.random() < 0.5 ? 'basic' : 'fast', x, y, false, scale));
+  }
+  Sound.sfx('shoot');
+  spawnParticles(state, boss.x, boss.y, boss.color, 10, { life: 0.4 });
 }
 
 // Boss'un tam çember (radyal) mermi saldırısı — oyuncuya doğru hizalanır ki
@@ -152,10 +172,34 @@ function updateEnemies(state, dt) {
     if (e.dead) continue;
 
     if (e.boss) {
-      e.fireTimer -= dt;
-      if (e.fireTimer <= 0) {
-        e.fireTimer = BOSS_DEF.fireEvery;
-        fireBossBurst(state, e);
+      if (e.variant === 'charger') {
+        if (e.charging > 0) {
+          // Hücum sırasında kilitli yönde yüksek hızla ilerle (normal steering'i atla).
+          e.charging -= dt;
+          const r = resolveObstacles(e.x + e.chargeDX * BOSS_DEF.chargeSpeed * dt, e.y + e.chargeDY * BOSS_DEF.chargeSpeed * dt, e.radius, state.obstacles);
+          e.x = r.x; e.y = r.y;
+          continue;
+        }
+        e.fireTimer -= dt;
+        if (e.fireTimer <= 0) {
+          const d = normalize(player.x - e.x, player.y - e.y);
+          e.chargeDX = d.x; e.chargeDY = d.y;
+          e.charging = BOSS_DEF.chargeDuration;
+          e.fireTimer = BOSS_DEF.chargeEvery;
+          Sound.sfx('shoot');
+        }
+      } else if (e.variant === 'summoner') {
+        e.fireTimer -= dt;
+        if (e.fireTimer <= 0) {
+          e.fireTimer = BOSS_DEF.summonEvery;
+          summonMinions(state, e);
+        }
+      } else {
+        e.fireTimer -= dt;
+        if (e.fireTimer <= 0) {
+          e.fireTimer = BOSS_DEF.fireEvery;
+          fireBossBurst(state, e);
+        }
       }
     }
 
