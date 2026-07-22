@@ -32,6 +32,7 @@ const UI = (function () {
     els.shopToggle = document.getElementById('shop-toggle');
     els.charSelect = document.getElementById('char-select');
     els.modeSelect = document.getElementById('mode-select');
+    els.difficultySelect = document.getElementById('difficulty-select');
     els.achievements = document.getElementById('achievements');
     els.achToggle = document.getElementById('ach-toggle');
     els.career = document.getElementById('career');
@@ -59,6 +60,7 @@ const UI = (function () {
     });
     renderCharacters();
     renderModes();
+    renderDifficulty();
     refreshAchievements();
     els.achToggle.addEventListener('click', () => {
       els.achievements.classList.toggle('hidden');
@@ -85,32 +87,20 @@ const UI = (function () {
     // iki anahtarlı bir panel açar. Her ekranda (start/oyun/game-over) erişilir.
     els.settingsBtn = document.getElementById('settings-btn');
     els.settingsPanel = document.getElementById('settings-panel');
-    els.toggleSfx = document.getElementById('toggle-sfx');
-    els.toggleMusic = document.getElementById('toggle-music');
+    els.volMaster = document.getElementById('vol-master');
+    els.volSfx = document.getElementById('vol-sfx');
+    els.volMusic = document.getElementById('vol-music');
     updateSoundControls();
     els.settingsBtn.addEventListener('click', () => {
       Sound.resume();       // tıklama bir kullanıcı jesti → ses kilidini aç
       els.settingsPanel.classList.toggle('hidden');
     });
-    els.toggleSfx.addEventListener('click', () => {
-      Sound.resume();
-      Sound.setSfxEnabled(!Sound.isSfxEnabled());
-      updateSoundControls();
-    });
-    els.toggleMusic.addEventListener('click', () => {
-      Sound.resume();
-      Sound.setMusicEnabled(!Sound.isMusicEnabled());
-      updateSoundControls();
-    });
-    // 'M' klavye kısayolu: her ikisini birden aç/kapat (level-up'taki 1/2/3
-    // ile çakışmaz).
+    els.volMaster.addEventListener('input', () => { Sound.resume(); Sound.setMasterVol(els.volMaster.value / 100); updateSoundControls(); });
+    els.volSfx.addEventListener('input', () => { Sound.resume(); Sound.setSfxVol(els.volSfx.value / 100); });
+    els.volMusic.addEventListener('input', () => { Sound.resume(); Sound.setMusicVol(els.volMusic.value / 100); });
+    // 'M' klavye kısayolu: ana sesi kıs/aç.
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'm' || e.key === 'M') {
-        const anyOn = Sound.isSfxEnabled() || Sound.isMusicEnabled();
-        Sound.setSfxEnabled(!anyOn);
-        Sound.setMusicEnabled(!anyOn);
-        updateSoundControls();
-      }
+      if (e.key === 'm' || e.key === 'M') { Sound.toggleMute(); updateSoundControls(); }
     });
 
     els.canvas = document.getElementById('game');
@@ -338,6 +328,24 @@ const UI = (function () {
     }));
   }
 
+  // Zorluk seçici (karakter/mod seçiciyle aynı stil).
+  function renderDifficulty() {
+    if (!els.difficultySelect) return;
+    const curId = Difficulty.getId();
+    let btns = '';
+    for (const d of DIFFICULTIES) {
+      const active = d.id === curId ? ' active' : '';
+      btns += `<button class="char-btn${active}" data-id="${d.id}">${d.name}</button>`;
+    }
+    els.difficultySelect.innerHTML =
+      `<div class="char-title">Zorluk</div><div class="char-btns">${btns}</div>`;
+    const btnEls = els.difficultySelect.querySelectorAll ? els.difficultySelect.querySelectorAll('.char-btn') : [];
+    btnEls.forEach(b => b.addEventListener('click', () => {
+      Difficulty.select(b.getAttribute('data-id'));
+      renderDifficulty();
+    }));
+  }
+
   function renderAchievements() {
     if (!els.achievements) return;
     let rows = '';
@@ -422,6 +430,7 @@ const UI = (function () {
     renderShop();
     renderCharacters();
     renderModes();
+    renderDifficulty();
     refreshAchievements();
     refreshCareer();
     refreshStartHighScores();
@@ -472,15 +481,11 @@ const UI = (function () {
   }
 
   function updateSoundControls() {
-    if (!els.toggleSfx) return;
-    const sfxOn = Sound.isSfxEnabled();
-    const musicOn = Sound.isMusicEnabled();
-    els.toggleSfx.textContent = `${sfxOn ? '🔊' : '🔇'} Efektler: ${sfxOn ? 'Açık' : 'Kapalı'}`;
-    els.toggleSfx.classList.toggle('off', !sfxOn);
-    els.toggleMusic.textContent = `${musicOn ? '🎵' : '🔇'} Müzik: ${musicOn ? 'Açık' : 'Kapalı'}`;
-    els.toggleMusic.classList.toggle('off', !musicOn);
-    // Ayarların tümü kapalıysa ⚙️ butonuna sessiz işareti koy.
-    els.settingsBtn.textContent = (!sfxOn && !musicOn) ? '🔇' : '⚙️';
+    if (!els.volMaster) return;
+    els.volMaster.value = Math.round(Sound.getMasterVol() * 100);
+    els.volSfx.value = Math.round(Sound.getSfxVol() * 100);
+    els.volMusic.value = Math.round(Sound.getMusicVol() * 100);
+    els.settingsBtn.textContent = Sound.getMasterVol() <= 0 ? '🔇' : '⚙️';
   }
 
   function showToast(text) {

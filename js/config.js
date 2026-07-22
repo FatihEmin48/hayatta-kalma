@@ -11,6 +11,14 @@ const VICTORY_TIME_SEC = 900;
 // Oyun modları (js/modes.js): başlangıç ekranında seçilir, run'ın kurallarını
 // değiştirir. bossEvery: boss aralığı (sn); victoryTime>0: o sürede zafer;
 // spawnScale: normal düşman yoğunluğu çarpanı (<1 = daha az).
+// Zorluk seçimi (js/difficulty.js): düşman gücü çarpanı. Başlangıç ekranında
+// seçilir, state.difficultyMult'e kopyalanıp spawn ölçeğiyle çarpılır.
+const DIFFICULTIES = [
+  { id: 'easy',   name: 'Kolay',  mult: 0.8 },
+  { id: 'normal', name: 'Normal', mult: 1.0 },
+  { id: 'hard',   name: 'Zor',    mult: 1.3 },
+];
+
 const GAME_MODES = [
   { id: 'normal',      name: 'Normal',         desc: 'Klasik sonsuz hayatta kalma.',        bossEvery: 180, victoryTime: 0,   spawnScale: 1 },
   { id: 'boss_rush',   name: 'Boss Yağmuru',   desc: 'Sık sık boss, az normal düşman.',     bossEvery: 45,  victoryTime: 0,   spawnScale: 0.5 },

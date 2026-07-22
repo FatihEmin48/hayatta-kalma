@@ -31,6 +31,11 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v28 — Ses seviyesi kaydırıcıları + zorluk seçimi
+
+- **Ses kaydırıcıları:** Aç/kapa yerine ⚙️ panelinde üç kaydırıcı — **Ana Ses / Efekt / Müzik** (0–100). Ayrı gain düğümlerine bağlı, hepsi `localStorage`'da kalıcı (`hk_vol_*`). **M** tuşu ana sesi kısar/açar. 0 = kapalı.
+- **Zorluk seçimi (`DIFFICULTIES`, `js/difficulty.js`):** Başlangıç ekranında Kolay / Normal / Zor. Seçilen çarpan (`0.8 / 1.0 / 1.3`) `state.difficultyMult`'e kopyalanıp tüm düşman/boss/minyon spawn ölçeğiyle çarpılır (localStorage'da kalıcı).
+
 ## v27 — Anka Tüyü (dirilme)
 
 - **Anka Tüyü (`revive` meta yükseltmesi, `REVIVE`):** Mağazadan alınınca (seviye 1-2 = run başına 1-2 dirilme hakkı) canın 0'a düştüğünde game-over yerine bir hakkın tükenir: canının %50'siyle, ~2 sn dokunulmazlıkla geri dönersin ve çevrendeki boss olmayan düşmanlar temizlenir (patlama efekti + sarsıntı). HUD'da sol üstte kalan hak sayısı (🔥 xN) gösterilir. Hak bitince normal game-over.

@@ -77,7 +77,7 @@ function hasBoss(state) {
 
 function spawnBoss(state) {
   const pos = randomOffscreenPoint(state.camera);
-  const scale = getDifficultyScale(state.timer, state.player.level);
+  const scale = getDifficultyScale(state.timer, state.player.level) * state.difficultyMult;
   const variant = BOSS_VARIANTS[state.bossesSpawned % BOSS_VARIANTS.length];
   state.bossesSpawned += 1;
   state.enemies.push(createBoss(pos.x, pos.y, scale, variant));
@@ -88,7 +88,7 @@ function spawnBoss(state) {
 // Efendi boss'unun etrafına minyon düşman çağırması.
 function summonMinions(state, boss) {
   if (state.enemies.length >= SPAWN.maxConcurrent) return;
-  const scale = getDifficultyScale(state.timer, state.player.level);
+  const scale = getDifficultyScale(state.timer, state.player.level) * state.difficultyMult;
   for (let i = 0; i < BOSS_DEF.summonCount; i++) {
     const a = Math.random() * Math.PI * 2;
     const x = boss.x + Math.cos(a) * boss.radius * 1.5;
@@ -136,7 +136,7 @@ function spawnEnemy(state, elite) {
   const available = ENEMY_DEFS.filter(d => d.unlockAt <= state.timer);
   const def = available[randInt(0, available.length - 1)];
   const pos = randomOffscreenPoint(state.camera);
-  const scale = getDifficultyScale(state.timer, state.player.level);
+  const scale = getDifficultyScale(state.timer, state.player.level) * state.difficultyMult;
   state.enemies.push(createEnemy(def.id, pos.x, pos.y, !!elite, scale));
 }
 

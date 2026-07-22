@@ -360,6 +360,16 @@ button:hover { filter: brightness(1.1); }
 .toggle-row:hover { background: rgba(0, 0, 0, 0.5); filter: none; }
 .toggle-row.off { opacity: 0.55; }
 
+.vol-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+}
+.vol-row input[type="range"] { width: 96px; accent-color: var(--accent); }
+
 /* Duraklat butonu — sol üstte, HUD barlarının altında (çakışmaz). Yalnız
    oyun içinde görünür (setHudVisible ile). */
 #pause-btn {

@@ -58,6 +58,7 @@ function createInitialState() {
     eliteTimer: ELITE_DEF.every,
     bossTimer: mc.bossEvery,
     bossesSpawned: 0,
+    difficultyMult: Difficulty.mult(),
     revivesLeft: Meta.getLevel('revive'),
     pendingLevelUps: 0,
     levelUpChoices: [],

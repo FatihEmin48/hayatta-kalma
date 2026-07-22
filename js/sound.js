@@ -15,8 +15,11 @@
 const Sound = (function () {
   let ctx = null;
   let masterGain = null, musicGain = null, sfxGain = null;
-  let sfxEnabled = true;
-  let musicEnabled = true;
+  // Ses seviyeleri 0..1 (aç/kapa yerine kaydırıcı). 0 = kapalı.
+  let masterVol = 0.85;
+  let sfxVol = 1;
+  let musicVol = 1;
+  let prevMasterVol = 0.85; // M ile kısınca geri yüklemek için
   let unlocked = false;
   let musicOn = false;
   let schedulerId = null;
@@ -33,10 +36,15 @@ const Sound = (function () {
   const ARP = [220.00, 261.63, 329.63, 261.63,
                293.66, 329.63, 261.63, 220.00];          // A3 C4 E4 C4 D4 E4 C4 A3
 
-  try {
-    sfxEnabled = localStorage.getItem('hk_sfx') !== '0';
-    musicEnabled = localStorage.getItem('hk_music') !== '0';
-  } catch (e) { /* localStorage yok */ }
+  function clamp01(v) { v = Number(v); return isNaN(v) ? 0 : Math.max(0, Math.min(1, v)); }
+  function loadVol(key, def) {
+    try { const s = localStorage.getItem(key); if (s !== null) return clamp01(parseFloat(s)); } catch (e) { /* yok */ }
+    return def;
+  }
+  masterVol = loadVol('hk_vol_master', 0.85);
+  sfxVol = loadVol('hk_vol_sfx', 1);
+  musicVol = loadVol('hk_vol_music', 1);
+  prevMasterVol = masterVol > 0 ? masterVol : 0.85;
 
   function supported() {
     return typeof window !== 'undefined' && !!(window.AudioContext || window.webkitAudioContext);
@@ -48,13 +56,13 @@ const Sound = (function () {
       const AC = window.AudioContext || window.webkitAudioContext;
       ctx = new AC();
       masterGain = ctx.createGain();
-      masterGain.gain.value = MASTER_VOL;
+      masterGain.gain.value = masterVol;
       masterGain.connect(ctx.destination);
       musicGain = ctx.createGain();
-      musicGain.gain.value = musicEnabled ? MUSIC_VOL : 0;
+      musicGain.gain.value = musicVol * MUSIC_VOL;
       musicGain.connect(masterGain);
       sfxGain = ctx.createGain();
-      sfxGain.gain.value = sfxEnabled ? 1 : 0;
+      sfxGain.gain.value = sfxVol;
       sfxGain.connect(masterGain);
     } catch (e) {
       ctx = null;
@@ -79,19 +87,30 @@ const Sound = (function () {
     } catch (e) { /* yok say */ }
   }
 
-  function setSfxEnabled(v) {
-    sfxEnabled = !!v;
-    try { localStorage.setItem('hk_sfx', sfxEnabled ? '1' : '0'); } catch (e) { /* yok say */ }
-    if (sfxGain && ctx) sfxGain.gain.setTargetAtTime(sfxEnabled ? 1 : 0, ctx.currentTime, 0.02);
+  function setMasterVol(v) {
+    masterVol = clamp01(v);
+    if (masterVol > 0) prevMasterVol = masterVol;
+    try { localStorage.setItem('hk_vol_master', String(masterVol)); } catch (e) { /* yok */ }
+    if (masterGain && ctx) masterGain.gain.setTargetAtTime(masterVol, ctx.currentTime, 0.02);
   }
-  function isSfxEnabled() { return sfxEnabled; }
-
-  function setMusicEnabled(v) {
-    musicEnabled = !!v;
-    try { localStorage.setItem('hk_music', musicEnabled ? '1' : '0'); } catch (e) { /* yok say */ }
-    if (musicGain && ctx) musicGain.gain.setTargetAtTime(musicEnabled ? MUSIC_VOL : 0, ctx.currentTime, 0.02);
+  function setSfxVol(v) {
+    sfxVol = clamp01(v);
+    try { localStorage.setItem('hk_vol_sfx', String(sfxVol)); } catch (e) { /* yok */ }
+    if (sfxGain && ctx) sfxGain.gain.setTargetAtTime(sfxVol, ctx.currentTime, 0.02);
   }
-  function isMusicEnabled() { return musicEnabled; }
+  function setMusicVol(v) {
+    musicVol = clamp01(v);
+    try { localStorage.setItem('hk_vol_music', String(musicVol)); } catch (e) { /* yok */ }
+    if (musicGain && ctx) musicGain.gain.setTargetAtTime(musicVol * MUSIC_VOL, ctx.currentTime, 0.02);
+  }
+  function getMasterVol() { return masterVol; }
+  function getSfxVol() { return sfxVol; }
+  function getMusicVol() { return musicVol; }
+  // 'M' kısayolu: ana sesi kıs/aç (son sıfırdan farklı değere geri döner).
+  function toggleMute() {
+    setMasterVol(masterVol > 0 ? 0 : (prevMasterVol || 0.85));
+    return masterVol === 0;
+  }
 
   // Tek osilatörlük kısa "blip": hızlı attack + üstel decay.
   function blip(freq, dur, type, gainVal, dest, when) {
@@ -120,7 +139,7 @@ const Sound = (function () {
   }
 
   function sfx(name) {
-    if (!ctx || !sfxEnabled) return;
+    if (!ctx || masterVol <= 0 || sfxVol <= 0) return;
     const now = ctx.currentTime;
     switch (name) {
       case 'hit':
@@ -162,7 +181,7 @@ const Sound = (function () {
   }
 
   function scheduleMusicStep(time, s) {
-    if (!ctx || !musicEnabled) return;
+    if (!ctx || masterVol <= 0 || musicVol <= 0) return;
     // Bas nota her 2 adımda bir.
     if (s % 2 === 0) {
       const bi = Math.floor(s / 2) % BASS.length;
@@ -211,6 +230,7 @@ const Sound = (function () {
 
   return {
     resume: unlock, unlock, sfx, startMusic, stopMusic,
-    setSfxEnabled, isSfxEnabled, setMusicEnabled, isMusicEnabled, supported,
+    setMasterVol, setSfxVol, setMusicVol, getMasterVol, getSfxVol, getMusicVol,
+    toggleMute, supported,
   };
 })();

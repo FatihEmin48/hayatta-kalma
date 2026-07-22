@@ -33,6 +33,7 @@
       <p>Düşman dalgalarından kaçın, deneyim toplayıp güçlen, mümkün olduğunca uzun süre hayatta kal!</p>
       <div id="char-select" class="char-select"></div>
       <div id="mode-select" class="char-select"></div>
+      <div id="difficulty-select" class="char-select"></div>
       <button id="start-btn">Oyunu Başlat</button>
       <button id="shop-toggle" class="ghost-btn">🛒 Mağaza</button>
       <div id="shop" class="shop hidden"></div>
@@ -81,8 +82,9 @@
     <div id="sound-controls">
       <button id="settings-btn" aria-label="Ses ayarları">⚙️</button>
       <div id="settings-panel" class="hidden">
-        <button id="toggle-sfx" class="toggle-row"></button>
-        <button id="toggle-music" class="toggle-row"></button>
+        <div class="vol-row"><span>Ana Ses</span><input type="range" id="vol-master" min="0" max="100" step="5"></div>
+        <div class="vol-row"><span>🔊 Efekt</span><input type="range" id="vol-sfx" min="0" max="100" step="5"></div>
+        <div class="vol-row"><span>🎵 Müzik</span><input type="range" id="vol-music" min="0" max="100" step="5"></div>
       </div>
     </div>
 
@@ -103,6 +105,7 @@
   <script src="js/career.js"></script>
   <script src="js/characters.js"></script>
   <script src="js/modes.js"></script>
+  <script src="js/difficulty.js"></script>
   <script src="js/world.js"></script>
   <script src="js/input.js"></script>
   <script src="js/weapons.js"></script>
