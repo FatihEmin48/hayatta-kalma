@@ -62,9 +62,12 @@ function createInitialState() {
     biome: BIOMES[randInt(0, BIOMES.length - 1)],
     spawnTimer: SPAWN.baseIntervalSec,
     eliteTimer: ELITE_DEF.every,
-    bossTimer: mc.bossEvery,
+    bossTimer: mc.bossEvery * Difficulty.current().bossMult,
     bossesSpawned: 0,
-    difficultyMult: Difficulty.mult(),
+    difficultyMult: Difficulty.current().mult,
+    difficultySpawn: Difficulty.current().spawnMult,
+    difficultyBoss: Difficulty.current().bossMult,
+    difficultyReward: Difficulty.current().rewardMult,
     revivesLeft: Meta.getLevel('revive'),
     pendingLevelUps: 0,
     levelUpChoices: [],
@@ -223,7 +226,8 @@ function update(state, dt) {
 
 // Run bitince: altın ekle + başarımları değerlendir (yeni açılanları bildir).
 function endRunRewards(state) {
-  const earned = Meta.goldForRun(state) + Math.round(state.comboGold * COMBO_CONFIG.goldWeight);
+  const base = Meta.goldForRun(state) + Math.round(state.comboGold * COMBO_CONFIG.goldWeight);
+  const earned = Math.round(base * (state.difficultyReward || 1)); // zorluk ödül çarpanı
   Meta.addGold(earned);
   const stats = {
     kills: state.kills,

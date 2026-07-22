@@ -146,7 +146,7 @@ function updateSpawner(state, dt) {
     spawnEnemy(state, false);
     const t = state.timer / SPAWN.rampSeconds;
     // spawnScale<1 → aralık uzar (daha az düşman), >1 → kısalır (daha çok).
-    state.spawnTimer = lerp(SPAWN.baseIntervalSec, SPAWN.minIntervalSec, t) / state.modeConfig.spawnScale;
+    state.spawnTimer = lerp(SPAWN.baseIntervalSec, SPAWN.minIntervalSec, t) / (state.modeConfig.spawnScale * state.difficultySpawn);
   }
 
   state.eliteTimer -= dt;
@@ -162,7 +162,7 @@ function updateSpawner(state, dt) {
   state.bossTimer -= dt;
   if (state.bossTimer <= 0 && !hasBoss(state)) {
     spawnBoss(state);
-    state.bossTimer = state.modeConfig.bossEvery;
+    state.bossTimer = state.modeConfig.bossEvery * state.difficultyBoss;
   }
 }
 

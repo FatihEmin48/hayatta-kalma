@@ -13,10 +13,13 @@ const VICTORY_TIME_SEC = 900;
 // spawnScale: normal düşman yoğunluğu çarpanı (<1 = daha az).
 // Zorluk seçimi (js/difficulty.js): düşman gücü çarpanı. Başlangıç ekranında
 // seçilir, state.difficultyMult'e kopyalanıp spawn ölçeğiyle çarpılır.
+// Zorluk artık sadece düşman gücünü (mult) değil; spawn yoğunluğunu
+// (spawnMult), boss sıklığını (bossMult, <1 = daha sık) ve ödülü (rewardMult:
+// altın) de etkiler → gerçek risk-ödül tercihi.
 const DIFFICULTIES = [
-  { id: 'easy',   name: 'Kolay',  mult: 0.8 },
-  { id: 'normal', name: 'Normal', mult: 1.0 },
-  { id: 'hard',   name: 'Zor',    mult: 1.3 },
+  { id: 'easy',   name: 'Kolay',  mult: 0.8, spawnMult: 0.85, bossMult: 1.25, rewardMult: 0.85 },
+  { id: 'normal', name: 'Normal', mult: 1.0, spawnMult: 1.0,  bossMult: 1.0,  rewardMult: 1.0 },
+  { id: 'hard',   name: 'Zor',    mult: 1.3, spawnMult: 1.2,  bossMult: 0.8,  rewardMult: 1.35 },
 ];
 
 const GAME_MODES = [

@@ -44,7 +44,7 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 ## v28 — Ses seviyesi kaydırıcıları + zorluk seçimi
 
 - **Ses kaydırıcıları:** Aç/kapa yerine ⚙️ panelinde üç kaydırıcı — **Ana Ses / Efekt / Müzik** (0–100). Ayrı gain düğümlerine bağlı, hepsi `localStorage`'da kalıcı (`hk_vol_*`). **M** tuşu ana sesi kısar/açar. 0 = kapalı.
-- **Zorluk seçimi (`DIFFICULTIES`, `js/difficulty.js`):** Başlangıç ekranında Kolay / Normal / Zor. Seçilen çarpan (`0.8 / 1.0 / 1.3`) `state.difficultyMult`'e kopyalanıp tüm düşman/boss/minyon spawn ölçeğiyle çarpılır (localStorage'da kalıcı).
+- **Zorluk seçimi (`DIFFICULTIES`, `js/difficulty.js`):** Başlangıç ekranında Kolay / Normal / Zor (localStorage'da kalıcı). Düşman gücü çarpanı (`mult`), **spawn yoğunluğu** (`spawnMult`), **boss sıklığı** (`bossMult`) ve **ödül** (`rewardMult`, altın) etkilenir — Zor: daha güçlü + daha yoğun + daha sık boss ama daha çok altın; Kolay: tersi. Gerçek risk-ödül tercihi (v30'da genişletildi).
 
 ## v27 — Anka Tüyü (dirilme)
 
