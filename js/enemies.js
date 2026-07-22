@@ -66,7 +66,7 @@ function createBoss(x, y, scale, variant) {
     erratic: false, elite: false,
     jitterPhase: 0, nudgeSign: 1,
     fireTimer: firstTimer,
-    charging: 0, chargeDX: 0, chargeDY: 0,
+    charging: 0, telegraph: 0, chargeDX: 0, chargeDY: 0,
     dead: false,
   };
 }
@@ -180,13 +180,23 @@ function updateEnemies(state, dt) {
           e.x = r.x; e.y = r.y;
           continue;
         }
-        e.fireTimer -= dt;
-        if (e.fireTimer <= 0) {
+        if (e.telegraph > 0) {
+          // Uyarı: yerinde bekleyip yönü oyuncuya kilitler (çizim yanıp söner),
+          // süre bitince hücum başlar. Oyuncu kaçmak için zaman kazanır.
+          e.telegraph -= dt;
           const d = normalize(player.x - e.x, player.y - e.y);
           e.chargeDX = d.x; e.chargeDY = d.y;
-          e.charging = BOSS_DEF.chargeDuration;
+          if (e.telegraph <= 0) {
+            e.charging = BOSS_DEF.chargeDuration;
+            Sound.sfx('shoot');
+          }
+          continue;
+        }
+        e.fireTimer -= dt;
+        if (e.fireTimer <= 0) {
+          e.telegraph = BOSS_DEF.chargeTelegraph;
           e.fireTimer = BOSS_DEF.chargeEvery;
-          Sound.sfx('shoot');
+          Sound.sfx('hit'); // uyarı sesi
         }
       } else if (e.variant === 'summoner') {
         e.fireTimer -= dt;

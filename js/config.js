@@ -164,8 +164,9 @@ const BOSS_DEF = {
   projectileRadius: 8,
   projectileLife: 4,
   goldReward: 30,
-  // charger (Koçbaşı): periyodik yüksek hızlı hücum
+  // charger (Koçbaşı): hücumdan önce kısa uyarı (telegraph), sonra hızlı hücum
   chargeEvery: 3.5,
+  chargeTelegraph: 0.5,
   chargeDuration: 0.7,
   chargeSpeed: 430,
   // summoner (Efendi): periyodik minyon çağırma

@@ -64,6 +64,23 @@ function drawEnemies(ctx, state) {
       ctx.stroke();
     }
 
+    // Koçbaşı hücum uyarısı: yanıp sönen halka + hücum yönü çizgisi (kaç!).
+    if (e.boss && e.telegraph > 0) {
+      if (Math.floor(performance.now() / 90) % 2 === 0) {
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, e.radius + 5, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = 'rgba(231,76,60,0.85)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      ctx.lineTo(pos.x + e.chargeDX * 130, pos.y + e.chargeDY * 130);
+      ctx.stroke();
+    }
+
     if (e.hp < e.maxHp) {
       const w = e.radius * 2;
       ctx.fillStyle = 'rgba(0,0,0,0.5)';

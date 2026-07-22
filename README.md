@@ -31,6 +31,11 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v31 — Boss telegrafı + müzik yoğunluğu
+
+- **Koçbaşı hücum uyarısı (telegraph):** Hücumdan önce ~0.5 sn yerinde bekleyip **yanıp sönen halka + hücum yönü çizgisi** gösterir (uyarı sesi de çıkar). Oyuncu kaçmak için zaman kazanır — hücum artık habersiz gelmez (`BOSS_DEF.chargeTelegraph`).
+- **Müziğe yoğunluk:** Sahnede boss varken müzik **daha hızlı tempo + biraz daha yüksek** çalar (`Sound.setMusicIntensity`, her frame boss varlığına göre). Boss ölünce normale döner.
+
 ## v30 — Günlük meydan okuma (seeded)
 
 - **Tohumlanabilir RNG (`js/rng.js`):** Tüm oyun içi rastgelelik (utils/enemies/effects) artık mulberry32 tabanlı seedlenebilir bir üreteçten geçer. Normal modlarda her run rastgele tohumla başlar (eski davranış).

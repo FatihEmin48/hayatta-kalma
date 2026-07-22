@@ -212,6 +212,7 @@ function update(state, dt) {
     state.comboTimer -= dt;
     if (state.comboTimer <= 0) state.combo = 0;
   }
+  Sound.setMusicIntensity(hasBoss(state)); // boss sahnedeyken müzik yoğunlaşır
 
   state.enemies = removeDead(state.enemies);
   state.projectiles = removeDead(state.projectiles);

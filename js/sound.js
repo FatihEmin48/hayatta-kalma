@@ -20,6 +20,7 @@ const Sound = (function () {
   let sfxVol = 1;
   let musicVol = 1;
   let prevMasterVol = 0.85; // M ile kısınca geri yüklemek için
+  let intensity = 0;        // 0 normal, 1 boss (müzik hızlanır + yükselir)
   let unlocked = false;
   let musicOn = false;
   let schedulerId = null;
@@ -98,10 +99,18 @@ const Sound = (function () {
     try { localStorage.setItem('hk_vol_sfx', String(sfxVol)); } catch (e) { /* yok */ }
     if (sfxGain && ctx) sfxGain.gain.setTargetAtTime(sfxVol, ctx.currentTime, 0.02);
   }
+  function musicGainValue() { return musicVol * MUSIC_VOL * (intensity ? 1.3 : 1); }
   function setMusicVol(v) {
     musicVol = clamp01(v);
     try { localStorage.setItem('hk_vol_music', String(musicVol)); } catch (e) { /* yok */ }
-    if (musicGain && ctx) musicGain.gain.setTargetAtTime(musicVol * MUSIC_VOL, ctx.currentTime, 0.02);
+    if (musicGain && ctx) musicGain.gain.setTargetAtTime(musicGainValue(), ctx.currentTime, 0.02);
+  }
+  // Boss sahnedeyken müzik yoğunluğunu artır (daha hızlı tempo + biraz yüksek).
+  function setMusicIntensity(high) {
+    const v = high ? 1 : 0;
+    if (v === intensity) return;
+    intensity = v;
+    if (musicGain && ctx) musicGain.gain.setTargetAtTime(musicGainValue(), ctx.currentTime, 0.15);
   }
   function getMasterVol() { return masterVol; }
   function getSfxVol() { return sfxVol; }
@@ -199,7 +208,7 @@ const Sound = (function () {
     if (nextNoteTime < ctx.currentTime) nextNoteTime = ctx.currentTime + 0.05;
     while (nextNoteTime < ctx.currentTime + LOOKAHEAD) {
       scheduleMusicStep(nextNoteTime, step);
-      nextNoteTime += STEP_DUR;
+      nextNoteTime += STEP_DUR * (intensity ? 0.82 : 1); // boss'ta daha hızlı tempo
       step++;
     }
   }
@@ -210,6 +219,7 @@ const Sound = (function () {
     ensureCtx();
     if (!ctx || musicOn) return;
     musicOn = true;
+    intensity = 0;
     step = 0;
     nextNoteTime = ctx.currentTime + 0.1;
     schedulerId = setInterval(scheduler, 40);
@@ -231,6 +241,6 @@ const Sound = (function () {
   return {
     resume: unlock, unlock, sfx, startMusic, stopMusic,
     setMasterVol, setSfxVol, setMusicVol, getMasterVol, getSfxVol, getMusicVol,
-    toggleMute, supported,
+    setMusicIntensity, toggleMute, supported,
   };
 })();
