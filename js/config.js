@@ -220,8 +220,12 @@ const META_UPGRADES = [
   { id: 'damage', name: 'Hasar',           desc: '+%6 hasar',         step: 0.06, maxLevel: 5, baseCost: 50, costGrowth: 1.7 },
   { id: 'speed',  name: 'Hareket Hızı',    desc: '+%4 hız',           step: 0.04, maxLevel: 5, baseCost: 45, costGrowth: 1.6 },
   { id: 'regen',  name: 'Can Yenilenmesi', desc: '+0.3/sn yenilenme', step: 0.3,  maxLevel: 3, baseCost: 60, costGrowth: 1.9 },
+  { id: 'armor',  name: 'Zırh',            desc: '-1 gelen hasar',    step: 1,    maxLevel: 5, baseCost: 55, costGrowth: 1.7 },
+  { id: 'crit',   name: 'Kritik Şans',     desc: '+%4 kritik (x2 hasar)', step: 0.04, maxLevel: 5, baseCost: 60, costGrowth: 1.8 },
   { id: 'greed',  name: 'Altın Bulma',     desc: '+%12 altın',        step: 0.12, maxLevel: 5, baseCost: 55, costGrowth: 1.7 },
 ];
+
+const CRIT_MULT = 2;
 
 // Level-up ekranı kolaylıkları (js/leveling.js + ui.js). Yeniden çevir altına
 // mal olur, atlayınca küçük altın kazanılır, sil (banish) run başına sınırlıdır.

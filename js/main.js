@@ -113,7 +113,8 @@ function applyPlayerDamage(state, amount) {
   const player = state.player;
   const now = performance.now();
   if (now < player.invulnUntil) return false;
-  player.hp -= amount;
+  const dmg = Math.max(1, amount - getPlayerArmor(player)); // zırh: en az 1 hasar
+  player.hp -= dmg;
   player.invulnUntil = now + PLAYER_BASE.invulnMs;
   Sound.sfx('hurt');
   addShake(state, EFFECTS.shakeOnHurt);

@@ -205,14 +205,26 @@ function updateEnemies(state, dt) {
 
 function damageEnemy(state, enemy, amount, source) {
   if (enemy.dead) return;
+
+  // Kritik vuruş: yalnız silah kaynaklı hasarlar için (bomba vb. hariç).
+  let dmg = amount;
+  let crit = false;
+  if (source) {
+    const cc = getPlayerCritChance(state.player);
+    if (cc > 0 && Math.random() < cc) { crit = true; dmg = amount * CRIT_MULT; }
+  }
+
   // Run özeti için etkili hasar (overkill sayılmaz) toplanır; source verilirse
   // silah bazında da (en etkili silah sıralaması için).
-  const dealt = Math.max(0, Math.min(amount, enemy.hp));
+  const dealt = Math.max(0, Math.min(dmg, enemy.hp));
   state.totalDamage += dealt;
   if (source) state.weaponDamage[source] = (state.weaponDamage[source] || 0) + dealt;
-  enemy.hp -= amount;
-  spawnDamageNumber(state, enemy.x, enemy.y - enemy.radius - 4, amount,
-    enemy.elite ? { color: '#f1c40f', size: 15 } : undefined);
+  enemy.hp -= dmg;
+
+  const dmgOpts = crit
+    ? { color: '#f39c12', size: 18, text: `${Math.round(dmg)}!` }
+    : (enemy.elite ? { color: '#f1c40f', size: 15 } : undefined);
+  spawnDamageNumber(state, enemy.x, enemy.y - enemy.radius - 4, dmg, dmgOpts);
   Sound.sfx('hit');
   spawnParticles(state, enemy.x, enemy.y, '#ffffff', EFFECTS.hitParticleCount,
     { speedMin: 20, speedMax: 70, life: 0.22, radius: 1.5 });

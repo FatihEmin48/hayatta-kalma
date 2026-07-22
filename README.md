@@ -31,6 +31,11 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v18 — Zırh + kritik vuruş
+
+- **Zırh (`armor` meta yükseltmesi):** Gelen her hasarı düz olarak azaltır (en az 1 hasar geçer). `applyPlayerDamage` içinde uygulanır — hem temas hem düşman/boss mermileri için.
+- **Kritik vuruş (`crit` meta yükseltmesi):** Silah kaynaklı her isabette kritik şansı; kritikte hasar **x2** (`CRIT_MULT`) ve hasar sayısı turuncu/büyük + "!" ile gösterilir. `damageEnemy` içinde merkezî olarak yuvarlanır (bomba gibi silah-dışı hasarlar kritik yapmaz). İkisi de mağazadan alınır.
+
 ## v17 — Run özeti + mobil/denge düzeltmeleri
 
 - **Run özeti (game-over):** Ölünce/bitince istatistik satırı: **Hasar/sn (DPS)**, **toplam hasar** ve **en etkili silah** (yüzdesiyle). `damageEnemy` artık kaynak silahı da alıp `state.weaponDamage`'de toplar (overkill sayılmaz).
@@ -247,6 +252,10 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 43. Game-over ekranında Hasar/sn, toplam hasar ve en etkili silah görünüyor mu.
 44. Telefonda (özellikle yatay/kısa ekran) seviye atlama seçenekleri ekrana sığıyor / kaydırılabiliyor mu.
 45. Patlayan düşmanlar artık daha makul mü (patlama daha az can götürüyor mu).
+
+**v18 test (zırh + kritik):**
+
+46. Mağazadan Zırh alınca gelen hasar azalıyor mu; Kritik Şans alınca ara sıra turuncu "x2!" hasar sayıları çıkıyor mu.
 
 ## v14 sonrası hâlâ kapsam dışı
 

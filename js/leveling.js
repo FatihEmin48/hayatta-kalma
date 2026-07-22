@@ -74,6 +74,14 @@ function getPlayerRegen(player) {
   return player.passives.regen * getPassiveDef('regen').step + Meta.bonus('regen');
 }
 
+function getPlayerArmor(player) {
+  return Meta.bonus('armor');
+}
+
+function getPlayerCritChance(player) {
+  return Meta.bonus('crit');
+}
+
 // Bir seçeneğin "sil" anahtarı: silahın iki varyantı (yeni/yükselt) aynı
 // silahı temsil ettiği için ortak 'w:<id>' anahtarını paylaşır; pasifler 'p:'.
 function choiceBanishKey(choice) {
