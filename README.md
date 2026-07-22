@@ -17,19 +17,24 @@ sonra tarayıcıda `http://localhost:8000/` aç. `index.html`'e doğrudan çift 
 ## Kontroller
 
 - **WASD** veya **ok tuşları**: hareket (masaüstü)
-- **Sol alt köşedeki sanal joystick**: hareket (dokunmatik cihazlarda otomatik görünür)
+- **Kayan sanal joystick**: hareket — dokunmatik cihazda ekrana nerede basarsan joystick orada belirir
 - Silahlar otomatik saldırır, hedef seçmene gerek yok
 - Seviye atladığında **1 / 2 / 3** tuşları veya fare/dokunma ile seçim yap
 
 ## Mobil / telefon desteği
 
-Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **gerçek cihaz ekranına göre dinamik olarak** ayarlanıyor (`js/ui.js` → `applyCanvasSize`, `320`–`1600` piksel arası sınırlarla, `resize`/`orientationchange` olaylarında yeniden hesaplanıyor). Böylece telefonda (dikey ya da yatay) ekranın büyük kısmı boş kalmıyor, oyun alanı gerçekten ekranı dolduruyor. Dokunmatik cihaz tespit edilince (`navigator.maxTouchPoints` / `ontouchstart`) bir sanal joystick beliriyor; klavye her zaman önceliklidir (ikisi çakışmaz). **Joystick'in tarafı seçilebilir:** başlangıç ekranında (yalnız dokunmatik cihazlarda görünen) "Kontrolcü nerede olsun? Sol / Sağ" seçicisiyle joystick sağ ya da sol alt köşeye alınır; tercih `localStorage`'a (`hk_joystick_side`) yazılıp hatırlanır, ilk kez oynayanlar için varsayılan **sağ**. Joystick sağa alındığında ses aç/kapat butonu çakışmaması için otomatik olarak sol alta geçer.
+Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **gerçek cihaz ekranına göre dinamik olarak** ayarlanıyor (`js/ui.js` → `applyCanvasSize`, `320`–`1600` piksel arası sınırlarla, `resize`/`orientationchange` olaylarında yeniden hesaplanıyor). Böylece telefonda (dikey ya da yatay) ekranın büyük kısmı boş kalmıyor, oyun alanı gerçekten ekranı dolduruyor. Dokunmatik cihaz tespit edilince (`navigator.maxTouchPoints` / `ontouchstart`) **kayan (floating) sanal joystick** devreye girer: oyun alanına (canvas) nerede basarsan joystick tam o noktada belirir, parmağını takip eder, parmağını çekince kaybolur — sabit köşe değil (gerçek oynanış geri bildirimi). Joystick görseli `pointer-events:none` olduğundan girişi engellemez; tüm dokunuş mantığı canvas + `window` dinleyicileriyle yürür, bu yüzden UI butonlarına (dash/ayar/duraklat — ayrı, üstteki elemanlar) basınca joystick çıkmaz. Klavye ve oyun kolu `getMoveVector`'da önceliklidir (üçü çakışmaz).
 
 ## v2 — Silah evrimleri + harita içeriği
 
 - **Silah evrimleri:** Kırbaç + Hasar pasifi (ikisi de max seviye/sayı) → **Kırbaç Fırtınası** (360° tam çember vuruş). Fırlatan Bıçak + Toplama Yarıçapı pasifi → **Bıçak Yağmuru** (tek hedef yerine aynı anda 3 düşmana mermi). Alan Hasarı + Can Yenilenmesi pasifi → **Yaşam Auraı** (daha büyük yarıçap + verdiği hasarın bir kısmını can olarak geri veriyor). Şartlar sağlanınca otomatik gerçekleşir, ekranda kısa bir bildirim (toast) çıkar.
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
+
+## v20 — Kayan (floating) joystick
+
+- **Gerçek oynanış geri bildirimi:** Mobilde kontroller sabit köşede değil, **parmağını bastığın yerde** çıksın istendi. Joystick artık kayan: oyun alanına dokunulan noktada belirir, parmağı takip eder, bırakınca kaybolur (`js/input.js` `initJoystick`). Görsel `pointer-events:none`, tüm giriş canvas + `window` dokunuş dinleyicileriyle işlenir; UI butonları etkilenmez.
+- Bununla birlikte artık gereksiz kalan **sol/sağ taraf seçicisi kaldırıldı** (kayan joystick zaten her yerden erişilebilir olduğu için el tercihini kendiliğinden çözer).
 
 ## v19 — Boss geri sayımı (HUD)
 
@@ -171,7 +176,7 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 **Mobil test:**
 
 8. Telefonda sayfa açıldığında oyun alanı ekranı gerçekten dolduruyor mu (dikey ve yatay modda), boş/letterbox alan kalmıyor mu.
-9. Başlangıç ekranında "Kontrolcü nerede olsun? Sol / Sağ" seçicisi görünüyor mu (dokunmatikte, masaüstünde görünmemeli); seçilen alt köşede (varsayılan sağ) joystick beliriyor, ses butonu karşı tarafa geçiyor, parmakla sürükleyince karakter o yönde hareket edip çekilince duruyor ve sayfa yenilenince taraf tercihi hatırlanıyor mu.
+9. Telefonda oyun alanına parmakla basınca joystick tam o noktada beliriyor mu; parmağı sürükleyince karakter o yönde gidiyor, çekince joystick kaybolup hareket duruyor mu; UI butonlarına (dash/ayar/duraklat) basınca joystick çıkmıyor mu.
 10. Seviye atlama seçenekleri dar ekranda alt alta dizilip dokunarak seçilebiliyor mu.
 
 **v2 test:**

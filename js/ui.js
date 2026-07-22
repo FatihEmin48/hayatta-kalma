@@ -67,12 +67,6 @@ const UI = (function () {
       refreshStartHighScores();
     });
 
-    // Joystick tarafı seçici (yalnız dokunmatikte görünür, CSS ile).
-    els.sideLeftBtn = document.getElementById('side-left');
-    els.sideRightBtn = document.getElementById('side-right');
-    updateSideButtons(getJoystickSide());
-    els.sideLeftBtn.addEventListener('click', () => updateSideButtons(setJoystickSide('left')));
-    els.sideRightBtn.addEventListener('click', () => updateSideButtons(setJoystickSide('right')));
 
     // Ses ayarları: ⚙️ butonu, efekt sesi ve müziği bağımsız açıp kapatan
     // iki anahtarlı bir panel açar. Her ekranda (start/oyun/game-over) erişilir.
@@ -247,12 +241,6 @@ const UI = (function () {
       `<table class="hs-table">` +
       `<thead><tr><th>#</th><th>Puan</th><th>Süre</th><th>Sv</th><th>Öldürme</th></tr></thead>` +
       `<tbody>${rows}</tbody></table>`;
-  }
-
-  function updateSideButtons(side) {
-    if (!els.sideLeftBtn) return;
-    els.sideLeftBtn.classList.toggle('active', side === 'left');
-    els.sideRightBtn.classList.toggle('active', side === 'right');
   }
 
   // Kalıcı yükseltme mağazası (başlangıç ekranı). Toggle butonunda güncel

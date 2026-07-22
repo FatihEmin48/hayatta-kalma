@@ -71,19 +71,32 @@ function getMoveVector() {
   return touchMoveVector;
 }
 
-// Bottom-left virtual joystick for touch devices. Only shown/active when the
-// device reports touch support; keyboard input always takes precedence over
-// it in getMoveVector() above, so the two schemes never fight each other.
+// Kayan (floating) sanal joystick: dokunmatik cihazda oyuncu ekrana nerede
+// basarsa joystick tam orada belirir, parmağı takip eder ve parmak çekilince
+// kaybolur — sabit köşe yerine. Görsel eleman pointer-events:none olduğundan
+// tüm dokunuş mantığı canvas + window dinleyicileriyle yürür; UI butonlarına
+// (dash/ayar/duraklat) basınca joystick çıkmaz (onlar ayrı, üstteki elemanlar).
+// Klavye/oyun kolu getMoveVector'da önceliklidir, çakışmazlar.
 let touchMoveVector = { x: 0, y: 0 };
-const JOYSTICK_MAX_RADIUS = 40;
-const JOYSTICK_DEADZONE = 6;
+const JOYSTICK_MAX_RADIUS = 45;
+const JOYSTICK_DEADZONE = 8;
+const JOYSTICK_SIZE = 120;
 let joystickTouchId = null;
 let joystickCenter = { x: 0, y: 0 };
 
 function initJoystick() {
-  const base = document.getElementById('joystick-base');
+  const wrap = document.getElementById('joystick');
   const knob = document.getElementById('joystick-knob');
-  if (!base || !knob) return;
+  const canvas = document.getElementById('game');
+  if (!wrap || !knob || !canvas) return;
+
+  function showAt(clientX, clientY) {
+    joystickCenter = { x: clientX, y: clientY };
+    wrap.style.left = (clientX - JOYSTICK_SIZE / 2) + 'px';
+    wrap.style.top = (clientY - JOYSTICK_SIZE / 2) + 'px';
+    wrap.classList.add('active');
+    knob.style.transform = 'translate(0px, 0px)';
+  }
 
   function updateKnob(clientX, clientY) {
     let dx = clientX - joystickCenter.x;
@@ -98,19 +111,21 @@ function initJoystick() {
     touchMoveVector = dist > JOYSTICK_DEADZONE ? normalize(dx, dy) : { x: 0, y: 0 };
   }
 
-  function resetKnob() {
+  function reset() {
     joystickTouchId = null;
     touchMoveVector = { x: 0, y: 0 };
+    wrap.classList.remove('active');
     knob.style.transform = 'translate(0px, 0px)';
   }
 
-  base.addEventListener('touchstart', (e) => {
-    e.preventDefault();
+  // Oyun alanına (canvas) ilk dokunuş joystick'i tam o noktada başlatır.
+  canvas.addEventListener('touchstart', (e) => {
+    if (joystickTouchId !== null) return;
     const touch = e.changedTouches[0];
     joystickTouchId = touch.identifier;
-    const rect = base.getBoundingClientRect();
-    joystickCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    showAt(touch.clientX, touch.clientY);
     updateKnob(touch.clientX, touch.clientY);
+    e.preventDefault();
   }, { passive: false });
 
   window.addEventListener('touchmove', (e) => {
@@ -125,40 +140,13 @@ function initJoystick() {
 
   window.addEventListener('touchend', (e) => {
     for (const touch of e.changedTouches) {
-      if (touch.identifier === joystickTouchId) resetKnob();
+      if (touch.identifier === joystickTouchId) reset();
     }
   });
-  window.addEventListener('touchcancel', resetKnob);
-}
-
-// Joystick'in ekranda hangi tarafta çıkacağı (dokunmatik). Tercih
-// localStorage'da tutulur; ilk kez oynayanlar için varsayılan SAĞ (sol el
-// oyuncuyu zorluyordu). Konumlandırma CSS'te body.joystick-left/right ile.
-const JOYSTICK_SIDE_KEY = 'hk_joystick_side';
-
-function getJoystickSide() {
-  try {
-    const s = localStorage.getItem(JOYSTICK_SIDE_KEY);
-    if (s === 'left' || s === 'right') return s;
-  } catch (e) { /* localStorage yok */ }
-  return 'right';
-}
-
-function applyJoystickSide(side) {
-  if (typeof document === 'undefined' || !document.body) return;
-  document.body.classList.toggle('joystick-left', side === 'left');
-  document.body.classList.toggle('joystick-right', side === 'right');
-}
-
-function setJoystickSide(side) {
-  side = side === 'left' ? 'left' : 'right';
-  try { localStorage.setItem(JOYSTICK_SIDE_KEY, side); } catch (e) { /* yok say */ }
-  applyJoystickSide(side);
-  return side;
+  window.addEventListener('touchcancel', reset);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  applyJoystickSide(getJoystickSide());
   if ('ontouchstart' in window || (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0)) {
     document.body.classList.add('touch-enabled');
     initJoystick();
