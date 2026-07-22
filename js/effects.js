@@ -10,7 +10,7 @@ function spawnParticles(state, x, y, color, count, opts) {
   const life = opts.life !== undefined ? opts.life : 0.5;
   for (let i = 0; i < count; i++) {
     if (state.particles.length >= EFFECTS.maxParticles) break;
-    const a = Math.random() * Math.PI * 2;
+    const a = Rng.random() * Math.PI * 2;
     const sp = randRange(speedMin, speedMax);
     state.particles.push({
       x, y,

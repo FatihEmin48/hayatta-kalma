@@ -31,6 +31,12 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v30 — Günlük meydan okuma (seeded)
+
+- **Tohumlanabilir RNG (`js/rng.js`):** Tüm oyun içi rastgelelik (utils/enemies/effects) artık mulberry32 tabanlı seedlenebilir bir üreteçten geçer. Normal modlarda her run rastgele tohumla başlar (eski davranış).
+- **Günlük mod (`daily` oyun modu):** Bugünün UTC tarihinden türetilen tohumla oynanır — aynı gün herkese **aynı harita, biyom ve dalga deseni**. `createInitialState` harita/biyom üretiminden önce reseed eder; bu yüzden aynı günün her run'ı birebir aynı dünyayı verir.
+- **Günlük en iyi:** Game-over'da bugünün tohumuna ait kişisel en yüksek skor (`hk_daily_best`) gösterilir/güncellenir.
+
 ## v29 — Erişilebilirlik ayarları
 
 - **Ayarlar (`js/settings.js`, localStorage):** ⚙️ panelinin altında "Erişilebilirlik" bölümü — 3 aç/kapa: **Ekran sarsıntısı** (kapalıyken `addShake` no-op), **Hasar sayıları** (kapalıyken uçuşan rakam çıkmaz), **Ekran kızarması** (kapalıyken hasar vinyeti çizilmez). Fotosensitivite/hareket hassasiyeti için. Tercihler kalıcı.

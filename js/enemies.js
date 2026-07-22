@@ -17,8 +17,8 @@ function createEnemy(defId, x, y, elite, scale) {
     color: elite ? ELITE_DEF.color : def.color,
     erratic: !!def.erratic,
     elite: !!elite,
-    jitterPhase: Math.random() * Math.PI * 2,
-    nudgeSign: Math.random() < 0.5 ? -1 : 1,
+    jitterPhase: Rng.random() * Math.PI * 2,
+    nudgeSign: Rng.random() < 0.5 ? -1 : 1,
     scale,
     // Davranış tipleri (F4): mesafeli / patlayan / bölünen.
     ranged: !!def.ranged,
@@ -90,10 +90,10 @@ function summonMinions(state, boss) {
   if (state.enemies.length >= SPAWN.maxConcurrent) return;
   const scale = getDifficultyScale(state.timer, state.player.level) * state.difficultyMult;
   for (let i = 0; i < BOSS_DEF.summonCount; i++) {
-    const a = Math.random() * Math.PI * 2;
+    const a = Rng.random() * Math.PI * 2;
     const x = boss.x + Math.cos(a) * boss.radius * 1.5;
     const y = boss.y + Math.sin(a) * boss.radius * 1.5;
-    state.enemies.push(createEnemy(Math.random() < 0.5 ? 'basic' : 'fast', x, y, false, scale));
+    state.enemies.push(createEnemy(Rng.random() < 0.5 ? 'basic' : 'fast', x, y, false, scale));
   }
   Sound.sfx('shoot');
   spawnParticles(state, boss.x, boss.y, boss.color, 10, { life: 0.4 });
@@ -255,7 +255,7 @@ function damageEnemy(state, enemy, amount, source) {
   let crit = false;
   if (source) {
     const cc = getPlayerCritChance(state.player);
-    if (cc > 0 && Math.random() < cc) { crit = true; dmg = amount * CRIT_MULT; }
+    if (cc > 0 && Rng.random() < cc) { crit = true; dmg = amount * CRIT_MULT; }
   }
 
   // Run özeti için etkili hasar (overkill sayılmaz) toplanır; source verilirse
@@ -310,7 +310,7 @@ function killEnemy(state, enemy) {
   // Bölünen: ölünce birkaç küçük (zayıf) düşmana ayrılır.
   if (enemy.splitter && enemy.splitInto > 0) {
     for (let i = 0; i < enemy.splitInto; i++) {
-      const a = (i / enemy.splitInto) * Math.PI * 2 + Math.random();
+      const a = (i / enemy.splitInto) * Math.PI * 2 + Rng.random();
       const cx = enemy.x + Math.cos(a) * enemy.radius;
       const cy = enemy.y + Math.sin(a) * enemy.radius;
       state.enemies.push(createEnemy('basic', cx, cy, false, Math.max(0.4, enemy.scale * 0.6)));
@@ -323,7 +323,7 @@ function killEnemy(state, enemy) {
 }
 
 function maybeDropPickup(state, x, y) {
-  if (Math.random() >= PICKUP_CONFIG.dropChance) return;
+  if (Rng.random() >= PICKUP_CONFIG.dropChance) return;
   const type = weightedPick(PICKUP_CONFIG.types, PICKUP_CONFIG.weights);
   state.pickups.push({ x, y, radius: PICKUP_CONFIG.radius, type, dead: false });
 }

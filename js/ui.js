@@ -466,6 +466,15 @@ const UI = (function () {
       const pct = state.totalDamage > 0 ? Math.round(bestDmg / state.totalDamage * 100) : 0;
       summary += ` · En etkili: ${name} (%${pct})`;
     }
+    // Günlük mod: bu tohumun kişisel en iyisini güncelle + göster.
+    if (state.modeConfig && state.modeConfig.seeded && scoreResult) {
+      const seed = Rng.dailySeed();
+      let best = 0;
+      try { const d = JSON.parse(localStorage.getItem('hk_daily_best') || '{}'); if (d.seed === seed) best = d.score || 0; } catch (e) { /* yok */ }
+      const sc = scoreResult.entry.score;
+      if (sc > best) { best = sc; try { localStorage.setItem('hk_daily_best', JSON.stringify({ seed, score: best })); } catch (e) { /* yok */ } }
+      summary += ` · 📅 Günlük en iyin: ${best}`;
+    }
     els.gameOverSummary.textContent = summary;
 
     if (goldEarned !== undefined) {

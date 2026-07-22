@@ -7,7 +7,7 @@ function lerp(a, b, t) {
 }
 
 function randRange(min, max) {
-  return min + Math.random() * (max - min);
+  return min + Rng.random() * (max - min);
 }
 
 function randInt(min, max) {
@@ -40,7 +40,7 @@ function pickRandomUnique(arr, count) {
   const result = [];
   const n = Math.min(count, pool.length);
   for (let i = 0; i < n; i++) {
-    const idx = Math.floor(Math.random() * pool.length);
+    const idx = Math.floor(Rng.random() * pool.length);
     result.push(pool[idx]);
     pool.splice(idx, 1);
   }
@@ -55,7 +55,7 @@ function removeDead(arr) {
 function weightedPick(items, weights) {
   let total = 0;
   for (const w of weights) total += w;
-  let r = Math.random() * total;
+  let r = Rng.random() * total;
   for (let i = 0; i < items.length; i++) {
     r -= weights[i];
     if (r <= 0) return items[i];

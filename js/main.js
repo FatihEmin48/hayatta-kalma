@@ -3,6 +3,7 @@ const STATE = { START: 'START', PLAYING: 'PLAYING', LEVEL_UP: 'LEVEL_UP', GAME_O
 let canvas, ctx;
 let lastTime = 0;
 let state = null;
+let runSalt = 0; // normal modda her run'a farklı tohum vermek için
 
 function createPlayer() {
   const p = {
@@ -23,6 +24,11 @@ function createPlayer() {
 
 function createInitialState() {
   const mc = Modes.current();
+  // Tohumla: Günlük mod → bugünün tohumu (herkese aynı harita). Diğer modlar →
+  // her run'a farklı tohum. RNG reseed'i harita/biyom üretiminden ÖNCE olmalı.
+  runSalt = (runSalt + 1) | 0;
+  Rng.reseed(mc.seeded ? Rng.dailySeed()
+    : ((Date.now() ^ (runSalt * 2654435761) ^ ((performance.now() * 1000) | 0)) >>> 0));
   const player = createPlayer();
   return {
     mode: STATE.START,

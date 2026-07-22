@@ -23,6 +23,7 @@ const GAME_MODES = [
   { id: 'normal',      name: 'Normal',         desc: 'Klasik sonsuz hayatta kalma.',        bossEvery: 180, victoryTime: 0,   spawnScale: 1 },
   { id: 'boss_rush',   name: 'Boss Yağmuru',   desc: 'Sık sık boss, az normal düşman.',     bossEvery: 45,  victoryTime: 0,   spawnScale: 0.5 },
   { id: 'time_attack', name: 'Süre Saldırısı', desc: '5 dakika dayan, en yüksek skoru yap.', bossEvery: 120, victoryTime: 300, spawnScale: 1.15 },
+  { id: 'daily', name: 'Günlük', desc: 'Bugünün tohumu: herkese aynı harita/dalga.', bossEvery: 180, victoryTime: 0, spawnScale: 1, seeded: true },
 ];
 
 const PLAYER_BASE = {
