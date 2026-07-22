@@ -28,6 +28,8 @@ function createInitialState() {
     timer: 0,
     kills: 0,
     bossKills: 0,
+    totalDamage: 0,
+    weaponDamage: {},
     player: createPlayer(),
     enemies: [],
     projectiles: [],

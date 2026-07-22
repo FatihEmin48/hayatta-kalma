@@ -23,6 +23,7 @@ const UI = (function () {
     els.gameOverTitle = document.getElementById('gameover-title');
     els.gameOverStats = document.getElementById('gameover-stats');
     els.gameOverScore = document.getElementById('gameover-score');
+    els.gameOverSummary = document.getElementById('gameover-summary');
     els.gameOverGold = document.getElementById('gameover-gold');
     els.gameOverHighScores = document.getElementById('gameover-highscores');
     els.startHighScores = document.getElementById('start-highscores');
@@ -376,6 +377,20 @@ const UI = (function () {
   function showGameOver(state, victory, scoreResult, goldEarned) {
     els.gameOverTitle.textContent = victory ? 'Hayatta Kaldın!' : 'Öldün';
     els.gameOverStats.textContent = `Süre: ${formatTime(state.timer)} · Seviye: ${state.player.level} · Öldürülen: ${state.kills}`;
+
+    // Run özeti: hasar/sn + toplam hasar + en etkili silah.
+    const dps = state.timer > 0 ? state.totalDamage / state.timer : 0;
+    let bestId = null, bestDmg = 0;
+    for (const k in state.weaponDamage) {
+      if (state.weaponDamage[k] > bestDmg) { bestDmg = state.weaponDamage[k]; bestId = k; }
+    }
+    let summary = `Hasar/sn: ${Math.round(dps)} · Toplam hasar: ${Math.round(state.totalDamage)}`;
+    if (bestId) {
+      const wd = WEAPON_DEFS.find(w => w.id === bestId);
+      const pct = state.totalDamage > 0 ? Math.round(bestDmg / state.totalDamage * 100) : 0;
+      summary += ` · En etkili: ${wd ? wd.name : bestId} (%${pct})`;
+    }
+    els.gameOverSummary.textContent = summary;
 
     if (goldEarned !== undefined) {
       els.gameOverGold.textContent = `🪙 +${goldEarned} altın kazandın · Toplam: ${Meta.getGold()}`;

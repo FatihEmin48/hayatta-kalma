@@ -31,6 +31,12 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v17 — Run özeti + mobil/denge düzeltmeleri
+
+- **Run özeti (game-over):** Ölünce/bitince istatistik satırı: **Hasar/sn (DPS)**, **toplam hasar** ve **en etkili silah** (yüzdesiyle). `damageEnemy` artık kaynak silahı da alıp `state.weaponDamage`'de toplar (overkill sayılmaz).
+- **Mobil seviye atlama ekranı düzeltmesi:** Telefonda seçenekler ekrana sığmıyordu; `.screen` artık `safe center` + kaydırma ile taşan içeriği kırpmadan gösterir, kartlar dar/kısa ekranlarda kompaktlaşır.
+- **Denge — patlayan düşman zayıflatıldı:** `exploder` patlama hasarı 18→9, yarıçapı 70→50, hızı 95→78. Artık ölürken oyuncuyu tek seferde ağır cezalandırmıyor.
+
 ## v16 — Gamepad (oyun kolu) desteği
 
 - **Gamepad API (`js/input.js`):** Sol analog çubuk + D-pad ile hareket; **A / RB / RT** ile atılma (dash). Öncelik sırası: klavye > oyun kolu > dokunmatik joystick — çakışmazlar. Oyun kolu bağlanınca bildirim çıkar. Kol yokken tüm okumalar güvenle 0 döner.
@@ -235,6 +241,12 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 **v16 test (gamepad):**
 
 42. Oyun kolu bağlanınca bildirim çıkıyor mu; sol analog/D-pad ile hareket, A/RB/RT ile dash çalışıyor mu; klavye/kol/dokunmatik çakışmadan çalışıyor mu.
+
+**v17 test (özet + düzeltmeler):**
+
+43. Game-over ekranında Hasar/sn, toplam hasar ve en etkili silah görünüyor mu.
+44. Telefonda (özellikle yatay/kısa ekran) seviye atlama seçenekleri ekrana sığıyor / kaydırılabiliyor mu.
+45. Patlayan düşmanlar artık daha makul mü (patlama daha az can götürüyor mu).
 
 ## v14 sonrası hâlâ kapsam dışı
 

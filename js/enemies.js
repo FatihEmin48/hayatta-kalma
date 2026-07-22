@@ -203,8 +203,13 @@ function updateEnemies(state, dt) {
   }
 }
 
-function damageEnemy(state, enemy, amount) {
+function damageEnemy(state, enemy, amount, source) {
   if (enemy.dead) return;
+  // Run özeti için etkili hasar (overkill sayılmaz) toplanır; source verilirse
+  // silah bazında da (en etkili silah sıralaması için).
+  const dealt = Math.max(0, Math.min(amount, enemy.hp));
+  state.totalDamage += dealt;
+  if (source) state.weaponDamage[source] = (state.weaponDamage[source] || 0) + dealt;
   enemy.hp -= amount;
   spawnDamageNumber(state, enemy.x, enemy.y - enemy.radius - 4, amount,
     enemy.elite ? { color: '#f1c40f', size: 15 } : undefined);

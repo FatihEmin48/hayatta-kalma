@@ -23,7 +23,7 @@ function fireWhip(state, w, def) {
   for (const e of state.enemies) {
     if (e.dead) continue;
     if (inWhipArc(player.x, player.y, player.facingX, player.facingY, range, arcDeg, e.x, e.y)) {
-      damageEnemy(state, e, damage);
+      damageEnemy(state, e, damage, 'whip');
     }
   }
 
@@ -60,6 +60,7 @@ function fireKnife(state, w, def) {
       vx: dir.x * speed, vy: dir.y * speed,
       damage, radius: 5,
       rangeLeft: range,
+      source: 'knife',
       dead: false,
     });
   }
@@ -77,7 +78,7 @@ function fireAura(state, w, def) {
     if (e.dead) continue;
     const dx = e.x - player.x, dy = e.y - player.y;
     if (dx * dx + dy * dy <= r2) {
-      damageEnemy(state, e, damage);
+      damageEnemy(state, e, damage, 'aura');
       hitCount++;
     }
   }
@@ -105,7 +106,7 @@ function fireOrbit(state, w, def) {
     const oy = player.y + Math.sin(a) * orbitR;
     for (const e of state.enemies) {
       if (e.dead) continue;
-      if (circleHit(ox, oy, hitR, e.x, e.y, e.radius)) damageEnemy(state, e, damage);
+      if (circleHit(ox, oy, hitR, e.x, e.y, e.radius)) damageEnemy(state, e, damage, 'orbit');
     }
   }
 }
@@ -132,7 +133,7 @@ function fireChain(state, w, def) {
   const hit = new Set();
   const points = [{ x: player.x, y: player.y }];
   for (let j = 0; j < maxJumps && node; j++) {
-    damageEnemy(state, node, damage * Math.pow(0.85, j));
+    damageEnemy(state, node, damage * Math.pow(0.85, j), 'chain');
     hit.add(node);
     points.push({ x: node.x, y: node.y });
     let next = null, bd2 = jumpRange * jumpRange;
@@ -178,6 +179,7 @@ function fireBoomerang(state, w, def) {
       radius: 9,
       boomerang: true, phase: 'out', traveled: 0, maxDist: range,
       hitTimes: new Map(),
+      source: 'boomerang',
       dead: false,
     });
   }
@@ -214,7 +216,7 @@ function updateBoomerang(state, p, dt) {
     if (circleHit(p.x, p.y, p.radius, e.x, e.y, e.radius)) {
       const last = p.hitTimes.get(e);
       if (last === undefined || state.timer - last >= 0.35) {
-        damageEnemy(state, e, p.damage);
+        damageEnemy(state, e, p.damage, p.source);
         p.hitTimes.set(e, state.timer);
       }
     }
@@ -238,7 +240,7 @@ function updateProjectiles(state, dt) {
     for (const e of state.enemies) {
       if (e.dead) continue;
       if (circleHit(p.x, p.y, p.radius, e.x, e.y, e.radius)) {
-        damageEnemy(state, e, p.damage);
+        damageEnemy(state, e, p.damage, p.source);
         p.dead = true;
         break;
       }

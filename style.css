@@ -93,12 +93,16 @@ canvas {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 12px;
   background: rgba(10, 12, 16, 0.85);
   text-align: center;
   padding: 20px;
   overflow-y: auto;
+  /* İçerik ekrandan taşarsa (ör. telefonda seviye atlama seçenekleri) üstten
+     kırpılmadan kaydırılabilsin: 'safe center' taşınca flex-start'a düşer.
+     Desteklemeyen tarayıcılar ilk 'center' bildirimini kullanır. */
+  justify-content: center;
+  justify-content: safe center;
 }
 .screen.hidden { display: none; }
 
@@ -167,12 +171,21 @@ button:hover { filter: brightness(1.1); }
 .choice-btn .choice-desc { font-size: 12px; color: var(--muted); }
 
 @media (max-width: 640px) {
-  #levelup-choices { flex-direction: column; }
-  .choice-btn { width: min(320px, 78vw); }
+  #levelup-choices { flex-direction: column; gap: 8px; }
+  .choice-card { width: min(320px, 82vw); }
+  .choice-btn { padding: 9px 12px; }
+  .choice-name { margin: 2px 0; }
+  .choice-tools { gap: 8px; }
   .screen h1 { font-size: 24px; }
-  .screen h2 { font-size: 20px; }
+  .screen h2 { font-size: 20px; margin-top: 4px; }
   .screen p { font-size: 14px; max-width: 90vw; }
   #hud-mid { font-size: 12px; }
+}
+/* Kısa/yatay ekranlarda seviye atlama başlığı daha da küçülsün. */
+@media (max-height: 560px) {
+  #screen-levelup h2 { font-size: 18px; margin: 2px; }
+  .choice-btn { padding: 8px 10px; }
+  #levelup-choices { gap: 6px; }
 }
 
 #toast {
@@ -216,6 +229,7 @@ button:hover { filter: brightness(1.1); }
 
 .score-line { font-size: 18px; font-weight: bold; color: var(--accent); }
 .gold-line { font-size: 15px; font-weight: bold; color: #d4af37; }
+.summary-line { font-size: 13px; color: var(--muted); max-width: 90vw; }
 
 .gameover-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 
