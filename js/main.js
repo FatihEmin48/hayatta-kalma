@@ -228,6 +228,7 @@ function endRunRewards(state) {
     Sound.sfx('evolve');
     UI.showToast(`🏆 ${newly.map(a => a.name).join(', ')}`);
   }
+  Career.recordRun(state, earned);
   return earned;
 }
 

@@ -34,6 +34,8 @@ const UI = (function () {
     els.modeSelect = document.getElementById('mode-select');
     els.achievements = document.getElementById('achievements');
     els.achToggle = document.getElementById('ach-toggle');
+    els.career = document.getElementById('career');
+    els.careerToggle = document.getElementById('career-toggle');
 
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', restartGame);
@@ -59,6 +61,11 @@ const UI = (function () {
     els.achToggle.addEventListener('click', () => {
       els.achievements.classList.toggle('hidden');
       refreshAchievements();
+    });
+    refreshCareer();
+    els.careerToggle.addEventListener('click', () => {
+      els.career.classList.toggle('hidden');
+      refreshCareer();
     });
 
     refreshStartHighScores();
@@ -345,6 +352,29 @@ const UI = (function () {
     if (!els.achievements.classList.contains('hidden')) renderAchievements();
   }
 
+  function renderCareer() {
+    if (!els.career) return;
+    const d = Career.get();
+    const rows = [
+      ['Oynanan oyun', d.runs],
+      ['Toplam öldürme', d.kills],
+      ['Toplam süre', formatTime(d.time)],
+      ['Öldürülen boss', d.bosses],
+      ['En yüksek combo', 'x' + d.bestCombo],
+      ['En yüksek seviye', d.bestLevel],
+      ['Toplam kazanılan altın', d.gold],
+    ];
+    els.career.innerHTML = rows.map(([k, v]) =>
+      `<div class="ach-row done"><span class="ach-info"><span class="ach-name">${k}</span>` +
+      `<span class="ach-desc">${v}</span></span></div>`).join('');
+  }
+
+  function refreshCareer() {
+    if (!els.careerToggle) return;
+    els.careerToggle.textContent = `📈 Kariyer (${Career.get().runs} oyun)`;
+    if (!els.career.classList.contains('hidden')) renderCareer();
+  }
+
   // Game-over ekranından başlangıç menüsüne dönünce çağrılır.
   function showStartMenu() {
     hideAllScreens();
@@ -353,6 +383,7 @@ const UI = (function () {
     renderCharacters();
     renderModes();
     refreshAchievements();
+    refreshCareer();
     refreshStartHighScores();
   }
 

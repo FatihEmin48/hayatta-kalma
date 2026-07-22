@@ -31,6 +31,11 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v24 — Kariyer istatistikleri
+
+- **Kariyer (`js/career.js`, localStorage):** Tüm run'lar boyunca biriken ömür boyu istatistikler — oynanan oyun, toplam öldürme, toplam süre, öldürülen boss, en yüksek combo, en yüksek seviye, toplam kazanılan altın. Her run sonunda (`endRunRewards`) güncellenir.
+- **Panel:** Başlangıç ekranında 📈 Kariyer düğmesiyle açılan liste (buton oynanan oyun sayısını gösterir).
+
 ## v23 — Yoldaş / pet
 
 - **Yoldaş (`COMPANION` + `companion` meta yükseltmesi):** Mağazadan alınınca (seviye 1-3) oyuncunun biraz üstünde süzülen, en yakın düşmana **otomatik mermi atan** bir eşlikçi belirir. Hasar seviyeyle artar; mermiler kritik yapabilir ve run özetinde "Yoldaş" olarak sayılır. Alınmadıysa run'da yoldaş yok.
@@ -284,6 +289,13 @@ Bu geliştirme ortamında görsel tarayıcı testi mümkün değil, bu yüzden k
 **v18 test (zırh + kritik):**
 
 46. Mağazadan Zırh alınca gelen hasar azalıyor mu; Kritik Şans alınca ara sıra turuncu "x2!" hasar sayıları çıkıyor mu.
+
+**v21–v24 test:**
+
+47. Combo: art arda öldürünce üst-ortada çarpan yükseliyor, hasar alınca/süre dolunca sıfırlanıyor; skor/altın artıyor mu.
+48. Biyom tehlikeleri: Çöl'de görüş dar, Buz'da zemin kaygan, Bataklık'ta yavaş mı; run başı bildirim tehlikeyi yazıyor mu.
+49. Mağazadan Yoldaş alınca eşlikçi çıkıp düşmanlara ateş ediyor, oyuncuyu takip ediyor mu.
+50. Başlangıç ekranında 📈 Kariyer paneli ömür boyu toplamları gösteriyor, her oyundan sonra artıyor mu.
 
 ## v14 sonrası hâlâ kapsam dışı
 
