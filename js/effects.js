@@ -37,7 +37,7 @@ function updateParticles(state, dt) {
 }
 
 function spawnDamageNumber(state, x, y, amount, opts) {
-  if (!EFFECTS.showDamageNumbers) return;
+  if (!EFFECTS.showDamageNumbers || !Settings.get('damageNumbers')) return;
   if (state.damageNumbers.length >= EFFECTS.maxDamageNumbers) return;
   opts = opts || {};
   state.damageNumbers.push({
@@ -62,6 +62,7 @@ function updateDamageNumbers(state, dt) {
 }
 
 function addShake(state, mag) {
+  if (!Settings.get('shake')) return; // erişilebilirlik: sarsıntı kapalı
   if (mag > state.shake.mag) state.shake.mag = mag;
 }
 
@@ -111,7 +112,7 @@ function drawDamageNumbers(ctx, state) {
 // Ekran kenarlarında kırmızı parıltı — hasar alındığında. Screen shake'in
 // aksine kameradan/sarsıntıdan bağımsız, tüm ekranı kaplar.
 function drawHurtVignette(ctx, state) {
-  if (state.hurtFlash <= 0) return;
+  if (state.hurtFlash <= 0 || !Settings.get('flash')) return;
   const a = clamp(state.hurtFlash / EFFECTS.hurtFlashTime, 0, 1) * 0.45;
   const cx = CANVAS_W / 2, cy = CANVAS_H / 2;
   const grad = ctx.createRadialGradient(

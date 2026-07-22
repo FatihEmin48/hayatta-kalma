@@ -90,7 +90,14 @@ const UI = (function () {
     els.volMaster = document.getElementById('vol-master');
     els.volSfx = document.getElementById('vol-sfx');
     els.volMusic = document.getElementById('vol-music');
+    els.toggleShake = document.getElementById('toggle-shake');
+    els.toggleDmgNum = document.getElementById('toggle-dmgnum');
+    els.toggleFlash = document.getElementById('toggle-flash');
     updateSoundControls();
+    updateAccessibilityControls();
+    els.toggleShake.addEventListener('click', () => { Settings.toggle('shake'); updateAccessibilityControls(); });
+    els.toggleDmgNum.addEventListener('click', () => { Settings.toggle('damageNumbers'); updateAccessibilityControls(); });
+    els.toggleFlash.addEventListener('click', () => { Settings.toggle('flash'); updateAccessibilityControls(); });
     els.settingsBtn.addEventListener('click', () => {
       Sound.resume();       // tıklama bir kullanıcı jesti → ses kilidini aç
       els.settingsPanel.classList.toggle('hidden');
@@ -486,6 +493,17 @@ const UI = (function () {
     els.volSfx.value = Math.round(Sound.getSfxVol() * 100);
     els.volMusic.value = Math.round(Sound.getMusicVol() * 100);
     els.settingsBtn.textContent = Sound.getMasterVol() <= 0 ? '🔇' : '⚙️';
+  }
+
+  function updateAccessibilityControls() {
+    if (!els.toggleShake) return;
+    const row = (btn, label, on) => {
+      btn.textContent = `${on ? '✅' : '⬜'} ${label}`;
+      btn.classList.toggle('off', !on);
+    };
+    row(els.toggleShake, 'Ekran sarsıntısı', Settings.get('shake'));
+    row(els.toggleDmgNum, 'Hasar sayıları', Settings.get('damageNumbers'));
+    row(els.toggleFlash, 'Ekran kızarması', Settings.get('flash'));
   }
 
   function showToast(text) {

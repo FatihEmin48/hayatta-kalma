@@ -370,6 +370,16 @@ button:hover { filter: brightness(1.1); }
 }
 .vol-row input[type="range"] { width: 96px; accent-color: var(--accent); }
 
+.settings-sep {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 6px;
+}
+
 /* Duraklat butonu — sol üstte, HUD barlarının altında (çakışmaz). Yalnız
    oyun içinde görünür (setHudVisible ile). */
 #pause-btn {
