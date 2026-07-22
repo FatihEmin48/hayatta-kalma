@@ -31,6 +31,10 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v25 — Codex / Rehber
+
+- **Rehber (`js/ui.js` `renderCodex`):** Başlangıç ekranında 📖 Rehber düğmesiyle açılan referans ekranı — tüm silahlar ve **evrim tarifleri** (hangi silah maks + hangi pasif maks → hangi evrim), düşman tipleri (davranışlarıyla) ve biyomlar (tehlikeleriyle). Tamamen `WEAPON_DEFS`/`EVOLUTION_DEFS`/`PASSIVE_DEFS`/`ENEMY_DEFS`/`BIOMES` config'inden üretilir, ayrı veri tutmaz.
+
 ## v24 — Kariyer istatistikleri
 
 - **Kariyer (`js/career.js`, localStorage):** Tüm run'lar boyunca biriken ömür boyu istatistikler — oynanan oyun, toplam öldürme, toplam süre, öldürülen boss, en yüksek combo, en yüksek seviye, toplam kazanılan altın. Her run sonunda (`endRunRewards`) güncellenir.

@@ -36,6 +36,8 @@ const UI = (function () {
     els.achToggle = document.getElementById('ach-toggle');
     els.career = document.getElementById('career');
     els.careerToggle = document.getElementById('career-toggle');
+    els.codex = document.getElementById('codex');
+    els.codexToggle = document.getElementById('codex-toggle');
 
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', restartGame);
@@ -66,6 +68,10 @@ const UI = (function () {
     els.careerToggle.addEventListener('click', () => {
       els.career.classList.toggle('hidden');
       refreshCareer();
+    });
+    els.codexToggle.addEventListener('click', () => {
+      els.codex.classList.toggle('hidden');
+      if (!els.codex.classList.contains('hidden')) renderCodex();
     });
 
     refreshStartHighScores();
@@ -350,6 +356,40 @@ const UI = (function () {
     if (!els.achToggle) return;
     els.achToggle.textContent = `🏆 Başarımlar (${Achievements.doneCount()}/${Achievements.all().length})`;
     if (!els.achievements.classList.contains('hidden')) renderAchievements();
+  }
+
+  function codexEnemyDesc(e) {
+    if (e.splitter) return 'ölünce bölünür';
+    if (e.ranged) return 'uzaktan mermi atar';
+    if (e.exploder) return 'ölünce patlar';
+    if (e.erratic) return 'hızlı, zikzak hareket';
+    if (e.id === 'tank') return 'yavaş ama dayanıklı';
+    return 'temel düşman';
+  }
+
+  // Rehber/Codex: silahlar + evrim tarifleri, düşmanlar, biyomlar (config'ten).
+  function renderCodex() {
+    if (!els.codex) return;
+    let html = '<div class="codex-h">Silahlar & Evrimler</div>';
+    for (const w of WEAPON_DEFS) {
+      let line = `<b>${w.name}</b>`;
+      const evo = EVOLUTION_DEFS.find(e => e.weaponId === w.id);
+      if (evo) {
+        const p = PASSIVE_DEFS.find(x => x.id === evo.passiveId);
+        line += ` → <span class="codex-evo">${evo.name}</span> <span class="codex-sub">(${w.name} maks + ${p ? p.name : evo.passiveId} maks)</span>`;
+      }
+      html += `<div class="codex-row">${line}</div>`;
+    }
+    html += '<div class="codex-h">Düşmanlar</div>';
+    for (const e of ENEMY_DEFS) {
+      html += `<div class="codex-row"><b>${e.name}</b> <span class="codex-sub">${codexEnemyDesc(e)}</span></div>`;
+    }
+    html += `<div class="codex-row"><b>Boss</b> <span class="codex-sub">iri, radyal mermi, can barı, büyük ödül</span></div>`;
+    html += '<div class="codex-h">Biyomlar</div>';
+    for (const b of BIOMES) {
+      html += `<div class="codex-row"><b>${b.name}</b> <span class="codex-sub">${b.hazard || 'tehlikesiz'}</span></div>`;
+    }
+    els.codex.innerHTML = html;
   }
 
   function renderCareer() {

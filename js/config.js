@@ -99,12 +99,12 @@ const WEAPON_DEFS = [
 ];
 
 const ENEMY_DEFS = [
-  { id: 'basic', unlockAt: 0, hp: 10, speed: 55, damage: 6, radius: 12, xp: 3, color: '#7fbf3f' },
-  { id: 'fast', unlockAt: 60, hp: 7, speed: 120, damage: 5, radius: 9, xp: 4, color: '#3fa9f5', erratic: true },
-  { id: 'splitter', unlockAt: 90, hp: 26, speed: 60, damage: 8, radius: 15, xp: 6, color: '#e67e22', splitter: true, splitInto: 3 },
-  { id: 'tank', unlockAt: 120, hp: 55, speed: 32, damage: 13, radius: 18, xp: 8, color: '#c0392b' },
-  { id: 'ranged', unlockAt: 150, hp: 16, speed: 70, damage: 6, radius: 11, xp: 7, color: '#9b59b6', ranged: true, preferredRange: 240, fireEvery: 2.2, projSpeed: 170, projDamage: 8 },
-  { id: 'exploder', unlockAt: 200, hp: 14, speed: 78, damage: 6, radius: 12, xp: 7, color: '#d35400', exploder: true, explodeRadius: 50, explodeDamage: 9 },
+  { id: 'basic', name: 'Temel', unlockAt: 0, hp: 10, speed: 55, damage: 6, radius: 12, xp: 3, color: '#7fbf3f' },
+  { id: 'fast', name: 'Hızlı', unlockAt: 60, hp: 7, speed: 120, damage: 5, radius: 9, xp: 4, color: '#3fa9f5', erratic: true },
+  { id: 'splitter', name: 'Bölünen', unlockAt: 90, hp: 26, speed: 60, damage: 8, radius: 15, xp: 6, color: '#e67e22', splitter: true, splitInto: 3 },
+  { id: 'tank', name: 'Tank', unlockAt: 120, hp: 55, speed: 32, damage: 13, radius: 18, xp: 8, color: '#c0392b' },
+  { id: 'ranged', name: 'Mesafeli', unlockAt: 150, hp: 16, speed: 70, damage: 6, radius: 11, xp: 7, color: '#9b59b6', ranged: true, preferredRange: 240, fireEvery: 2.2, projSpeed: 170, projDamage: 8 },
+  { id: 'exploder', name: 'Patlayan', unlockAt: 200, hp: 14, speed: 78, damage: 6, radius: 12, xp: 7, color: '#d35400', exploder: true, explodeRadius: 50, explodeDamage: 9 },
 ];
 
 // Enemies are weaker at the start and ramp up to their full ENEMY_DEFS
