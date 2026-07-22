@@ -354,6 +354,19 @@ function drawDashGauge(ctx, state) {
   ctx.fillText('⚡', cx, cy);
 }
 
+// Üst-orta: bir sonraki boss'a kalan süre (boss sahnedeyken gizli — o zaman
+// alttaki boss barı gösterir). Son 10 sn kırmızı.
+function drawBossCountdown(ctx, state) {
+  if (state.enemies.some(e => e.boss && !e.dead)) return;
+  const t = Math.max(0, state.bossTimer);
+  const m = Math.floor(t / 60), s = Math.floor(t % 60);
+  ctx.font = 'bold 13px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillStyle = t <= 10 ? '#e74c3c' : 'rgba(255,255,255,0.7)';
+  ctx.fillText(`⚔️ Boss: ${m}:${s.toString().padStart(2, '0')}`, CANVAS_W / 2, 66);
+}
+
 function render(ctx, state) {
   ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
   if (state.mode === STATE.START) return;
@@ -383,6 +396,7 @@ function render(ctx, state) {
   // Vinyet, boss barı ve mini-harita sarsıntıdan bağımsız → transform dışında.
   drawHurtVignette(ctx, state);
   drawBossBar(ctx, state);
+  drawBossCountdown(ctx, state);
   drawMinimap(ctx, state);
   drawDashGauge(ctx, state);
 }

@@ -31,6 +31,10 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v19 — Boss geri sayımı (HUD)
+
+- **Boss geri sayımı:** Üst-ortada bir sonraki boss'a kalan süre gösterilir (⚔️ Boss: M:SS); son 10 saniyede kırmızıya döner. Boss sahnedeyken gizlenir (o an alttaki boss can barı görünür). Oyuncu boss'a hazırlanabilsin diye.
+
 ## v18 — Zırh + kritik vuruş
 
 - **Zırh (`armor` meta yükseltmesi):** Gelen her hasarı düz olarak azaltır (en az 1 hasar geçer). `applyPlayerDamage` içinde uygulanır — hem temas hem düşman/boss mermileri için.
