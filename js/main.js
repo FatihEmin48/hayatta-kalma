@@ -10,6 +10,7 @@ function createPlayer() {
     radius: PLAYER_BASE.radius,
     hp: PLAYER_BASE.maxHp,
     facingX: 0, facingY: -1,
+    vx: 0, vy: 0,
     invulnUntil: 0,
     dashCooldownLeft: 0, dashTimeLeft: 0, dashDirX: 0, dashDirY: 0,
     xp: 0, level: 1, xpToNext: xpToNextLevel(1),
@@ -91,22 +92,34 @@ function updateDash(state, dt) {
 
 function updatePlayerMovement(state, dt) {
   const player = state.player;
+  const biome = state.biome || {};
+  let nx, ny;
 
-  let moveX, moveY, speed;
   if (player.dashTimeLeft > 0) {
-    moveX = player.dashDirX; moveY = player.dashDirY;
-    speed = DASH.speed;
-    player.facingX = moveX; player.facingY = moveY;
+    // Dash: anlık, biyom etkilerini bypass eder.
+    const sp = DASH.speed;
+    player.facingX = player.dashDirX; player.facingY = player.dashDirY;
+    player.vx = player.dashDirX * sp; player.vy = player.dashDirY * sp;
+    nx = player.x + player.dashDirX * sp * dt;
+    ny = player.y + player.dashDirY * sp * dt;
   } else {
     const move = getMoveVector();
-    speed = getPlayerSpeed(player);
+    const speed = getPlayerSpeed(player) * (biome.speedMult || 1);
     if (move.x !== 0 || move.y !== 0) { player.facingX = move.x; player.facingY = move.y; }
-    moveX = move.x; moveY = move.y;
+    const targetVX = move.x * speed, targetVY = move.y * speed;
+    if (biome.slippery) {
+      // Kaygan zemin: hedef hıza yumuşak geçiş (atalet), anında durmaz.
+      const a = Math.min(1, 4 * dt);
+      player.vx += (targetVX - player.vx) * a;
+      player.vy += (targetVY - player.vy) * a;
+    } else {
+      player.vx = targetVX; player.vy = targetVY;
+    }
+    nx = player.x + player.vx * dt;
+    ny = player.y + player.vy * dt;
   }
 
-  const newX = player.x + moveX * speed * dt;
-  const newY = player.y + moveY * speed * dt;
-  const resolved = resolveObstacles(newX, newY, player.radius, state.obstacles);
+  const resolved = resolveObstacles(nx, ny, player.radius, state.obstacles);
   player.x = clamp(resolved.x, 0, WORLD_W);
   player.y = clamp(resolved.y, 0, WORLD_H);
 }
@@ -296,7 +309,7 @@ function startGame() {
   // Start/Tekrar Oyna butonu bir kullanıcı jesti — autoplay kilidini burada aç.
   Sound.resume();
   Sound.startMusic();
-  UI.showToast(`Biyom: ${state.biome.name}`);
+  UI.showToast(`Biyom: ${state.biome.name}${state.biome.hazard ? ' — ' + state.biome.hazard : ''}`);
 }
 
 function restartGame() {

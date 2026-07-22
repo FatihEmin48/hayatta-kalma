@@ -182,11 +182,13 @@ const OBSTACLE_CONFIG = {
 
 // Biyomlar (js/render.js): her run rastgele biri seçilir, arka plan / ızgara /
 // engel renklerini değiştirir. Oynanışı değiştirmez, görsel çeşitlilik katar.
+// Her biyomun görsel renkleri + mekanik tehlikesi: speedMult (hareket hızı
+// çarpanı), slippery (kaygan zemin/atalet), vision (dar görüş vinyeti).
 const BIOMES = [
   { id: 'night',  name: 'Gece',          bg: '#0a0c10', grid: 'rgba(255,255,255,0.05)', obstacle: '#4a3f35' },
-  { id: 'desert', name: 'Çöl',           bg: '#1c1608', grid: 'rgba(230,200,120,0.06)', obstacle: '#6b5a3a' },
-  { id: 'ice',    name: 'Buz Diyarı',    bg: '#0a1620', grid: 'rgba(120,200,230,0.06)', obstacle: '#3a5b6a' },
-  { id: 'blood',  name: 'Kan Bataklığı', bg: '#140a0c', grid: 'rgba(230,120,120,0.05)', obstacle: '#4a2f35' },
+  { id: 'desert', name: 'Çöl',           bg: '#1c1608', grid: 'rgba(230,200,120,0.06)', obstacle: '#6b5a3a', vision: true, hazard: 'görüş dar' },
+  { id: 'ice',    name: 'Buz Diyarı',    bg: '#0a1620', grid: 'rgba(120,200,230,0.06)', obstacle: '#3a5b6a', slippery: true, hazard: 'zemin kaygan' },
+  { id: 'blood',  name: 'Kan Bataklığı', bg: '#140a0c', grid: 'rgba(230,120,120,0.05)', obstacle: '#4a2f35', speedMult: 0.88, hazard: 'çamur yavaşlatır' },
 ];
 
 const CHEST_CONFIG = {

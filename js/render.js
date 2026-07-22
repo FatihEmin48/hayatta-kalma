@@ -367,6 +367,20 @@ function drawBossCountdown(ctx, state) {
   ctx.fillText(`⚔️ Boss: ${m}:${s.toString().padStart(2, '0')}`, CANVAS_W / 2, 66);
 }
 
+// Çöl biyomu: oyuncunun etrafında dar görüş vinyeti (kenarları karartır →
+// düşmanları daha geç görürsün). Screen-space, transform dışında çizilir.
+function drawBiomeVision(ctx, state) {
+  if (!state.biome || !state.biome.vision) return;
+  const pos = worldToScreen(state.camera, state.player.x, state.player.y);
+  const inner = Math.min(CANVAS_W, CANVAS_H) * 0.26;
+  const outer = Math.max(CANVAS_W, CANVAS_H) * 0.78;
+  const g = ctx.createRadialGradient(pos.x, pos.y, inner, pos.x, pos.y, outer);
+  g.addColorStop(0, 'rgba(18,12,2,0)');
+  g.addColorStop(1, 'rgba(18,12,2,0.72)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+}
+
 // Combo göstergesi (üst-orta, boss geri sayımının altında). combo>=2'de görünür;
 // çarpan yükseldikçe renk kızarır, altındaki bar kalan süreyi gösterir.
 function drawCombo(ctx, state) {
@@ -417,6 +431,7 @@ function render(ctx, state) {
   ctx.restore();
 
   // Vinyet, boss barı ve mini-harita sarsıntıdan bağımsız → transform dışında.
+  drawBiomeVision(ctx, state);
   drawHurtVignette(ctx, state);
   drawBossBar(ctx, state);
   drawBossCountdown(ctx, state);

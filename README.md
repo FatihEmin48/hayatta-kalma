@@ -31,6 +31,15 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v22 — Biyoma özel tehlikeler
+
+Biyomlar artık sadece görsel değil, mekanik de: her biri `BIOMES` içinde bir tehlike taşır ve run başı bildirimde belirtilir.
+
+- **Çöl — dar görüş:** Oyuncunun etrafında görüş vinyeti; düşmanları daha geç görürsün (`drawBiomeVision`).
+- **Buz Diyarı — kaygan zemin:** Hareket atalet kazanır (anında durmaz/dönmez); oyuncuda `vx/vy` ile yumuşak geçiş.
+- **Kan Bataklığı — çamur:** Hareket hızı %12 düşer (`speedMult`).
+- Gece nötr (tehlikesiz). Dash biyom etkilerini bypass eder (kaçış hep güvenilir).
+
 ## v21 — Combo / seri çarpanı
 
 - **Combo (`COMBO_CONFIG`, `js/leveling.js`):** Art arda öldürme bir çarpan biriktirir (her öldürme +%2, en fazla +%150 → 2.5x). `window` saniye (3sn) içinde öldürme olmazsa **veya hasar alınca** combo sıfırlanır — risk-ödül.
