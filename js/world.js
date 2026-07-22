@@ -76,6 +76,39 @@ function collectChests(state) {
   }
 }
 
+// Yoldaş: oyuncunun biraz üstünde süzülür ve menzildeki en yakın düşmana
+// periyodik mermi atar. Hasar Meta 'companion' seviyesiyle artar; kritik/özet
+// için 'companion' kaynağıyla etiketlenir.
+function updateCompanion(state, dt) {
+  const c = state.companion;
+  if (!c) return;
+  const player = state.player;
+  const a = Math.min(1, 6 * dt);
+  c.x += (player.x - c.x) * a;
+  c.y += (player.y - 26 - c.y) * a;
+
+  c.fireTimer -= dt;
+  if (c.fireTimer > 0) return;
+
+  let target = null, best = COMPANION.range * COMPANION.range;
+  for (const e of state.enemies) {
+    if (e.dead) continue;
+    const d2 = (e.x - c.x) ** 2 + (e.y - c.y) ** 2;
+    if (d2 <= best) { best = d2; target = e; }
+  }
+  if (!target) { c.fireTimer = 0.2; return; }
+
+  const lvl = Meta.getLevel('companion');
+  const dir = normalize(target.x - c.x, target.y - c.y);
+  state.projectiles.push({
+    x: c.x, y: c.y,
+    vx: dir.x * COMPANION.projSpeed, vy: dir.y * COMPANION.projSpeed,
+    damage: COMPANION.damage * lvl * getPlayerDamageMult(player),
+    radius: 4, rangeLeft: COMPANION.range, source: 'companion', dead: false,
+  });
+  c.fireTimer = COMPANION.cooldown;
+}
+
 function updatePickups(state) {
   const player = state.player;
   for (const p of state.pickups) {

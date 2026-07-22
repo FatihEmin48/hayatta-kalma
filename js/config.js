@@ -224,8 +224,15 @@ const META_UPGRADES = [
   { id: 'regen',  name: 'Can Yenilenmesi', desc: '+0.3/sn yenilenme', step: 0.3,  maxLevel: 3, baseCost: 60, costGrowth: 1.9 },
   { id: 'armor',  name: 'Zırh',            desc: '-1 gelen hasar',    step: 1,    maxLevel: 5, baseCost: 55, costGrowth: 1.7 },
   { id: 'crit',   name: 'Kritik Şans',     desc: '+%4 kritik (x2 hasar)', step: 0.04, maxLevel: 5, baseCost: 60, costGrowth: 1.8 },
+  { id: 'companion', name: 'Yoldaş',       desc: 'Otomatik ateş eden eşlikçi (+hasar)', step: 1, maxLevel: 3, baseCost: 80, costGrowth: 1.9 },
   { id: 'greed',  name: 'Altın Bulma',     desc: '+%12 altın',        step: 0.12, maxLevel: 5, baseCost: 55, costGrowth: 1.7 },
 ];
+
+// Yoldaş/pet (js/world.js). Meta 'companion' seviyesi > 0 ise oyuncuyu takip
+// edip en yakın düşmana otomatik mermi atar; hasar seviyeyle artar.
+const COMPANION = {
+  damage: 6, cooldown: 0.9, range: 320, projSpeed: 340, radius: 8, color: '#48dbfb',
+};
 
 const CRIT_MULT = 2;
 

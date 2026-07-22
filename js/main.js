@@ -23,12 +23,15 @@ function createPlayer() {
 
 function createInitialState() {
   const mc = Modes.current();
+  const player = createPlayer();
   return {
     mode: STATE.START,
     modeConfig: mc,
+    companion: Meta.getLevel('companion') > 0 ? { x: player.x, y: player.y - 26, fireTimer: 0 } : null,
     timer: 0,
     kills: 0,
     bossKills: 0,
+    player,
     totalDamage: 0,
     weaponDamage: {},
     combo: 0,
@@ -36,7 +39,6 @@ function createInitialState() {
     maxCombo: 0,
     comboScore: 0,
     comboGold: 0,
-    player: createPlayer(),
     enemies: [],
     projectiles: [],
     enemyProjectiles: [],
@@ -189,6 +191,7 @@ function update(state, dt) {
   updateGems(state, dt);
   updateChests(state, dt);
   updatePickups(state);
+  updateCompanion(state, dt);
   updateParticles(state, dt);
   updateDamageNumbers(state, dt);
   updateShake(state, dt);

@@ -31,6 +31,10 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v23 — Yoldaş / pet
+
+- **Yoldaş (`COMPANION` + `companion` meta yükseltmesi):** Mağazadan alınınca (seviye 1-3) oyuncunun biraz üstünde süzülen, en yakın düşmana **otomatik mermi atan** bir eşlikçi belirir. Hasar seviyeyle artar; mermiler kritik yapabilir ve run özetinde "Yoldaş" olarak sayılır. Alınmadıysa run'da yoldaş yok.
+
 ## v22 — Biyoma özel tehlikeler
 
 Biyomlar artık sadece görsel değil, mekanik de: her biri `BIOMES` içinde bir tehlike taşır ve run başı bildirimde belirtilir.

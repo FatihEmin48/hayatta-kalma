@@ -375,8 +375,9 @@ const UI = (function () {
     let summary = `Hasar/sn: ${Math.round(dps)} · Toplam hasar: ${Math.round(state.totalDamage)}`;
     if (bestId) {
       const wd = WEAPON_DEFS.find(w => w.id === bestId);
+      const name = wd ? wd.name : (bestId === 'companion' ? 'Yoldaş' : bestId);
       const pct = state.totalDamage > 0 ? Math.round(bestDmg / state.totalDamage * 100) : 0;
-      summary += ` · En etkili: ${wd ? wd.name : bestId} (%${pct})`;
+      summary += ` · En etkili: ${name} (%${pct})`;
     }
     els.gameOverSummary.textContent = summary;
 

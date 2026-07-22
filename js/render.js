@@ -114,6 +114,22 @@ function drawPickups(ctx, state) {
   }
 }
 
+function drawCompanion(ctx, state) {
+  if (!state.companion) return;
+  const pos = worldToScreen(state.camera, state.companion.x, state.companion.y);
+  ctx.fillStyle = COMPANION.color;
+  ctx.beginPath();
+  ctx.arc(pos.x, pos.y, COMPANION.radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#0a0c10';
+  ctx.beginPath();
+  ctx.arc(pos.x, pos.y, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
 function drawGems(ctx, state) {
   ctx.fillStyle = '#3fa9f5';
   for (const g of state.gems) {
@@ -424,6 +440,7 @@ function render(ctx, state) {
   drawEnemyProjectiles(ctx, state);
   drawAura(ctx, state);
   drawOrbit(ctx, state);
+  drawCompanion(ctx, state);
   drawPlayer(ctx, state);
   drawParticles(ctx, state);
   drawDamageNumbers(ctx, state);
