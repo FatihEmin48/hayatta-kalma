@@ -31,6 +31,10 @@ Canvas'ın çizim çözünürlüğü, sabit bir boyutu küçültmek yerine **ger
 - **Harita engelleri:** Dünyada dağınık ~40 statik engel (kaya); oyuncu ve düşmanlar üzerinden geçemez, etrafından dolaşmak zorunda. Silahlar/mermiler engellere bakmıyor (bilinçli basitleştirme).
 - **Sandıklar:** Yaklaşık her 90 saniyede bir haritada beliren altın bir sandık; üzerine yürüyünce can tam yenilenir + 40 XP kazanılır (birden fazla seviye atlamayı tetikleyebilir), bildirim çıkar.
 
+## v27 — Anka Tüyü (dirilme)
+
+- **Anka Tüyü (`revive` meta yükseltmesi, `REVIVE`):** Mağazadan alınınca (seviye 1-2 = run başına 1-2 dirilme hakkı) canın 0'a düştüğünde game-over yerine bir hakkın tükenir: canının %50'siyle, ~2 sn dokunulmazlıkla geri dönersin ve çevrendeki boss olmayan düşmanlar temizlenir (patlama efekti + sarsıntı). HUD'da sol üstte kalan hak sayısı (🔥 xN) gösterilir. Hak bitince normal game-over.
+
 ## v26 — Yeni boss çeşitleri
 
 Boss'lar artık tek tip değil; her boss'ta sırayla değişen 3 çeşit (`BOSS_VARIANTS`):

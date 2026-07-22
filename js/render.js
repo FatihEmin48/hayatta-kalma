@@ -455,4 +455,15 @@ function render(ctx, state) {
   drawCombo(ctx, state);
   drawMinimap(ctx, state);
   drawDashGauge(ctx, state);
+  drawReviveIndicator(ctx, state);
+}
+
+// Kalan Anka Tüyü sayısı (sol üstte, duraklat butonunun altında).
+function drawReviveIndicator(ctx, state) {
+  if (!state.revivesLeft || state.revivesLeft <= 0) return;
+  ctx.font = 'bold 15px system-ui, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillStyle = '#f1c40f';
+  ctx.fillText(`🔥 x${state.revivesLeft}`, 12, 124);
 }

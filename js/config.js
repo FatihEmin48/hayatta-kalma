@@ -242,8 +242,18 @@ const META_UPGRADES = [
   { id: 'armor',  name: 'Zırh',            desc: '-1 gelen hasar',    step: 1,    maxLevel: 5, baseCost: 55, costGrowth: 1.7 },
   { id: 'crit',   name: 'Kritik Şans',     desc: '+%4 kritik (x2 hasar)', step: 0.04, maxLevel: 5, baseCost: 60, costGrowth: 1.8 },
   { id: 'companion', name: 'Yoldaş',       desc: 'Otomatik ateş eden eşlikçi (+hasar)', step: 1, maxLevel: 3, baseCost: 80, costGrowth: 1.9 },
+  { id: 'revive', name: 'Anka Tüyü',       desc: 'Run başına 1 dirilme', step: 1, maxLevel: 2, baseCost: 120, costGrowth: 2.4 },
   { id: 'greed',  name: 'Altın Bulma',     desc: '+%12 altın',        step: 0.12, maxLevel: 5, baseCost: 55, costGrowth: 1.7 },
 ];
+
+// Anka Tüyü dirilmesi (js/main.js): can 0'a düşünce sahipse tüketilir; canın
+// bir kısmıyla, kısa dokunulmazlıkla geri dön + yakındaki (boss olmayan)
+// düşmanları temizle.
+const REVIVE = {
+  healPct: 0.5,
+  iframeMs: 2000,
+  clearRadius: 150,
+};
 
 // Yoldaş/pet (js/world.js). Meta 'companion' seviyesi > 0 ise oyuncuyu takip
 // edip en yakın düşmana otomatik mermi atar; hasar seviyeyle artar.

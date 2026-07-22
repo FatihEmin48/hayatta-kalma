@@ -58,6 +58,7 @@ function createInitialState() {
     eliteTimer: ELITE_DEF.every,
     bossTimer: mc.bossEvery,
     bossesSpawned: 0,
+    revivesLeft: Meta.getLevel('revive'),
     pendingLevelUps: 0,
     levelUpChoices: [],
     banished: [],
@@ -233,8 +234,32 @@ function endRunRewards(state) {
   return earned;
 }
 
+// Anka Tüyü: canın bir kısmıyla ve kısa dokunulmazlıkla geri dön, çevredeki
+// (boss olmayan) düşmanları temizle.
+function revivePlayer(state) {
+  const player = state.player;
+  player.hp = getPlayerMaxHp(player) * REVIVE.healPct;
+  player.invulnUntil = performance.now() + REVIVE.iframeMs;
+  for (const e of state.enemies) {
+    if (e.dead || e.boss) continue;
+    if (circleHit(player.x, player.y, REVIVE.clearRadius, e.x, e.y, e.radius)) {
+      damageEnemy(state, e, e.hp + 1);
+    }
+  }
+  addShake(state, 12);
+  state.hurtFlash = 0;
+  spawnParticles(state, player.x, player.y, '#f1c40f', 30, { speedMin: 100, speedMax: 300, life: 0.8 });
+  Sound.sfx('evolve');
+  UI.showToast('🔥 Anka Tüyü! Küllerinden dirildin');
+}
+
 function checkTransitions(state) {
   if (state.player.hp <= 0) {
+    if (state.revivesLeft > 0) {
+      state.revivesLeft -= 1;
+      revivePlayer(state);
+      return; // dirildik, oyun sürüyor
+    }
     state.mode = STATE.GAME_OVER;
     Sound.sfx('gameover');
     Sound.stopMusic();
